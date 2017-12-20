@@ -1,0 +1,36 @@
+#################
+## Misc
+#################
+**/.DS_Store
+nbproject
+manifest.mf
+build.xml
+node_modules/*
+npm-debug.log
+coverage
+*.ts
+!*.d.ts
+tests
+typings
+typings.json
+.github
+!*.metadata.json
+!bundles/*.js
+*.tgz
+
+############
+## Windows
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+############
+## Mac
+############
+
+# Mac crap
+.DS_Store
