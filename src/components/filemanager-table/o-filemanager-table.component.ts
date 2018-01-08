@@ -1,8 +1,11 @@
-
-import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild, Optional, Inject, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OntimizeWebModule, OTableComponent, OSharedModule } from 'ontimize-web-ngx';
+import { Subscription } from 'rxjs/Subscription';
+
+import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFileInputComponent } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/o-table-column-renderer-filetype.component';
+import { FileManagerStateService } from '../../services/filemanager-state.service';
+
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   // parent-keys [string]: parent keys to filter, separated by ';'. Default: no value.
@@ -21,28 +24,55 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class.o-filemanager-table]': 'true'
-  }
+  },
+  providers: [{
+    provide: FileManagerStateService,
+    useClass: FileManagerStateService
+  }],
 })
 
 export class OFileManagerTableComponent {
-
+  protected onFormDataSubscribe: Subscription;
+  protected stateService: FileManagerStateService;
   protected parentKeys: string;
 
   @ViewChild('oTable') oTable: OTableComponent;
+  @ViewChild('oFileInput') oFileInput: OFileInputComponent;
 
-  constructor(protected injector: Injector) {
-    //
+  constructor(
+    protected injector: Injector,
+    @Optional() @Inject(forwardRef(() => OFormComponent)) protected oForm: OFormComponent) {
+
+    this.stateService = this.injector.get(FileManagerStateService);
+
+    const self = this;
+    if (this.oForm) {
+      this.onFormDataSubscribe = this.oForm.onFormDataLoaded.subscribe(function (data) {
+        self.stateService.setFormParentItem(data);
+      });
+    }
   }
+
 
   onTableDoubleClick(item: any) {
     if (item === undefined || !item['isDir'] || !this.oTable) {
       return;
     }
-    // this.oTable.queryData
+    const filter = this.stateService.getAndStoreQueryFilter({ PARENT: item.id });
+    this.oTable.queryData(filter);
   }
 
-  onFileUpload() {
-    console.log('onFileUpload');
+  onFileUploadClick() {
+     if (this.oFileInput) {
+      (this.oFileInput as any).inputFile.nativeElement.click();
+      this.oFileInput.onChange.subscribe(data => {
+        this.oFileInput.upload();
+      });
+    }
+  }
+
+  onUploadedFile(arg) {
+    this.oTable.reloadData();
   }
 }
 

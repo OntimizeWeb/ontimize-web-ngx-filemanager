@@ -1,12 +1,14 @@
 <div fxFill fxLayout="column" fxLayoutAlign="start">
-  <o-table #oTable fxFlex attr="filemanager" title="FILES"
-    service-type="FileManagerService" service="customers" entity="customer"
-    keys="id"  [parent-keys]="parentKeys"
-    columns="id;isDir;name;size;created" visible-columns="isDir;name;size;created" sort-columns="name"
-    show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
-    detail-mode="none" (onDoubleClick)="onTableDoubleClick($event)" query-method="queryDummy">
+  <o-file-input #oFileInput service-type="FileManagerService" (onUploadFile)="onUploadedFile($event)" attr="fileUpload" max-file-size="10000"
+    multiple="no">
+  </o-file-input>
 
-    <o-table-button icon="file_upload" (onClick)="onFileUpload()"></o-table-button>
+  <o-table #oTable fxFlex attr="filemanager" title="FILES" service-type="FileManagerService" service="customers" entity="customer"
+    keys="id" [parent-keys]="parentKeys" columns="id;isDir;name;size;created" visible-columns="isDir;name;size;created" sort-columns="name"
+    show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
+    detail-mode="none" (onDoubleClick)="onTableDoubleClick($event)" query-method="queryFiles" query-on-init="no">
+
+    <o-table-button icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
 
     <o-table-column attr="isDir" width="24px">
       <o-table-column-renderer-filetype></o-table-column-renderer-filetype>
