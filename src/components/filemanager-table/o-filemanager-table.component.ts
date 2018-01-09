@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild, Optional, Inject, forwardRef } from '@angular/core';
+import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild, Optional, Inject, forwardRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -31,10 +31,14 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   }],
 })
 
-export class OFileManagerTableComponent {
+
+export class OFileManagerTableComponent implements OnDestroy {
   protected onFormDataSubscribe: Subscription;
   protected stateService: FileManagerStateService;
   protected parentKeys: string;
+
+  protected stateSubscription: Subscription;
+  protected _breadcrumbs: Array<any> = [];
 
   @ViewChild('oTable') oTable: OTableComponent;
   @ViewChild('oFileInput') oFileInput: OFileInputComponent;
@@ -51,19 +55,31 @@ export class OFileManagerTableComponent {
         self.stateService.setFormParentItem(data);
       });
     }
+
+    this.stateSubscription = this.stateService.getStateObservable().subscribe(array => {
+      self.breadcrumbs = array;
+    });
   }
 
+  ngOnDestroy() {
+    if (this.onFormDataSubscribe) {
+      this.onFormDataSubscribe.unsubscribe();
+    }
+    if (this.stateSubscription) {
+      this.stateSubscription.unsubscribe();
+    }
+  }
 
   onTableDoubleClick(item: any) {
     if (item === undefined || !item['isDir'] || !this.oTable) {
       return;
     }
-    const filter = this.stateService.getAndStoreQueryFilter({ PARENT: item.id });
+    const filter = this.stateService.getAndStoreQueryFilter({ PARENT: item.id }, item);
     this.oTable.queryData(filter);
   }
 
   onFileUploadClick() {
-     if (this.oFileInput) {
+    if (this.oFileInput) {
       (this.oFileInput as any).inputFile.nativeElement.click();
       this.oFileInput.onChange.subscribe(data => {
         this.oFileInput.upload();
@@ -73,6 +89,29 @@ export class OFileManagerTableComponent {
 
   onUploadedFile(arg) {
     this.oTable.reloadData();
+  }
+
+  onGoToRootFolderClick() {
+    this.stateService.restart();
+    const filter = this.stateService.getFormParentItem();
+    this.oTable.queryData(filter);
+  }
+
+  onGoToFolderClick(filter: any, index: number) {
+    this.stateService.restart(index);
+    this.oTable.queryData(filter);
+  }
+
+  get breadcrumbs(): Array<any> {
+    return this._breadcrumbs;
+  }
+
+  set breadcrumbs(arg: Array<any>) {
+    this._breadcrumbs = arg;
+  }
+
+  get uploadFile(): any {
+    return this.oFileInput.uploader.files[0];
   }
 }
 

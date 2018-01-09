@@ -1,4 +1,4 @@
-import { Injector, Injectable } from '@angular/core';import { HttpRequest, HttpHeaders, HttpClient, HttpEventType } from '@angular/common/http';
+import { Injector, Injectable } from '@angular/core'; import { HttpRequest, HttpHeaders, HttpClient, HttpEventType } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -41,11 +41,25 @@ export class FileManagerService extends OntimizeEEService {
       toUpload.append('data', JSON.stringify(data));
     }
 
+    const LOOPS = 5;
+    let i = 0;
+    const intervalId = setInterval(function () {
+      i++;
+      const progressData = {
+        loaded: i * 1000,
+        total: LOOPS * 1000
+      };
+      _innerObserver.next(progressData);
+      if (i === LOOPS) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
     setTimeout(() => {
       _innerObserver.next({
         code: 0
       });
-    }, 500);
+    }, (LOOPS + 1) * 1000);
 
     // const request = new HttpRequest('POST', url, toUpload, {
     //   headers: headers,
@@ -93,11 +107,6 @@ export class FileManagerService extends OntimizeEEService {
   }
 
 
-  queryUserInfo(kv?: Object, av?: Array<string>, entity?: string, sqltypes?: Object): Observable<File> {
-    return this.http.get('./assets/data/user_data.json')
-      .map((res: any) => res.json());
-  }
-
   queryFiles(kv?: any, av?: Array<string>, entity?: string, sqltypes?: Object): Observable<any> {// : Observable<File> {
 
     const self = this;
@@ -112,7 +121,7 @@ export class FileManagerService extends OntimizeEEService {
         if (!kv.hasOwnProperty('PARENT')) {
           innerObserver.next(filteredUserData['FILES'] || []);
         } else {
-          const filteredByParent = (filteredUserData['FILES'] || []).filter(i => i['id'] === kv['PARENT'])[0];
+          const filteredByParent = this.searchFolderById(filteredUserData['FILES'], kv['PARENT']);
           if (filteredByParent) {
             innerObserver.next(filteredByParent['FILES'] || []);
           } else {
@@ -129,5 +138,19 @@ export class FileManagerService extends OntimizeEEService {
       () => innerObserver.complete());
     return dataObservable;
   }
+
+  private searchFolderById(array: Array<any>, id: any) {
+    let result = undefined;
+    let searchArr = array || [];
+    for (let i = 0, len = searchArr.length; i < len; i++) {
+      if (searchArr[i]['id'] === id) {
+        return searchArr[i];
+      } else if (searchArr[i]['isDir']) {
+        return this.searchFolderById(searchArr[i]['FILES'], id);
+      }
+    }
+    return result;
+  }
+
 }
 

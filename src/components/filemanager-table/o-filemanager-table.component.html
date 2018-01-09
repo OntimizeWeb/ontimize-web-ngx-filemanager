@@ -1,9 +1,19 @@
 <div fxFill fxLayout="column" fxLayoutAlign="start">
-  <o-file-input #oFileInput service-type="FileManagerService" (onUploadFile)="onUploadedFile($event)" attr="fileUpload" max-file-size="10000"
-    multiple="no">
+  <o-file-input #oFileInput service-type="FileManagerService2" attr="fileUpload" max-file-size="10000" multiple="no" (onUploadFile)="onUploadedFile($event)"
+    (onProgressFile)="onProgressFile($event)">
   </o-file-input>
 
-  <o-table #oTable fxFlex attr="filemanager" title="FILES" service-type="FileManagerService" service="customers" entity="customer"
+  <div class="filemanager-breadcrumb" layout-padding fxFill fxLayout="row" fxLayoutAlign="start center">
+    <md-icon class="breadcrumb-root" (click)="onGoToRootFolderClick()">home</md-icon>
+
+    <div fxLayout="row" fxLayoutAlign="center center" class="breadcrumb-item" *ngFor="let item of breadcrumbs; let i = index"
+      (click)="onGoToFolderClick(item.filter, i)">
+      <md-icon color="accent">chevron_right</md-icon>
+      <div class="breadcrumb-item-text">{{ item.item.name }}</div>
+    </div>
+  </div>
+
+  <o-table #oTable fxFlex attr="filemanager" title="FILES" service-type="FileManagerService2" service="customers" entity="customer"
     keys="id" [parent-keys]="parentKeys" columns="id;isDir;name;size;created" visible-columns="isDir;name;size;created" sort-columns="name"
     show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
     detail-mode="none" (onDoubleClick)="onTableDoubleClick($event)" query-method="queryFiles" query-on-init="no">
@@ -16,4 +26,15 @@
     <!-- format="LLL" -->
     <o-table-column attr="created" title="created" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
   </o-table>
+
+  <div class="upload-progress-container" fxLayout="row" fxLayoutAlign="end center" *ngIf="uploadFile">
+    <div class="upload-progress-content mat-elevation-z4" fxLayout="row" fxLayoutAlign="center center" fxFlex="60">
+      <span md-line>{{ uploadFile.name }}</span>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100">
+        <md-progress-bar *ngIf="uploadFile.isUploading" color="accent" mode="determinate" [value]="uploadFile.progress" class="uploading"></md-progress-bar>
+        <md-icon *ngIf="uploadFile.isUploaded && uploadFile.isSuccess" class="uploaded">check_circle</md-icon>
+        <md-icon *ngIf="uploadFile.isUploaded && uploadFile.isError" class="error">error</md-icon>
+      </div>
+    </div>
+  </div>
 </div>
