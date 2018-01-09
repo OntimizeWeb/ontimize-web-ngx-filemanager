@@ -31,9 +31,15 @@ const FILES = [
   'dist'
 ];
 
-gulp.task('copy-files', (callback) => {
+gulp.task('copy-files', ['copy-theme'], (callback) => {
   copyfiles(FILES, true, callback);
 });
+
+
+gulp.task('copy-theme', (callback) => {
+  copyfiles(['src/components/filemanager-table/o-filemanager-table-theme.scss', 'dist'], true, callback);
+});
+
 
 /**
  * Inline templates configuration.
