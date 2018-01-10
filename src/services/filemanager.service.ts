@@ -41,25 +41,25 @@ export class FileManagerService extends OntimizeEEService {
       toUpload.append('data', JSON.stringify(data));
     }
 
-    const LOOPS = 5;
+    const LOOPS = 500;
     let i = 0;
     const intervalId = setInterval(function () {
       i++;
       const progressData = {
-        loaded: i * 1000,
-        total: LOOPS * 1000
+        loaded: i * 10,
+        total: LOOPS * 10
       };
       _innerObserver.next(progressData);
       if (i === LOOPS) {
         clearInterval(intervalId);
       }
-    }, 1000);
+    }, 10);
 
     setTimeout(() => {
       _innerObserver.next({
         code: 0
       });
-    }, (LOOPS + 1) * 1000);
+    }, (LOOPS + 5) * 10);
 
     // const request = new HttpRequest('POST', url, toUpload, {
     //   headers: headers,
