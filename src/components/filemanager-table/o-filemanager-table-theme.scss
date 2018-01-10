@@ -8,8 +8,17 @@
 
 
   .o-filemanager-table {
+    .filemanager-breadcrumb {
+      .breadcrumb-root {
+        color: mat-color($primary, 0.54);
+      }
+    }
     .upload-progress-content {
       background-color: mat-color($background, background);
     }
+
+
   }
+
+
 }

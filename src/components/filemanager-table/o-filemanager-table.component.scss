@@ -3,26 +3,15 @@
     display: none;
   }
 
-
   .filemanager-breadcrumb {
-
     overflow-x: overlay;
-
     .breadcrumb-root {
-      padding: 0 4px;
+      margin-left: 0.5%;
     }
 
     .mat-icon,
     .breadcrumb-item {
       cursor: pointer;
-
-      .breadcrumb-item-text {
-        margin-right: 12px;
-      }
-    }
-
-    .breadcrumb-item {
-      margin-left: 8px;
     }
   }
 
@@ -31,12 +20,19 @@
     bottom: 16px;
     left: 0px;
     right: 16px;
-
     .upload-progress-content {
-      padding: 16px;
-
-      span {
-        margin-right: 16px;
+      position: relative;
+      .close-icon {
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .mat-list {
+        padding: 0;
+        &.has-close-icon{
+          padding-top: 14px;
+        }
       }
     }
   }

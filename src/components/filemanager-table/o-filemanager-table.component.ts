@@ -2,14 +2,17 @@ import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEM
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 
-import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFileInputComponent } from 'ontimize-web-ngx';
+import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFileInputComponent, InputConverter } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/o-table-column-renderer-filetype.component';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
 
-
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
-  // parent-keys [string]: parent keys to filter, separated by ';'. Default: no value.
   'parentKeys: parent-keys',
+  'autoHideUpload : auto-hide-upload',
+  'autoHideTimeout : auto-hide-timeout',
+  'serviceType : service-type',
+  'queryMethod : query-method',
+  'uploadServiceType : upload-service-type'
 ];
 
 export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
@@ -31,17 +34,26 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   }],
 })
 
-
 export class OFileManagerTableComponent implements OnDestroy {
+  protected parentKeys: string;
+  @InputConverter()
+  autoHideUpload: boolean = true;
+  @InputConverter()
+  autoHideTimeout: number = 1500;
+  serviceType: string = 'FileManagerService';
+  queryMethod: string = 'queryFiles';
+  uploadServiceType: string = 'FileManagerService';
+
   protected onFormDataSubscribe: Subscription;
   protected stateService: FileManagerStateService;
-  protected parentKeys: string;
-
   protected stateSubscription: Subscription;
   protected _breadcrumbs: Array<any> = [];
 
   @ViewChild('oTable') oTable: OTableComponent;
   @ViewChild('oFileInput') oFileInput: OFileInputComponent;
+  showUploaderStatus = false;
+
+  private doReloadQuery: boolean;
 
   constructor(
     protected injector: Injector,
@@ -74,6 +86,7 @@ export class OFileManagerTableComponent implements OnDestroy {
     if (item === undefined || !item['isDir'] || !this.oTable) {
       return;
     }
+    this.doReloadQuery = false;
     const filter = this.stateService.getAndStoreQueryFilter({ PARENT: item.id }, item);
     this.oTable.queryData(filter);
   }
@@ -82,13 +95,22 @@ export class OFileManagerTableComponent implements OnDestroy {
     if (this.oFileInput) {
       (this.oFileInput as any).inputFile.nativeElement.click();
       this.oFileInput.onChange.subscribe(data => {
+        this.showUploaderStatus = true;
+        this.doReloadQuery = true;
         this.oFileInput.upload();
       });
     }
   }
 
-  onUploadedFile(arg) {
-    this.oTable.reloadData();
+  onUploadedFile() {
+    if (this.autoHideUpload) {
+      setTimeout(() => {
+        this.onCloseUploaderStatus();
+      }, this.autoHideTimeout);
+    }
+    if (this.doReloadQuery) {
+      this.oTable.reloadData();
+    }
   }
 
   onGoToRootFolderClick() {
@@ -97,7 +119,7 @@ export class OFileManagerTableComponent implements OnDestroy {
     this.oTable.queryData(filter);
   }
 
-  onGoToFolderClick(filter: any, index: number) {
+  onBreadcrumbItemClick(filter: any, index: number) {
     this.stateService.restart(index);
     this.oTable.queryData(filter);
   }
@@ -110,8 +132,12 @@ export class OFileManagerTableComponent implements OnDestroy {
     this._breadcrumbs = arg;
   }
 
-  get uploadFile(): any {
-    return this.oFileInput.uploader.files[0];
+  get uploaderFiles(): any {
+    return this.showUploaderStatus ? this.oFileInput.uploader.files : undefined;
+  }
+
+  onCloseUploaderStatus() {
+    this.showUploaderStatus = false;
   }
 }
 
