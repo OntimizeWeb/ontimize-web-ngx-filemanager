@@ -12,13 +12,16 @@
 // @import 'node_modules/ontimize-web-ngx-theming/src/themes/o-pink-bluegrey.scss';
 // @import 'node_modules/ontimize-web-ngx-theming/src/themes/o-purple-green.scss';
 @import 'node_modules/ontimize-web-ngx-theming/src/themes/ontimize.scss';
-
+// @import 'node_modules/ontimize-web-ngx-theming/src/themes/ontimize-lite.scss';
 
 /*
 * After define theme, it is necessary to transfer color to Ontimize Web framework
 */
 @import 'node_modules/ontimize-web-ngx/ontimize/components/theming/all-theme.scss';
 @include o-material-theme($theme);
+
+@import 'node_modules/ontimize-web-ngx-filemanager/o-filemanager-table-theme.scss';
+@include o-filemanager-table-theme($theme);
 
 /*
 * Propagate theme to screen styles definition.

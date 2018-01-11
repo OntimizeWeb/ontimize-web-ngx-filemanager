@@ -1,0 +1,6 @@
+<ng-template #templateref let-cellvalue="cellvalue" let-rowvalue="rowvalue">
+    <span fxLayoutAlign="space-around center">
+        <md-icon *ngIf="cellvalue">folder</md-icon>
+        <md-icon *ngIf="!cellvalue">insert_drive_file</md-icon>
+    </span>
+</ng-template>

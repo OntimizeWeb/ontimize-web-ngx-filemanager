@@ -11,7 +11,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "production": "ng build --aot=false --target -prod",
-    "production-aot": "ontimize-web-ngx production-aot --href /ontimize-web-ngx-filemanager-quickstart/"
+    "production-aot": "ontimize-web-ngx production-aot --href /ontimize-web-ngx-filemanager-quickstart/",
+    "xxx": "rimraf node_modules/ontimize-web-ngx && npm install",
+    "zzz": "npm run xxx & npm start"
   },
   "private": true,
   "dependencies": {
@@ -34,8 +36,9 @@
     "core-js": "^2.4.1",
     "lodash": "^4.17.4",
     "npm": "^5.4.1",
-    "ontimize-web-ngx": "2.1.0-rc.2",
-    "ontimize-web-ngx-theming": "1.0.3",
+    "ontimize-web-ngx": "file:C:\\workspace\\github\\ontimize-web-ng2-VERSIONS\\2.1.0-rc.3\\ontimize-web-ngx\\dist\\ontimize-web-ngx-2.1.0-rc.3.tgz",
+    "ontimize-web-ngx-filemanager": "file:C:\\workspace\\github\\FILEMANAGER\\ontimize-web-ngx-filemanager\\dist\\ontimize-web-ngx-filemanager-1.0.0.tgz",
+    "ontimize-web-ngx-theming": "file:C:\\workspace\\github\\THEMING\\ontimize-web-ng2-theming\\dist\\ontimize-web-ngx-theming-1.0.4.tgz",
     "reflect-metadata": "0.1.10",
     "rxjs": "^5.4.2",
     "zone.js": "^0.8.12"

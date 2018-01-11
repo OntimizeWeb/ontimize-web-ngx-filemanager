@@ -10,10 +10,10 @@ export const CONFIG: Config = {
   // Application identifier. Is the unique package identifier of the app.
   // It is used when storing or managing temporal data related with the app.
   // By default is set as 'ontimize-web-uuid'.
-  uuid: 'com.ontimize.web.ngx.jee.seed',
+  uuid: 'com.ontimize.web.ngx.filemanager.quickstart',
 
   // Title of the app
-  title: 'JEE seed',
+  title: 'File manager quickstart',
 
   //  Language of the application.
   locale: 'en',
