@@ -1,10 +1,11 @@
-import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild, Optional, Inject, forwardRef, OnDestroy } from '@angular/core';
+import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild, Optional, Inject, forwardRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 
-import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFileInputComponent, InputConverter } from 'ontimize-web-ngx';
+import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFileInputComponent, InputConverter, OTranslateService } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/o-table-column-renderer-filetype.component';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
+import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core/o-filemanager-translate.pipe';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'parentKeys: parent-keys',
@@ -34,7 +35,7 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   }],
 })
 
-export class OFileManagerTableComponent implements OnDestroy {
+export class OFileManagerTableComponent implements OnDestroy, AfterViewInit {
   protected parentKeys: string;
   @InputConverter()
   autoHideUpload: boolean = true;
@@ -53,12 +54,18 @@ export class OFileManagerTableComponent implements OnDestroy {
   @ViewChild('oFileInput') oFileInput: OFileInputComponent;
   showUploaderStatus = false;
 
+  protected translateService: OTranslateService;
+  protected translatePipe: OFileManagerTranslatePipe;
+  protected onLanguageChangeSubscribe: any;
+
   private doReloadQuery: boolean;
 
   constructor(
     protected injector: Injector,
-    @Optional() @Inject(forwardRef(() => OFormComponent)) protected oForm: OFormComponent) {
-
+    @Optional() @Inject(forwardRef(() => OFormComponent)) protected oForm: OFormComponent
+  ) {
+    this.translateService = this.injector.get(OTranslateService);
+    this.translatePipe = new OFileManagerTranslatePipe(this.injector);
     this.stateService = this.injector.get(FileManagerStateService);
 
     const self = this;
@@ -71,6 +78,14 @@ export class OFileManagerTableComponent implements OnDestroy {
     this.stateSubscription = this.stateService.getStateObservable().subscribe(array => {
       self.breadcrumbs = array;
     });
+
+    this.onLanguageChangeSubscribe = this.translateService.onLanguageChanged.subscribe(res => {
+      self.setTableColumnsTitles();
+    });
+  }
+
+  ngAfterViewInit() {
+    this.setTableColumnsTitles();
   }
 
   ngOnDestroy() {
@@ -80,6 +95,18 @@ export class OFileManagerTableComponent implements OnDestroy {
     if (this.stateSubscription) {
       this.stateSubscription.unsubscribe();
     }
+    if (this.onLanguageChangeSubscribe) {
+      this.onLanguageChangeSubscribe.unsubscribe();
+    }
+  }
+
+  setTableColumnsTitles() {
+    const self = this;
+    this.oTable.oTableOptions.columns.forEach(col => {
+      if (col.title !== undefined) {
+        col.title = self.translatePipe.transform(col.attr);
+      }
+    });
   }
 
   onTableDoubleClick(item: any) {
@@ -149,7 +176,8 @@ export class OFileManagerTableComponent implements OnDestroy {
   imports: [
     CommonModule,
     OntimizeWebModule,
-    OSharedModule
+    OSharedModule,
+    OFileManagerTranslateModule
   ],
   exports: [OFileManagerTableComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

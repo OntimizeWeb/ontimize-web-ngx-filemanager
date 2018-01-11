@@ -13,16 +13,12 @@ export function getFileManagerStateServiceProvider(injector) {
   return new FileManagerStateService(injector);
 }
 
-export const OFILEMANAGER_PROVIDERS: any = [
-  {
-    provide: 'FileManagerService',
-    useFactory: getFileManagerServiceProvider,
-    deps: [Injector]
-  },
-  {
-    provide: FileManagerStateService,
-    useFactory: getFileManagerStateServiceProvider,
-    deps: [Injector]
-  }
-
-];
+export const OFILEMANAGER_PROVIDERS: any = [{
+  provide: 'FileManagerService',
+  useFactory: getFileManagerServiceProvider,
+  deps: [Injector]
+}, {
+  provide: FileManagerStateService,
+  useFactory: getFileManagerStateServiceProvider,
+  deps: [Injector]
+}];
