@@ -1,0 +1,70 @@
+[
+  {
+    "USER_ID": 1,
+    "FILES": [
+      {
+        "name": "FOLDER1",
+        "created": 1514901612345,
+        "isDir": true,
+        "id": 2,
+        "FILES": [
+          {
+            "name": "FILE4",
+            "size": 1024,
+            "created": 1224901605551,
+            "id": 5
+          },
+          {
+            "name": "FILE5",
+            "size": 2048,
+            "created": 1004001617051,
+            "id": 6
+          },{
+            "name": "FOLDER2",
+            "created": 1514123456745,
+            "isDir": true,
+            "id": 9,
+            "FILES": [
+              {
+                "name": "FILE21",
+                "size": 1024,
+                "created": 1666901605551,
+                "id": 25
+              },
+              {
+                "name": "FILE22",
+                "size": 1024,
+                "created": 1777901605551,
+                "id": 15
+              },
+              {
+                "name": "FOLDER3",
+                "created": 1222223456745,
+                "isDir": true,
+                "id": 19
+               }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "FILE1",
+        "size": 123,
+        "created": 1514901150269,
+        "id": 3
+      },
+      {
+        "name": "FILE2",
+        "size": 456,
+        "created": 1514801655999,
+        "id": 1
+      },
+      {
+        "name": "FILE3",
+        "size": 789,
+        "created": 1200105655999,
+        "id": 8
+      }
+    ]
+  }
+]
