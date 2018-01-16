@@ -17,7 +17,7 @@ export class FileManagerService extends OntimizeEEService {
     this.httpClient = this.injector.get(HttpClient);
   }
 
-  public upload(files: any[], entity: string, data?: Object): Observable<any> {
+  upload(files: any[], entity: string, data?: Object): Observable<any> {
     const url = this._urlBase + this.path + '/' + entity;
 
     const authorizationToken = 'Bearer ' + this._sessionid;
@@ -106,6 +106,18 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
+  download(files: any[]): Observable<any> {
+    let _innerObserver: any;
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+
+    setTimeout(() => {
+      _innerObserver.next({
+        code: 0
+      });
+    }, 3000);
+
+    return dataObservable;
+  }
 
   queryFiles(kv?: any, av?: Array<string>, entity?: string, sqltypes?: Object): Observable<any> {// : Observable<File> {
 

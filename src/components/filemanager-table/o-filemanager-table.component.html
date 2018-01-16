@@ -1,5 +1,5 @@
 <div fxFill fxLayout="column" fxLayoutAlign="start">
-  <o-file-input #oFileInput [service-type]="uploadServiceType" attr="fileUpload" max-file-size="10000" multiple="no" (onUploadFile)="onUploadedFile($event)">
+  <o-file-input #oFileInput [service-type]="serviceType" attr="fileUpload" max-file-size="10000" multiple="no" (onUploadFile)="onUploadedFile($event)">
   </o-file-input>
 
   <div class="filemanager-breadcrumb" layout-padding fxFill fxLayout="row" fxLayoutAlign="start center">
@@ -11,15 +11,12 @@
     </div>
   </div>
 
-  <o-table #oTable fxFlex attr="filemanager" title="FILES"
-    [service-type]="serviceType" service="customers" entity="customer"
-    keys="id" [parent-keys]="parentKeys"
-    columns="id;isDir;name;size;created"
-    visible-columns="isDir;name;size;created"
-    sort-columns="name"
-    show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no"
-    columns-visibility-button="no" pagination-controls="no" query-on-init="no"
-    detail-mode="none" (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod" >
+  <o-table #oTable fxFlex attr="filemanager" title="FILES" [service-type]="serviceType" service="customers" entity="customer"
+    keys="id" [parent-keys]="parentKeys" columns="id;isDir;name;size;created" visible-columns="isDir;name;size;created" sort-columns="name"
+    show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
+    query-on-init="no" detail-mode="none" (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod">
+
+    <o-table-context-menu [context-menu]="tableContextMenu"></o-table-context-menu>
 
     <o-table-button icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
 
@@ -31,6 +28,12 @@
     <!-- format="LLL" -->
     <o-table-column attr="created" title="created" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
   </o-table>
+
+  <o-context-menu #tableContextMenu>
+    <o-context-menu-item icon="file_download" [label]="downloadLabel" [visible]="isFileContextItem" (execute)="onDownloadFile($event)"></o-context-menu-item>
+    <o-context-menu-item icon="file_download" [label]="openFolderLabel" [visible]="isDirectoryContextItem" (execute)="onOpenFolder($event)"></o-context-menu-item>
+  </o-context-menu>
+
 
   <div class="upload-progress-container" fxLayout="row" fxLayoutAlign="end center" *ngIf="uploaderFiles">
     <div class="upload-progress-content mat-elevation-z4" fxLayout="row" fxLayoutAlign="center center" fxFlex="60">
