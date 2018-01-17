@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <o-table #oTable fxFlex attr="filemanager" title="FILES" [service-type]="serviceType" service="customers" entity="customer"
+  <o-table-extended #oTable fxFlex attr="filemanager" title="FILES" [service-type]="serviceType" service="customers" entity="customer"
     keys="id" [parent-keys]="parentKeys" columns="id;isDir;name;size;created" visible-columns="isDir;name;size;created" sort-columns="name"
     show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
     query-on-init="no" detail-mode="none" (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod">
@@ -27,7 +27,7 @@
     <o-table-column attr="size" title="size"></o-table-column>
     <!-- format="LLL" -->
     <o-table-column attr="created" title="created" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
-  </o-table>
+  </o-table-extended>
 
   <o-context-menu #tableContextMenu>
     <o-context-menu-item icon="file_download" [label]="downloadLabel" [visible]="isFileContextItem" (execute)="onDownloadFile($event)"></o-context-menu-item>

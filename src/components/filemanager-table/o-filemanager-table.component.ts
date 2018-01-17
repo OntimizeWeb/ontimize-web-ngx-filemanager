@@ -6,6 +6,7 @@ import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFil
 import { OTableColumnRendererFileTypeComponent } from './renderers/o-table-column-renderer-filetype.component';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
 import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core/o-filemanager-translate.pipe';
+import { OTableExtendedModule } from './table-extended/o-table-extended.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'parentKeys: parent-keys',
@@ -229,6 +230,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     CommonModule,
     OntimizeWebModule,
     OSharedModule,
+    OTableExtendedModule,
     OFileManagerTranslateModule
   ],
   exports: [OFileManagerTableComponent],
