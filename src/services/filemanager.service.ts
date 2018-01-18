@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/share';
 
 import { OntimizeEEService } from 'ontimize-web-ngx';
+
 import { File } from '../core/file.class';
 
 @Injectable()
@@ -70,7 +71,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  public download(file: Object): Observable<any> {
+  public download(file: File): Observable<any> {
 
     let url = this._urlBase + this.path + '/getFile/' + file['id'];
 
@@ -85,7 +86,8 @@ export class FileManagerService extends OntimizeEEService {
       _innerObserver = observer).share();
 
     let request = new HttpRequest('GET', url, null, {
-      headers: headers
+      headers: headers,
+      responseType: 'blob'
     });
 
     let self = this;
@@ -93,9 +95,13 @@ export class FileManagerService extends OntimizeEEService {
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
       .subscribe((resp: HttpResponse<File>) => {
-        console.log(resp);
         if (resp.body) {
-          _innerObserver.next(resp.body);
+          let fileURL = URL.createObjectURL(resp.body);
+          let a = document.createElement('a');
+          a.href = fileURL;
+          a.download = file.name;
+          a.click();
+          _innerObserver.next(resp);
         } else {
           _innerObserver.error(resp);
         }
