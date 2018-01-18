@@ -146,14 +146,34 @@ export class OTableExtendedComponent extends OTableComponent {
       return;
     } else if ($event.shiftKey) {
       if (this.selection.selected.length > 0) {
-        // TODO
+        let first = this.dataSource.renderedData.indexOf(this.selectedItems[0]);
+        let last = this.dataSource.renderedData.indexOf(item);
+        let indexFrom = Math.min(first, last);
+        let indexTo = Math.max(first, last);
+        this.selection.clear();
+        this.dataSource.renderedData.slice(indexFrom, indexTo + 1).forEach(e => this.selectedRow(e));
+        ObservableWrapper.callEmit(this.onClick, this.selection.selected);
+        return;
       }
     }
-    ObservableWrapper.callEmit(this.onClick, item);
     if (this.selection.selected.length > 0 && !(this.selection.selected.length === 1 && this.selection.selected.indexOf(item) !== -1)) {
       this.selection.clear();
+      this.selectedItems = [];
     }
     this.selectedRow(item);
+    ObservableWrapper.callEmit(this.onClick, item);
+  }
+
+  selectedRow(row: any) {
+    this.selection.toggle(row);
+    let index = this.selectedItems.indexOf(row);
+    if (this.selection.selected.indexOf(row) !== -1) {
+      if (index === -1) {
+        this.selectedItems.push(row);
+      }
+    } else if (index !== -1) {
+      this.selectedItems.splice(index, 1);
+    }
   }
 
   isSelected(item): boolean {
