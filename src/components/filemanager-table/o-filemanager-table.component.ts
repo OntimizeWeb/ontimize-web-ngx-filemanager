@@ -1,14 +1,18 @@
-import { Component, ViewEncapsulation, Injector, NgModule, CUSTOM_ELEMENTS_SCHEMA, ViewChild, Optional, Inject, forwardRef, OnDestroy, AfterViewInit, OnInit } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 
-import { OntimizeWebModule, OTableComponent, OSharedModule, OFormComponent, OFileInputComponent, InputConverter, OTranslateService, DialogService } from 'ontimize-web-ngx';
+import { DialogService, InputConverter, OFileInputComponent, OFormComponent, OntimizeWebModule, OSharedModule, OTableComponent, OTranslateService } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/o-table-column-renderer-filetype.component';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
 import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core/o-filemanager-translate.pipe';
 import { OTableExtendedModule } from './table-extended/o-table-extended.component';
+import { OFileInputExtendedModule } from '../file-input/o-file-input-extended.component';
+import { File } from '../../core/file.class';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
+  'workspaceKey: workspace-key',
+  'service',
   'parentKeys: parent-keys',
   'autoHideUpload : auto-hide-upload',
   'autoHideTimeout : auto-hide-timeout',
@@ -33,11 +37,12 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
     useClass: FileManagerStateService
   }],
 })
-
 export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public static DEFAULT_SERVICE_TYPE = 'FileManagerService';
 
+  protected workspaceKey: string;
+  protected service: string;
   protected parentKeys: string;
   @InputConverter()
   autoHideUpload: boolean = true;
@@ -130,12 +135,12 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return this.translatePipe.transform('OPEN_FOLDER');
   }
 
-  onTableDoubleClick(item: any) {
-    if (item === undefined || !item['isDir'] || !this.oTable) {
+  onTableDoubleClick(item: File) {
+    if (item === undefined || !item['directory'] || !this.oTable) {
       return;
     }
     this.doReloadQuery = false;
-    const filter = this.stateService.getAndStoreQueryFilter({ PARENT: item.id }, item);
+    const filter = this.stateService.getAndStoreQueryFilter({ 'FM_FOLDER_PARENT_KEY': item.id }, item);
     this.oTable.queryData(filter);
   }
 
@@ -182,8 +187,9 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     if (event && event.data) {
       const tableService = this.oTable.dataService;
       if (tableService && (this.downloadMethod in tableService)) {
-        tableService[this.downloadMethod].apply([event.data]).subscribe(res => {
+        tableService[this.downloadMethod](event.data).subscribe(res => {
           // TODO
+          console.log(res);
         }, err => {
           if (err && typeof err !== 'object') {
             this.dialogService.alert('ERROR', err);
@@ -197,11 +203,11 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   isFileContextItem(event) {
-    return event && !event.isDir;
+    return event && !event.directory;
   }
 
   isDirectoryContextItem(event) {
-    return event && event.isDir;
+    return event && event.directory;
   }
 
   get breadcrumbs(): Array<any> {
@@ -231,6 +237,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     OntimizeWebModule,
     OSharedModule,
     OTableExtendedModule,
+    OFileInputExtendedModule,
     OFileManagerTranslateModule
   ],
   exports: [OFileManagerTableComponent],

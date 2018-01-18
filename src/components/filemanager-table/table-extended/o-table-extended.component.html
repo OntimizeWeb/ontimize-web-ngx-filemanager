@@ -21,8 +21,8 @@
           <md-icon>more_vert</md-icon>
         </button>
         <md-menu #menu="mdMenu" x-position="before" class="o-table-menu">
-          <o-table-option *ngIf="selectAllCheckbox" (onClick)="onShowsSelects($event)" label="TABLE.BUTTONS.SELECT" show-active-icon="true">
-          </o-table-option>
+          <!-- <o-table-option *ngIf="selectAllCheckbox" (onClick)="onShowsSelects($event)" label="TABLE.BUTTONS.SELECT" show-active-icon="true"> -->
+          <!-- </o-table-option> -->
           <o-table-option *ngIf="exportButton" (onClick)="onExportButtonClicked()" label="TABLE.BUTTONS.EXPORT"> </o-table-option>
           <o-table-option *ngIf="columnsVisibilityButton" (onClick)="onChangeColumnsVisibilityClicked()" label="TABLE.BUTTONS.COLVIS">
           </o-table-option>
@@ -36,11 +36,11 @@
 
     <md-table #table class="header-fixed" mdSort [class]="rowHeight">
       <!--Checkbox Column -->
-      <ng-container [cdkColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
+      <!-- <ng-container [cdkColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
         <md-header-cell *cdkHeaderCellDef>
           <md-checkbox (change)="masterToggle($event)" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></md-checkbox>
         </md-header-cell>
-      </ng-container>
+      </ng-container> -->
 
       <!-- Generic column definition -->
       <ng-container *ngFor="let column of oTableOptions.columns" [cdkColumnDef]="column.name">
@@ -65,7 +65,7 @@
 
     <md-table #table [trackBy]="getTrackByFunction()" [dataSource]="dataSource" mdSort [class]="rowHeight" id="tableContent">
       <!--Checkbox Column -->
-      <ng-container [cdkColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
+      <!-- <ng-container [cdkColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
         <md-header-cell *cdkHeaderCellDef>
           <md-checkbox (change)="masterToggle($event)" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></md-checkbox>
         </md-header-cell>
@@ -73,7 +73,7 @@
           <md-checkbox name="id[]" (click)="$event.stopPropagation()" (change)="$event ? selectedRow(row) : null" [checked]="selection.isSelected(row)">
           </md-checkbox>
         </md-cell>
-      </ng-container>
+      </ng-container> -->
 
       <!-- Generic column definition -->
       <ng-container *ngFor="let column of oTableOptions.columns" [cdkColumnDef]="column.name">
@@ -97,8 +97,8 @@
 
       <md-header-row *cdkHeaderRowDef="[]" [style.display]="none"></md-header-row>
 
-      <md-row *cdkRowDef="let row; columns: oTableOptions.visibleColumns;" (click)="handleClick(row)" (dblclick)="handleDoubleClick(row)"
-        [oContextMenu]="tableContextMenu" [oContextMenuData]="row">
+      <md-row *cdkRowDef="let row; columns: oTableOptions.visibleColumns;" (click)="handleClick(row, $event)" (dblclick)="handleDoubleClick(row)"
+        [oContextMenu]="tableContextMenu" [oContextMenuData]="row" [class.selected]="isSelected(row)">
       </md-row>
 
     </md-table>

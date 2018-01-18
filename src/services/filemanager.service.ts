@@ -1,4 +1,5 @@
-import { Injector, Injectable } from '@angular/core'; import { HttpRequest, HttpHeaders, HttpClient, HttpEventType } from '@angular/common/http';
+import { Injectable, Injector } from '@angular/core';
+import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -17,17 +18,118 @@ export class FileManagerService extends OntimizeEEService {
     this.httpClient = this.injector.get(HttpClient);
   }
 
-  upload(files: any[], entity: string, data?: Object): Observable<any> {
-    const url = this._urlBase + this.path + '/' + entity;
+  public configureService(config: any): void {
+    super.configureService(config);
+    if (config.fileManagerPath) {
+      this.path = config.fileManagerPath;
+    }
+  }
 
-    const authorizationToken = 'Bearer ' + this._sessionid;
-    const headers: HttpHeaders = new HttpHeaders({
+  public queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+
+    let url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
+
+    let authorizationToken = 'Bearer ' + this._sessionid;
+    let headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
+
+    let body = JSON.stringify({
+      filter: kv,
+      columns: av
+    });
+
+    let _innerObserver: any;
+    let dataObservable = new Observable(observer =>
+      _innerObserver = observer).share();
+
+    let request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
+
+    let self = this;
+    this.httpClient
+      .request(request)
+      .filter(resp => HttpEventType.Response === resp.type)
+      .subscribe((resp: HttpResponse<File>) => {
+        if (resp.body) {
+          _innerObserver.next(resp.body);
+        } else {
+          _innerObserver.error(resp);
+        }
+      }, error => {
+        if (error.status === 401) {
+          self.redirectLogin(true);
+        } else {
+          _innerObserver.error(error);
+        }
+      }, () => _innerObserver.complete());
+
+    return dataObservable;
+  }
+
+  public download(file: Object): Observable<any> {
+
+    let url = this._urlBase + this.path + '/getFile/' + file['id'];
+
+    let authorizationToken = 'Bearer ' + this._sessionid;
+    let headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Authorization': authorizationToken
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    let dataObservable = new Observable(observer =>
+      _innerObserver = observer).share();
+
+    let request = new HttpRequest('GET', url, null, {
+      headers: headers
+    });
+
+    let self = this;
+    this.httpClient
+      .request(request)
+      .filter(resp => HttpEventType.Response === resp.type)
+      .subscribe((resp: HttpResponse<File>) => {
+        console.log(resp);
+        if (resp.body) {
+          _innerObserver.next(resp.body);
+        } else {
+          _innerObserver.error(resp);
+        }
+      }, error => {
+        if (error.status === 401) {
+          self.redirectLogin(true);
+        } else {
+          _innerObserver.error(error);
+        }
+      }, () => _innerObserver.complete());
+
+    return dataObservable;
+  }
+
+  upload(files: any[], entity: string, data?: Object): Observable<any> {
+
+    // TODO: documentId
+    const documentId = 1;
+    let folderId = 0;
+
+    if (this.isNullOrUndef(folderId)) {
+      folderId = 0;
+    }
+
+    let url = this._urlBase + this.path + '/insertFile/' + documentId + '/' + folderId;
+
+    let authorizationToken = 'Bearer ' + this._sessionid;
+    let headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Authorization': authorizationToken
+    });
+
+    let _innerObserver: any;
+    let dataObservable = new Observable(observer => _innerObserver = observer).share();
 
     let toUpload: any;
     toUpload = new FormData();
@@ -41,127 +143,40 @@ export class FileManagerService extends OntimizeEEService {
       toUpload.append('data', JSON.stringify(data));
     }
 
-    const LOOPS = 500;
-    let i = 0;
-    const intervalId = setInterval(function () {
-      i++;
-      const progressData = {
-        loaded: i * 10,
-        total: LOOPS * 10
-      };
-      _innerObserver.next(progressData);
-      if (i === LOOPS) {
-        clearInterval(intervalId);
-      }
-    }, 10);
-
-    setTimeout(() => {
-      _innerObserver.next({
-        code: 0
-      });
-    }, (LOOPS + 5) * 10);
-
-    // const request = new HttpRequest('POST', url, toUpload, {
-    //   headers: headers,
-    //   reportProgress: true
-    // });
-
-    // const self = this;
-    // this.httpClient.request(request).subscribe(resp => {
-    //   if (HttpEventType.UploadProgress === resp.type) {
-    //     // Upload progress event received
-    //     const progressData = {
-    //       loaded: resp.loaded,
-    //       total: resp.total
-    //     };
-    //     _innerObserver.next(progressData);
-    //   } else if (HttpEventType.Response === resp.type) {
-    //     // Full response received
-    //     if (resp.body) {
-    //       if (resp.body['code'] === 3) {
-    //         self.redirectLogin(true);
-    //       } else if (resp.body['code'] === 1) {
-    //         _innerObserver.error(resp.body['message']);
-    //       } else if (resp.body['code'] === 0) {
-    //         // RESPONSE
-    //         _innerObserver.next(resp.body);
-    //       } else {
-    //         // Unknow state -> error
-    //         _innerObserver.error('Service unavailable');
-    //       }
-    //     } else {
-    //       _innerObserver.next(resp.body);
-    //     }
-    //   }
-    // }, error => {
-    //   console.log(error);
-    //   if (error.status === 401) {
-    //     self.redirectLogin(true);
-    //   } else {
-    //     _innerObserver.error(error);
-    //   }
-    // },
-    //   () => _innerObserver.complete());
-
-    return dataObservable;
-  }
-
-  download(files: any[]): Observable<any> {
-    let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
-
-    setTimeout(() => {
-      _innerObserver.next({
-        code: 0
-      });
-    }, 3000);
-
-    return dataObservable;
-  }
-
-  queryFiles(kv?: any, av?: Array<string>, entity?: string, sqltypes?: Object): Observable<any> {// : Observable<File> {
+    const request = new HttpRequest('POST', url, toUpload, {
+      headers: headers,
+      reportProgress: true
+    });
 
     const self = this;
-    let innerObserver: any;
-    const dataObservable = new Observable(observer =>
-      innerObserver = observer).share();
-
-    this.http.get('./assets/data/files_data.json')
-      .map(response => response.json())
+    this.httpClient
+      .request(request)
       .subscribe(resp => {
-        const filteredUserData = resp.filter(i => i['USER_ID'] === kv['USER_ID'])[0] || [];
-        if (!kv.hasOwnProperty('PARENT')) {
-          innerObserver.next(filteredUserData['FILES'] || []);
-        } else {
-          const filteredByParent = this.searchFolderById(filteredUserData['FILES'], kv['PARENT']);
-          if (filteredByParent) {
-            innerObserver.next(filteredByParent['FILES'] || []);
+        if (HttpEventType.UploadProgress === resp.type) {
+          // Upload progress event received
+          const progressData = {
+            loaded: resp.loaded,
+            total: resp.total
+          };
+          _innerObserver.next(progressData);
+        } else if (HttpEventType.Response === resp.type) {
+          // Full response received
+          if (resp.body) {
+            _innerObserver.next(resp.body);
           } else {
-            innerObserver.next([]);
+            _innerObserver.error(resp);
           }
         }
       }, error => {
+        console.log(error);
         if (error.status === 401) {
           self.redirectLogin(true);
         } else {
-          innerObserver.error(error);
+          _innerObserver.error(error);
         }
-      },
-      () => innerObserver.complete());
-    return dataObservable;
-  }
+      }, () => _innerObserver.complete());
 
-  private searchFolderById(array: Array<any>, id: any) {
-    let result = undefined;
-    let searchArr = array || [];
-    for (let i = 0, len = searchArr.length; i < len; i++) {
-      if (searchArr[i]['id'] === id) {
-        return searchArr[i];
-      } else if (searchArr[i]['isDir']) {
-        return this.searchFolderById(searchArr[i]['FILES'], id);
-      }
-    }
-    return result;
+    return dataObservable;
   }
 
 }
