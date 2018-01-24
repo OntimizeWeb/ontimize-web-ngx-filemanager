@@ -1,0 +1,44 @@
+.upload-progress {
+
+
+  .upload-progress-container {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    min-width: 30%;
+
+    .fill-remaining {
+      flex: 1 1 auto;
+    }
+
+    .upload-progress-content {
+      overflow: hidden;
+      padding: 0 16px;
+      box-sizing: border-box;
+      width: 100%;
+
+      .mat-list {
+        .mat-list-item-content {
+          padding: 0;
+          .file-data {
+            width: 100%;
+            cursor: default;
+            .mat-progress-spinner {
+              height: 24px;
+              width: 40px;
+            }
+          }
+        }
+        .file-name.uploading {
+          opacity: 0.35;
+        }
+        .uploaded {
+          color: #0f9d58;
+        }
+        .error {
+          color: #db4437;
+        }
+      }
+    }
+  }
+}

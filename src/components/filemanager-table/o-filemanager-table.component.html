@@ -1,5 +1,10 @@
 <div fxLayout="column">
-  <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no" (onUploadFile)="onUploadedFile($event)"></o-file-input-extended>
+  <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no"
+    (onErrorFile)="onUploadError($event)"
+    (onUploadFile)="onUploadedFile($event)"
+    [workspace-key]="workspaceKey">
+  </o-file-input-extended>
+    <!-- [parent-key]="OTableComponent.FM_FOLDER_PARENT_KEY" -->
 
   <div fxLayout="row" fxFill layout-padding class="filemanager-breadcrumb">
     <md-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</md-icon>
@@ -12,22 +17,36 @@
 
   <!-- service="customers" entity="customer" -->
   <o-table-extended #oTable attr="filemanager" title="FILES" [service]="service" [service-type]="serviceType" [workspace-key]="workspaceKey"
-    [parent-keys]="parentKeys" columns="id;name;size;created;directory" visible-columns="directory;name;size;created" sort-columns="directory;name"
-    show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
-    query-on-init="no" detail-mode="none" select-all-checkbox="yes" (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod">
+    [parent-keys]="parentKeys"  keys="id"
 
-    <o-table-context-menu [context-menu]="tableContextMenu"></o-table-context-menu>
+    columns="id;name;size;creationDate;directory"
+    visible-columns="directory;name;size;creationDate"
+    sort-columns="directory;name"
 
-    <!-- <o-table-button icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button> -->
-    <o-table-button label="upload" icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
+    show-table-buttons-text="yes" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
+    query-on-init="no" detail-mode="none" select-all-checkbox="yes" (onDoubleClick)="onTableDoubleClick($event)"
+    [query-method]="queryMethod"
+    [delete-method]="deleteMethod"
+    [add-folder-method]="addFolderMethod">
+
+    <!-- <o-table-option label="TABLE.BUTTONS.DELETE" *ngIf="oTable.showDeleteButton"></o-table-option> -->
+
+    <o-table-button [label]="uploadLabel" icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
+    <o-table-button *ngIf="newFolderButton" [label]="newFolderLabel" icon="add" (onClick)="oTable.onAddFolder()"></o-table-button>
+
+    <o-table-option [label]="newFolderLabel" (onClick)="oTable.onAddFolder()"></o-table-option>
 
     <o-table-column attr="directory" width="24px">
       <o-table-column-renderer-filetype></o-table-column-renderer-filetype>
     </o-table-column>
     <o-table-column attr="name" title="name"></o-table-column>
-    <o-table-column attr="size" title="size"></o-table-column>
+    <o-table-column attr="size" title="size">
+        <o-table-column-renderer-filesize></o-table-column-renderer-filesize>
+    </o-table-column>
     <!-- format="LLL" -->
-    <o-table-column attr="created" title="created" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
+    <o-table-column attr="creationDate" title="creationDate" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
+
+    <o-table-context-menu [context-menu]="tableContextMenu"></o-table-context-menu>
   </o-table-extended>
 
   <o-context-menu #tableContextMenu>
@@ -35,19 +54,5 @@
     <o-context-menu-item icon="folder_open" [label]="openFolderLabel" [visible]="isDirectoryContextItem" (execute)="onOpenFolder($event)"></o-context-menu-item>
   </o-context-menu>
 
-  <div class="upload-progress-container" fxLayout="row" fxLayoutAlign="end center" *ngIf="uploaderFiles">
-    <div class="upload-progress-content mat-elevation-z4" fxLayout="row" fxLayoutAlign="center center" fxFlex="60">
-      <md-icon class="close-icon" color="accent" *ngIf="!autoHideUpload" (click)="onCloseUploaderStatus()">close</md-icon>
-      <md-list fxFlex [class.has-close-icon]="!autoHideUpload">
-        <md-list-item *ngFor="let file of uploaderFiles">
-          <span md-line>{{ file.name }}</span>
-          <div fxLayout="row" fxLayoutAlign="start center" fxFlex="100">
-            <md-progress-bar *ngIf="file.isUploading" color="accent" mode="determinate" [value]="file.progress" class="uploading"></md-progress-bar>
-            <md-icon *ngIf="file.isUploaded && file.isSuccess" class="uploaded">check_circle</md-icon>
-            <md-icon *ngIf="file.isUploaded && file.isError" class="error">error</md-icon>
-          </div>
-        </md-list-item>
-      </md-list>
-    </div>
-  </div>
+
 </div>

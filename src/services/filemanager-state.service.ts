@@ -3,7 +3,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/share';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-// import { File } from '../core/file.class';
+// import { FileClass } from '../core/file.class';
 
 @Injectable()
 export class FileManagerStateService {

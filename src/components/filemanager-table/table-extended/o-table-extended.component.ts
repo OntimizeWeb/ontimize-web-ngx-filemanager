@@ -1,6 +1,9 @@
 import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, OFormValue, Util, ObservableWrapper } from 'ontimize-web-ngx';
+import { MdDialogConfig } from '@angular/material';
+
+import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
+import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component';
 
 @Component({
   selector: 'o-table-extended',
@@ -15,14 +18,16 @@ import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OU
   ],
   inputs: [
     ...DEFAULT_INPUTS_O_TABLE,
-    'workspaceKey: workspace-key'
+    'workspaceKey: workspace-key',
+    'addFolderMethod : add-folder-method'
   ],
   outputs: DEFAULT_OUTPUTS_O_TABLE,
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class.o-table]': 'true',
     '[class.ontimize-table]': 'true',
-    '[class.o-table-fixed]': 'fixedHeader'
+    '[class.o-table-fixed]': 'fixedHeader',
+    '(document:click)': 'handleDocumentClick($event)'
   }
 })
 
@@ -31,13 +36,22 @@ export class OTableExtendedComponent extends OTableComponent {
   public static FM_FOLDER_PARENT_KEY: string = 'FM_FOLDER_PARENT_KEY';
 
   protected workspaceKey: string;
+  protected addFolderMethod: string;
+
   protected workspaceId: any;
 
+  setParentItem(val: any) {
+    this.parentItem = val;
+  }
+
+  getParentItem(): any {
+    return this.parentItem;
+  }
   /**
-    * This method manages the call to the service
-    * @param parentItem it is defined if its called from a form
-    * @param ovrrArgs
-    */
+     * This method manages the call to the service
+     * @param parentItem it is defined if its called from a form
+     * @param ovrrArgs
+     */
   queryData(parentItem: any = undefined, ovrrArgs?: any) {
     // If exit tab and not is active then waiting call queryData
     if (this.mdTabContainer && !this.mdTabContainer.isActive) {
@@ -45,85 +59,51 @@ export class OTableExtendedComponent extends OTableComponent {
       this.pendingQueryFilter = parentItem;
       return;
     }
-
     let queryMethodName = this.pageable ? this.paginatedQueryMethod : this.queryMethod;
-    if (this.dataService && (queryMethodName in this.dataService)) {
-      this.pendingQuery = false;
-      this.pendingQueryFilter = undefined;
+    if (!this.dataService || !(queryMethodName in this.dataService)) {
+      return;
+    }
 
-      if (this.filterForm && (typeof (parentItem) === 'undefined')) {
-        parentItem = {};
-        let formComponents = this.form.getComponents();
-        if ((this.dataParentKeys.length > 0) && (Object.keys(formComponents).length > 0)) {
-          for (let k = 0; k < this.dataParentKeys.length; ++k) {
-            let parentKey = this.dataParentKeys[k];
-            if (formComponents.hasOwnProperty(parentKey['alias'])) {
-              let currentData = formComponents[parentKey['alias']].getValue();
-              switch (typeof (currentData)) {
-                case 'string':
-                  if (currentData.trim().length > 0) {
-                    parentItem[parentKey['alias']] = currentData.trim();
-                  }
-                  break;
-                case 'number':
-                  if (!isNaN(currentData)) {
-                    parentItem[parentKey['alias']] = currentData;
-                  }
-                  break;
-              }
-            }
-          }
-        }
+    this.pendingQuery = false;
+    this.pendingQueryFilter = undefined;
+
+    parentItem = this.getParentItemFromForm(parentItem);
+
+    let formData = this.form.formData;
+    this.workspaceId = formData[this.workspaceKey] ? formData[this.workspaceKey].value : undefined;
+
+    if (this.workspaceId === undefined || ((this.dataParentKeys.length > 0) && (typeof (parentItem) === 'undefined'))) {
+      this.setData([], []);
+    } else {
+      let filter = this.getFilterUsingParentKeys(parentItem);
+
+      if (parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+        filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
       }
 
-      let formComponents = this.form.getComponents();
-      this.workspaceId = formComponents[this.workspaceKey].getValue();
-
-      if ((this.dataParentKeys.length > 0) && (typeof (parentItem) === 'undefined')) {
+      let queryArguments = this.getQueryArguments(filter, ovrrArgs);
+      if (this.querySubscription) {
+        this.querySubscription.unsubscribe();
+      }
+      this.querySubscription = this.daoTable.getQuery(queryArguments).subscribe(res => {
+        let data = undefined;
+        let sqlTypes = undefined;
+        if (Util.isArray(res)) {
+          data = res;
+          sqlTypes = [];
+        } else if ((res.code === 0) && Util.isArray(res.data)) {
+          data = (res.data !== undefined) ? res.data : [];
+          sqlTypes = res.sqlTypes;
+        }
+        this.setData(data, sqlTypes);
+        if (this.pageable) {
+          ObservableWrapper.callEmit(this.onPaginatedTableDataLoaded, data);
+        }
+        ObservableWrapper.callEmit(this.onTableDataLoaded, this.daoTable.data);
+      }, err => {
+        this.showDialogError(err, 'MESSAGES.ERROR_QUERY');
         this.setData([], []);
-      } else {
-        let filter = {};
-        if ((this.dataParentKeys.length > 0) && (typeof (parentItem) !== 'undefined')) {
-          for (let k = 0; k < this.dataParentKeys.length; ++k) {
-            let parentKey = this.dataParentKeys[k];
-            if (parentItem.hasOwnProperty(parentKey['alias'])) {
-              let currentData = parentItem[parentKey['alias']];
-              if (currentData instanceof OFormValue) {
-                currentData = currentData.value;
-              }
-              filter[parentKey['name']] = currentData;
-            }
-          }
-        }
-
-        if (parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-          filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
-        }
-
-        let queryArguments = this.getQueryArguments(filter, ovrrArgs);
-        if (this.querySubscription) {
-          this.querySubscription.unsubscribe();
-        }
-        this.querySubscription = this.daoTable.getQuery(queryArguments).subscribe(res => {
-          let data = undefined;
-          let sqlTypes = undefined;
-          if (Util.isArray(res)) {
-            data = res;
-            sqlTypes = [];
-          } else if ((res.code === 0) && Util.isArray(res.data)) {
-            data = (res.data !== undefined) ? res.data : [];
-            sqlTypes = res.sqlTypes;
-          }
-          this.setData(data, sqlTypes);
-          if (this.pageable) {
-            ObservableWrapper.callEmit(this.onPaginatedTableDataLoaded, data);
-          }
-          ObservableWrapper.callEmit(this.onTableDataLoaded, this.daoTable.data);
-        }, err => {
-          this.showDialogError(err, 'MESSAGES.ERROR_QUERY');
-          this.setData([], []);
-        });
-      }
+      });
     }
   }
 
@@ -136,6 +116,17 @@ export class OTableExtendedComponent extends OTableComponent {
     }
     queryArguments[2] = this.getAttributesValuesToQuery();
     return queryArguments;
+  }
+
+  handleDocumentClick(event) {
+    const tableContent = this.elRef.nativeElement;//.querySelectorAll('#tableContent')[0];
+    const overlayContainer = document.body.getElementsByClassName('cdk-overlay-container')[0];
+    if (overlayContainer && overlayContainer.contains(event.target)) {
+      return;
+    }
+    if (tableContent && !tableContent.contains(event.target) && this.selection && this.selection.selected.length) {
+      this.clearSelection();
+    }
   }
 
   handleClick(item: any, $event?) {
@@ -180,10 +171,87 @@ export class OTableExtendedComponent extends OTableComponent {
     return this.selection.selected.indexOf(item) !== -1;
   }
 
+  remove(clearSelectedItems: boolean = false) {
+    if (!(this.keysArray.length > 0) || !(this.selectedItems.length > 0)) {
+      return;
+    }
+    this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
+      if (res === true) {
+        if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
+          let files = [];
+          this.selectedItems.map(item => {
+            files.push(item);
+          });
+          let workspaceId = this.parentItem[this.workspaceKey];
+          this.dataService[this.deleteMethod](files, workspaceId).subscribe(res => {
+            this.clearSelection();
+            ObservableWrapper.callEmit(this.onRowDeleted, this.selectedItems);
+          }, error => {
+            this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
+          }, () => {
+            this.reloadData();
+          });
+        } else {
+          // remove local
+          this.deleteLocalItems();
+        }
+      } else if (clearSelectedItems) {
+        this.selectedItems = [];
+      }
+    });
+  }
+
+  onAddFolder() {
+    let cfg: MdDialogConfig = {
+      role: 'dialog',
+      disableClose: false,
+      panelClass: 'cdk-overlay-pane-custom',
+      data: {
+      }
+    };
+    let dialogRef = this.dialog.open(FolderNameDialogComponent, cfg);
+    const self = this;
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        self.insertFolder(result);
+      }
+    });
+  }
+
+  insertFolder(folderName: string) {
+    const tableService = this.dataService;
+    if (!tableService || !(this.addFolderMethod in tableService)) {
+      return;
+    }
+    let workspaceId = this.parentItem[this.workspaceKey];
+    let folderId;
+    if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+      folderId = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+    }
+    tableService[this.addFolderMethod](workspaceId, folderName, folderId).subscribe(res => {
+      //
+    }, err => {
+      if (err && typeof err !== 'object') {
+        this.dialogService.alert('ERROR', err);
+      }
+      // else {
+      //   this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
+      // }
+    }, () => {
+      this.reloadData();
+    });
+  }
+
 }
 
 @NgModule({
-  declarations: [OTableExtendedComponent],
+  declarations: [
+    OTableExtendedComponent,
+    FolderNameDialogComponent
+  ],
+  entryComponents: [
+    FolderNameDialogComponent
+  ],
   imports: [
     CommonModule,
     OntimizeWebModule

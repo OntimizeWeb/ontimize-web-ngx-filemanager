@@ -1,5 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+// import { Http, Headers, RequestOptions, RequestMethod } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -7,7 +8,7 @@ import 'rxjs/add/operator/share';
 
 import { OntimizeEEService } from 'ontimize-web-ngx';
 
-import { File } from '../core/file.class';
+import { FileClass } from '../core/file.class';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService {
@@ -19,15 +20,14 @@ export class FileManagerService extends OntimizeEEService {
     this.httpClient = this.injector.get(HttpClient);
   }
 
-  public configureService(config: any): void {
+  configureService(config: any): void {
     super.configureService(config);
     if (config.fileManagerPath) {
       this.path = config.fileManagerPath;
     }
   }
 
-  public queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
-
+  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
     let url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
 
     let authorizationToken = 'Bearer ' + this._sessionid;
@@ -43,8 +43,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer =>
-      _innerObserver = observer).share();
+    let dataObservable = new Observable(observer => _innerObserver = observer).share();
 
     let request = new HttpRequest('POST', url, body, {
       headers: headers
@@ -54,7 +53,7 @@ export class FileManagerService extends OntimizeEEService {
     this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
-      .subscribe((resp: HttpResponse<File>) => {
+      .subscribe((resp: HttpResponse<FileClass>) => {
         if (resp.body) {
           _innerObserver.next(resp.body);
         } else {
@@ -71,8 +70,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  public download(file: File): Observable<any> {
-
+  download(file: File): Observable<any> {
     let url = this._urlBase + this.path + '/getFile/' + file['id'];
 
     let authorizationToken = 'Bearer ' + this._sessionid;
@@ -116,17 +114,12 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  upload(files: any[], entity: string, data?: Object): Observable<any> {
+  upload(files: any[], workspaceId: any, folderId: any, data?: Object): Observable<any> {
 
-    // TODO: documentId
-    const documentId = 1;
-    let folderId = 0;
-
-    if (this.isNullOrUndef(folderId)) {
-      folderId = 0;
+    let url = this._urlBase + this.path + '/insertFile/' + workspaceId;
+    if (folderId !== undefined) {
+      url += '/' + folderId;
     }
-
-    let url = this._urlBase + this.path + '/insertFile/' + documentId + '/' + folderId;
 
     let authorizationToken = 'Bearer ' + this._sessionid;
     let headers: HttpHeaders = new HttpHeaders({
@@ -185,5 +178,80 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
+  deleteFiles(files: Object[] = [], workspaceId: any, sqltypes?: Object): Observable<any> {
+    const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
+
+    let authorizationToken = 'Bearer ' + this._sessionid;
+    let headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
+
+    let body = JSON.stringify({
+      fileList: files,
+      sqltypes: sqltypes
+    });
+
+    let request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
+
+    let _innerObserver: any;
+    let dataObservable = new Observable(observer => _innerObserver = observer).share();
+
+    let self = this;
+    this.httpClient
+      .request(request)
+      .filter(resp => HttpEventType.Response === resp.type)
+      .subscribe((resp: HttpResponse<File>) => {
+        _innerObserver.next(resp);
+      }, error => {
+        if (error.status === 401) {
+          self.redirectLogin(true);
+        } else {
+          _innerObserver.error(error);
+        }
+      }, () => _innerObserver.complete());
+    return dataObservable;
+  }
+
+  insertFolder(workspaceId: any, name: any, folderId: any): Observable<any> {
+    let url = this._urlBase + this.path + '/insertFolder/' + workspaceId + '/' + name;
+    if (folderId !== undefined) {
+      url += '/' + folderId;
+    }
+
+    let authorizationToken = 'Bearer ' + this._sessionid;
+    let headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
+
+    let body = JSON.stringify({});
+
+    let request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
+
+    let _innerObserver: any;
+    let dataObservable = new Observable(observer => _innerObserver = observer).share();
+
+    let self = this;
+    this.httpClient
+      .request(request)
+      .filter(resp => HttpEventType.Response === resp.type)
+      .subscribe((resp: HttpResponse<File>) => {
+        _innerObserver.next(resp);
+      }, error => {
+        if (error.status === 401) {
+          self.redirectLogin(true);
+        } else {
+          _innerObserver.error(error);
+        }
+      }, () => _innerObserver.complete());
+    return dataObservable;
+  }
 }
 
