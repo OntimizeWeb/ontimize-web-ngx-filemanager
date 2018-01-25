@@ -10,11 +10,10 @@
     </div>
   </div>
 
-  <!-- service="customers" entity="customer" -->
   <o-table-extended #oTable attr="filemanager" title="FILES" [service]="service" [service-type]="serviceType" [workspace-key]="workspaceKey"
-    [parent-keys]="parentKeys" columns="id;name;size;created;directory" visible-columns="directory;name;size;created" sort-columns="directory;name"
-    show-table-buttons-text="no" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no"
-    query-on-init="no" detail-mode="none" select-all-checkbox="yes" (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod">
+    [parent-keys]="parentKeys" columns="id;name;size;created;directory" visible-columns="directory;name;size;created" show-table-buttons-text="no"
+    insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no" pagination-controls="no" query-on-init="no"
+    detail-mode="none" select-all-checkbox="yes" (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod">
 
     <o-table-context-menu [context-menu]="tableContextMenu"></o-table-context-menu>
 
@@ -31,8 +30,8 @@
   </o-table-extended>
 
   <o-context-menu #tableContextMenu>
-    <o-context-menu-item icon="file_download" [label]="downloadLabel" [visible]="isFileContextItem" (execute)="onDownloadFile($event)"></o-context-menu-item>
-    <o-context-menu-item icon="folder_open" [label]="openFolderLabel" [visible]="isDirectoryContextItem" (execute)="onOpenFolder($event)"></o-context-menu-item>
+    <o-context-menu-item icon="folder_open" [label]="openFolderLabel" [visible]="isDirectoryItem" (execute)="onOpenFolder($event)"></o-context-menu-item>
+    <o-context-menu-item icon="file_download" [label]="downloadLabel" [visible]="cmShowDownloadOpt.bind(this)" (execute)="onDownloadFile()"></o-context-menu-item>
   </o-context-menu>
 
   <div class="upload-progress-container" fxLayout="row" fxLayoutAlign="end center" *ngIf="uploaderFiles">

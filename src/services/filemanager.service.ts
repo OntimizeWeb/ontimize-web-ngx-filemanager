@@ -73,7 +73,7 @@ export class FileManagerService extends OntimizeEEService {
 
   public download(file: File): Observable<any> {
 
-    let url = this._urlBase + this.path + '/getFile/' + file['id'];
+    let url = this._urlBase + this.path + '/getFile/' + file.id;
 
     let authorizationToken = 'Bearer ' + this._sessionid;
     let headers: HttpHeaders = new HttpHeaders({
@@ -87,24 +87,109 @@ export class FileManagerService extends OntimizeEEService {
 
     let request = new HttpRequest('GET', url, null, {
       headers: headers,
+      reportProgress: true,
       responseType: 'blob'
     });
 
     let self = this;
     this.httpClient
       .request(request)
-      .filter(resp => HttpEventType.Response === resp.type)
-      .subscribe((resp: HttpResponse<File>) => {
-        if (resp.body) {
-          let fileURL = URL.createObjectURL(resp.body);
-          let a = document.createElement('a');
-          a.href = fileURL;
-          a.download = file.name;
-          a.click();
-          _innerObserver.next(resp);
-        } else {
-          _innerObserver.error(resp);
+      .subscribe((resp) => {
+        if (HttpEventType.DownloadProgress === resp.type) {
+          // Download progress event received
+          let progressData = {
+            loaded: resp.loaded
+          };
+          _innerObserver.next(progressData);
+        } else if (HttpEventType.Response === resp.type) {
+          // Full response received
+          if (resp.body) {
+            let fileURL = URL.createObjectURL(resp.body);
+            let a = document.createElement('a');
+            a.href = fileURL;
+            a.download = file.name;
+            a.click();
+            _innerObserver.next(resp);
+          } else {
+            _innerObserver.error(resp.body);
+          }
         }
+      }, error => {
+        if (error.status === 401) {
+          self.redirectLogin(true);
+        } else {
+          _innerObserver.error(error);
+        }
+      }, () => _innerObserver.complete());
+
+    return dataObservable;
+  }
+
+  public downloadMultiple(workspaceId: any, files: File[]): Observable<any> {
+    // Send data to generate zip file
+    let url = this._urlBase + this.path + '/getFiles/' + workspaceId;
+
+    let authorizationToken = 'Bearer ' + this._sessionid;
+    let headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Authorization': authorizationToken
+    });
+
+    let _innerObserver: any;
+    let dataObservable = new Observable(observer =>
+      _innerObserver = observer).share();
+
+    let request = new HttpRequest('POST', url, files, {
+      headers: headers,
+      responseType: 'text'
+    });
+
+    let self = this;
+    this.httpClient
+      .request(request)
+      .filter(resp => HttpEventType.Response === resp.type)
+      .subscribe((resp: HttpResponse<any>) => {
+        let body = JSON.parse(resp.body);
+        let zipFileName = body.file;
+
+        // Download zip file
+        let url = this._urlBase + this.path + '/getZipFile/' + zipFileName.substring(0, zipFileName.lastIndexOf('.'));
+
+        let request = new HttpRequest('GET', url, null, {
+          headers: headers,
+          reportProgress: true,
+          responseType: 'blob'
+        });
+
+        self.httpClient
+          .request(request)
+          .subscribe(resp => {
+            if (HttpEventType.DownloadProgress === resp.type) {
+              // Download progress event received
+              const progressData = {
+                loaded: resp.loaded
+              };
+              _innerObserver.next(progressData);
+            } else if (HttpEventType.Response === resp.type) {
+              // Full response received
+              if (resp.body) {
+                let fileURL = URL.createObjectURL(resp['body']);
+                let a = document.createElement('a');
+                a.href = fileURL;
+                a.download = zipFileName;
+                a.click();
+                _innerObserver.next(resp);
+              } else {
+                _innerObserver.error(resp);
+              }
+            }
+          }, error => {
+            if (error.status === 401) {
+              self.redirectLogin(true);
+            } else {
+              _innerObserver.error(error);
+            }
+          }, () => _innerObserver.complete());
       }, error => {
         if (error.status === 401) {
           self.redirectLogin(true);

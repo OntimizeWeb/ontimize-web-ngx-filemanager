@@ -3,7 +3,7 @@ export var MAP = {
   'en': {
     'name': 'Name',
     'size': 'Size',
-    'creationDate': 'Creation date',
+    'created': 'Creation date',
     'OPEN_FOLDER': 'Open',
     'DOWNLOAD_FILE': 'Download',
     'MESSAGES.ERROR_DOWNLOAD': 'Failed to download file from the server.'
@@ -13,7 +13,7 @@ export var MAP = {
   'es': {
     'name': 'Nombre',
     'size': 'Tamaño',
-    'creationDate': 'Fecha de creación',
+    'created': 'Fecha de creación',
     'OPEN_FOLDER': 'Abrir',
     'DOWNLOAD_FILE': 'Descargar',
     'MESSAGES.ERROR_DOWNLOAD': 'Error al descargar el fichero del servidor.'

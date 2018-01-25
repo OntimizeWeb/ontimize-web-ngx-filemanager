@@ -76,8 +76,7 @@ export class OTableExtendedComponent extends OTableComponent {
         }
       }
 
-      let formComponents = this.form.getComponents();
-      this.workspaceId = formComponents[this.workspaceKey].getValue();
+      this.workspaceId = this.form.getDataValue(this.workspaceKey).value;
 
       if ((this.dataParentKeys.length > 0) && (typeof (parentItem) === 'undefined')) {
         this.setData([], []);
@@ -162,6 +161,12 @@ export class OTableExtendedComponent extends OTableComponent {
     }
     this.selectedRow(item);
     ObservableWrapper.callEmit(this.onClick, item);
+  }
+
+  handleSecondaryClick(item: any, $event): void {
+    if (this.selection.selected.indexOf(item) === -1) {
+      this.handleClick(item, $event);
+    }
   }
 
   selectedRow(row: any) {
