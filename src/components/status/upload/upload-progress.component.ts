@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 export const DEFAULT_INPUTS_UPLOAD_PROGRESS = [
@@ -11,7 +11,6 @@ export const DEFAULT_OUTPUTS_UPLOAD_PROGRESS = [
 
 export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,1)';
 
-
 @Component({
   selector: 'upload-progress',
   templateUrl: './upload-progress.component.html',
@@ -20,36 +19,39 @@ export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,
   outputs: DEFAULT_OUTPUTS_UPLOAD_PROGRESS,
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.upload-progress]': 'true',
-    '[@displayMode]': '_getExpandedState()'
+    '[class.upload-progress]': 'true'
   },
   animations: [
-    trigger('bodyExpansion', [
+    trigger('contentExpansion', [
       state('collapsed', style({ height: '0px' })),
       state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate(EXPANSION_PANEL_ANIMATION_TIMING)),
+      transition('expanded <=> collapsed', animate(EXPANSION_PANEL_ANIMATION_TIMING))
     ]),
-    trigger('displayMode', [
-      state('collapsed', style({ margin: '0' })),
-      state('default', style({ margin: '16px 0' })),
-      state('flat', style({ margin: '0' })),
-      transition('flat <=> collapsed, default <=> collapsed, flat <=> default',
-        animate(EXPANSION_PANEL_ANIMATION_TIMING)),
-    ]),
-  ],
+    trigger('containerPosition', [
+      state('opened', style({ opacity: '1' })),
+      state('closed', style({ opacity: '0.01', bottom: '0px' })),
+      transition('opened <=> closed', animate(EXPANSION_PANEL_ANIMATION_TIMING))
+    ])
+  ]
 })
 
-export class UploadProgressComponent {
-  protected title: string;
-  protected uploaderFiles: any;
+export class UploadProgressComponent implements AfterViewInit {
+  title: string;
+  protected _uploaderFiles: any[] = [];
 
-  protected onCloseFunction: Function;
-  protected onCancelItemUpload: Function;
+  isOpened: boolean = false;
+  onCloseFunction: Function;
+  onCancelItemUpload: Function;
 
   protected collapsed: boolean = false;
 
+  ngAfterViewInit() {
+    this.isOpened = true;
+  }
+
   onClose() {
     if (this.onCloseFunction) {
+      this.isOpened = false;
       this.onCloseFunction();
     }
   }
@@ -62,9 +64,21 @@ export class UploadProgressComponent {
     return this.collapsed ? 'collapsed' : 'expanded';
   }
 
+  _getContainerState(): any {
+    return this.isOpened ? 'opened' : 'closed';
+  }
+
   onCancelFileUpload(file: any) {
     if (this.onCancelItemUpload) {
       this.onCancelItemUpload(file);
     }
+  }
+
+  get uploaderFiles(): any[] {
+    return this._uploaderFiles;
+  }
+
+  set uploaderFiles(arg: any[]) {
+    this._uploaderFiles = arg;
   }
 }
