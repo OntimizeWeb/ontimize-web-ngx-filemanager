@@ -200,32 +200,26 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  upload(files: any[], workspaceId: any, folderId: any, data?: Object): Observable<any> {
-
-    let url = this._urlBase + this.path + '/insertFile/' + workspaceId;
-    if (folderId !== undefined) {
-      url += '/' + folderId;
-    }
-
-    let authorizationToken = 'Bearer ' + this._sessionid;
-    let headers: HttpHeaders = new HttpHeaders({
+  upload(files: any[], workspaceId: any, folderId: any): Observable<any> {
+    const url = this._urlBase + this.path + '/insertFile/' + workspaceId;
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Authorization': authorizationToken
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
 
-    let toUpload: any;
-    toUpload = new FormData();
+    let toUpload: any = new FormData();
     files.forEach(item => {
       item.prepareToUpload();
       item.isUploading = true;
       toUpload.append('name', item.name);
       toUpload.append('file', item.file);
     });
-    if (data) {
-      toUpload.append('data', JSON.stringify(data));
+    if (folderId) {
+      toUpload.append('folderId', folderId);
     }
 
     const request = new HttpRequest('POST', url, toUpload, {
@@ -302,29 +296,27 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  insertFolder(workspaceId: any, name: any, folderId: any): Observable<any> {
-    let url = this._urlBase + this.path + '/insertFolder/' + workspaceId + '/' + name;
-    if (folderId !== undefined) {
-      url += '/' + folderId;
-    }
-
-    let authorizationToken = 'Bearer ' + this._sessionid;
-    let headers: HttpHeaders = new HttpHeaders({
+  insertFolder(workspaceId: any, name: any, kv?: Object): Observable<any> {
+    const url = this._urlBase + this.path + '/insertFolder/' + workspaceId + '/' + name;
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json;charset=UTF-8',
       'Authorization': authorizationToken
     });
 
-    let body = JSON.stringify({});
+    const body = JSON.stringify({
+      data: kv
+    });
 
-    let request = new HttpRequest('POST', url, body, {
+    const request = new HttpRequest('POST', url, body, {
       headers: headers
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
 
-    let self = this;
+    const self = this;
     this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)

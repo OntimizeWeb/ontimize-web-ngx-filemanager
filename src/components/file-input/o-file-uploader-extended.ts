@@ -1,13 +1,14 @@
 import { OFileUploader } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-uploader.class';
 import { OFileItem } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-item.class';
 import { OFormComponent, OntimizeFileService } from 'ontimize-web-ngx';
+import { FileManagerService } from '../../services/filemanager.service';
 
 export class OFileUploaderExtended extends OFileUploader {
 
   protected form: OFormComponent;
   protected workspaceKey: string;
   parentKey: string;
-  protected filemanagerService: any;
+  protected filemanagerService: FileManagerService;
 
   protected parentItem: any;
 
@@ -38,7 +39,7 @@ export class OFileUploaderExtended extends OFileUploader {
    * Uploads a single file on a single request.
    * @param item the file to upload
    */
-  public uploadItem(item: OFileItem): void {
+  uploadItem(item: OFileItem): void {
     item.prepareToUpload();
     if (this.isUploading || item.isUploading) {
       return;
@@ -57,14 +58,14 @@ export class OFileUploaderExtended extends OFileUploader {
     }
 
     const workspaceId = this.parentItem[this.workspaceKey];
-    let folderId = undefined;
+    let folderId;
     if (this.parentKey && this.parentItem.hasOwnProperty(this.parentKey)) {
       folderId = this.parentItem[this.parentKey];
     }
 
-    var self = this;
+    const self = this;
     this._uploadSuscription = item._uploadSuscription =
-      this.filemanagerService.upload([item], workspaceId, folderId, this.data).subscribe(resp => {
+      this.filemanagerService.upload([item], workspaceId, folderId).subscribe(resp => {
         if (resp.loaded && resp.total) {
           let progress = Math.round(resp.loaded * 100 / resp.total);
           self._onProgressItem(item, progress);

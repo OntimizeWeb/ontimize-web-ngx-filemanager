@@ -1,4 +1,4 @@
-<div class="upload-progress-container mat-elevation-z4" fxLayout="column" fxLayoutAlign="center center" fxFlex="30">
+<div [@containerPosition]="_getContainerState()" [class.opened]="isOpened" class="upload-progress-container mat-elevation-z4" fxLayout="column" fxLayoutAlign="center center" fxFlex="30">
 
   <md-toolbar color="primary" class="upload-progress-toolbar">
     <div class="mat-toolbar-tools" fxLayout="row" fxFill fxLayoutAlign="start center">
@@ -20,7 +20,7 @@
   </md-toolbar>
 
   <!-- mat-expansion-panel-content -->
-  <div [class.collapsed]="collapsed" class="upload-progress-content" [@bodyExpansion]="_getExpandedState()">
+  <div [class.collapsed]="collapsed" class="upload-progress-content" [@contentExpansion]="_getExpandedState()">
     <md-list fxFlex>
       <md-list-item *ngFor="let file of uploaderFiles">
         <div fxLayout="row" fxLayoutAlign="space-between center" class="file-data">
