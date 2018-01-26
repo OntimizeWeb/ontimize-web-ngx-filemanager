@@ -1,5 +1,6 @@
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
-import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { Component, ViewEncapsulation, Injector } from '@angular/core';
+import { MdDialogRef } from '@angular/material';
+import { OFileManagerTranslatePipe } from '../../../../core/o-filemanager-translate.pipe';
 
 @Component({
   selector: 'folder-name-dialog',
@@ -11,13 +12,20 @@ import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
   }
 })
 export class FolderNameDialogComponent {
-
+  protected translatePipe: OFileManagerTranslatePipe;
   constructor(
+    protected injector: Injector,
     public dialogRef: MdDialogRef<FolderNameDialogComponent>
-    // ,
-    // @Inject(MD_DIALOG_DATA) data: any
   ) {
+    this.translatePipe = new OFileManagerTranslatePipe(this.injector);
+  }
 
+  get title(): string {
+    return this.translatePipe.transform('EXTENDED_TABLE.NEW_FOLDER_TITLE');
+  }
+
+  get folderName(): string {
+    return this.translatePipe.transform('name');
   }
 
 
