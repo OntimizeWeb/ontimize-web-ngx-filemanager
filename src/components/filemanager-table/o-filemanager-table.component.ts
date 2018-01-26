@@ -237,7 +237,10 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
           });
         }
       }
-      tableService.downloadMultiple(this.oTable.getSelectedItems()).subscribe(asdf => {
+
+      let workspaceId = this.oTable.getParentItem()[this.workspaceKey];
+
+      tableService.downloadMultiple(workspaceId, this.oTable.getSelectedItems()).subscribe(asdf => {
         // TODO
         console.log(asdf);
       }, err => {
