@@ -81,7 +81,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected doReloadQuery: boolean;
 
   protected domService: DomService;
-  protected uploadProggresComponentRef: any;
+  protected uploadProgressComponentRef: any;
+  protected fileChangeSubscription: Subscription;
 
   constructor(
     protected injector: Injector,
@@ -120,6 +121,15 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.oFileInput.uploader.parentKey = OTableExtendedComponent.FM_FOLDER_PARENT_KEY;
 
     this.translateTable();
+
+    if (this.oFileInput) {
+      this.fileChangeSubscription = this.oFileInput.onChange.subscribe(data => {
+        this.showUploaderStatus = true;
+        this.doReloadQuery = true;
+        this.oFileInput.uploader.setParentItem(this.oTable.getParentItem());
+        this.oFileInput.upload();
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -131,6 +141,10 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
     if (this.onLanguageChangeSubscribe) {
       this.onLanguageChangeSubscribe.unsubscribe();
+    }
+    this.destroyUploadProgress();
+    if (this.fileChangeSubscription) {
+      this.fileChangeSubscription.unsubscribe();
     }
   }
 
@@ -173,24 +187,18 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   onFileUploadClick() {
     if (this.oFileInput) {
       (this.oFileInput as any).inputFile.nativeElement.click();
-      this.oFileInput.onChange.subscribe(data => {
-        this.showUploaderStatus = true;
-        this.doReloadQuery = true;
-        this.oFileInput.uploader.setParentItem(this.oTable.getParentItem());
-        this.oFileInput.upload();
-      });
     }
   }
 
   onUploadError() {
-    if (this.uploadProggresComponentRef) {
-      this.uploadProggresComponentRef.instance.title = this.translatePipe.transform('MESSAGES.UPLOADING_ERROR');
+    if (this.uploadProgressComponentRef) {
+      this.uploadProgressComponentRef.instance.title = this.translatePipe.transform('MESSAGES.UPLOADING_ERROR');
     }
   }
 
   onUploadedFile() {
-    if (this.uploadProggresComponentRef) {
-      this.uploadProggresComponentRef.instance.title = this.translatePipe.transform('MESSAGES.UPLOADING_SINGLE_FILE');
+    if (this.uploadProgressComponentRef) {
+      this.uploadProgressComponentRef.instance.title = this.translatePipe.transform('MESSAGES.UPLOADING_COMPLETED');
     }
     this.removeUploadProggressComponent();
     if (this.doReloadQuery) {
@@ -211,13 +219,13 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.oTable.queryData(filter);
   }
 
-  onOpenFolder(event) {
+  onContextOpenFolder(event) {
     if (event && event.data) {
       this.onTableDoubleClick(event.data);
     }
   }
 
-  onDownloadFile(event) {
+  onContextDownloadFile(event) {
     if (event && event.data) {
       const tableService = this.oTable.dataService;
       if (tableService && (this.downloadMethod in tableService)) {
@@ -232,6 +240,12 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
           }
         });
       }
+    }
+  }
+
+  onContextDelete(event) {
+    if (event && event.data) {
+      this.oTable.remove();
     }
   }
 
@@ -257,20 +271,22 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
   set showUploaderStatus(val: boolean) {
     this._showUploaderStatus = val;
-    if (val && !this.uploadProggresComponentRef) {
-      this.uploadProggresComponentRef = this.domService.appendComponentToBody(UploadProgressComponent);
-      const instance = this.uploadProggresComponentRef.instance;
-      instance.uploaderFiles = this.oFileInput.uploader.files;
+    let createComp = val && !this.uploadProgressComponentRef;
+    if (createComp) {
+      this.uploadProgressComponentRef = this.domService.appendComponentToBody(UploadProgressComponent);
+      const instance: UploadProgressComponent = this.uploadProgressComponentRef.instance;
       instance.onCloseFunction = this.closeUploadProgressComponent.bind(this);
       instance.onCancelItemUpload = this.cancelFileUpload.bind(this);
     }
-
-    if (val && this.uploadProggresComponentRef) {
+    if (val && this.uploadProgressComponentRef) {
+      const instance: UploadProgressComponent = this.uploadProgressComponentRef.instance;
+      let files = this.oFileInput.uploader.files;
+      instance.uploaderFiles = createComp ? files.filter(item => !item.isUploaded) : files;
       let title = this.translatePipe.transform('MESSAGES.UPLOADING_SINGLE_FILE');
-      if (this.oFileInput.uploader.files.length > 1) {
+      if (instance.uploaderFiles.length > 1) {
         title = this.translatePipe.transform('MESSAGES.UPLOADING_MULTIPLE_FILE');
       }
-      this.uploadProggresComponentRef.instance.title = title;
+      instance.title = title;
     }
   }
 
@@ -301,10 +317,14 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
   removeUploadProggressComponent(auto: boolean = false) {
     if (this.autoHideUpload || auto) {
-      this.domService.removeComponentFromBody(this.uploadProggresComponentRef, auto ? 0 : this.autoHideTimeout);
-      this.uploadProggresComponentRef = undefined;
+      this.destroyUploadProgress();
     }
     this.showUploaderStatus = false;
+  }
+
+  protected destroyUploadProgress(auto: boolean = false) {
+    this.domService.removeComponentFromBody(this.uploadProgressComponentRef, auto ? 0 : this.autoHideTimeout);
+    this.uploadProgressComponentRef = undefined;
   }
 }
 
