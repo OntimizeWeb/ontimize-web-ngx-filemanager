@@ -9,6 +9,7 @@ export var MAP = {
     'MESSAGES.ERROR_DOWNLOAD': 'Failed to download file from the server.',
     'BUTTONS.UPLOAD': 'Upload',
     'BUTTONS.NEW_FOLDER': 'New folder',
+    'EXTENDED_TABLE.NEW_FOLDER_TITLE' : 'New folder',
 
     'MESSAGES.UPLOADING_SINGLE_FILE': 'Uploading 1 element',
     'MESSAGES.UPLOADING_MULTIPLE_FILE': 'Uploading elements',
@@ -28,6 +29,7 @@ export var MAP = {
     'MESSAGES.ERROR_DOWNLOAD': 'Error al descargar el fichero del servidor.',
     'BUTTONS.UPLOAD': 'Subir',
     'BUTTONS.NEW_FOLDER': 'Crear carpeta',
+    'EXTENDED_TABLE.NEW_FOLDER_TITLE': 'Nueva carpeta',
 
     'MESSAGES.UPLOADING_SINGLE_FILE': 'Subiendo 1 elemento',
     'MESSAGES.UPLOADING_MULTIPLE_FILE': 'Subiendo elementos',
