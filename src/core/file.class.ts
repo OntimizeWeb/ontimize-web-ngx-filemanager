@@ -1,4 +1,4 @@
-export class File {
+export class FileClass {
 
   public id: number;
   public name: string;

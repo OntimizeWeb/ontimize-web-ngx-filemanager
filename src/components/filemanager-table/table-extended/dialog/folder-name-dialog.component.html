@@ -1,0 +1,10 @@
+<span md-dialog-title>{{ 'TABLE.BUTTONS.COLVIS' | oTranslate }}</span>
+<md-dialog-content>
+  <md-form-field fxFlexFill fxFlex class="vertical-padding-16">
+    <input mdInput #folderName placeholder="{{'TABLE.FILTER' | oTranslate}}">
+  </md-form-field>
+</md-dialog-content>
+<md-dialog-actions fxLayoutAlign="end center">
+  <button md-button [md-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
+  <button md-button [md-dialog-close]="folderName.value">{{ 'ACCEPT' | oTranslate }}</button>
+</md-dialog-actions>

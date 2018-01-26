@@ -15,30 +15,4 @@
       cursor: pointer;
     }
   }
-
-  .upload-progress-container {
-    position: fixed;
-    bottom: 16px;
-    left: 0;
-    right: 16px;
-
-    .upload-progress-content {
-      position: relative;
-
-      .close-icon {
-        cursor: pointer;
-        position: absolute;
-        top: 0;
-        right: 0;
-      }
-
-      .mat-list {
-        padding: 0;
-
-        &.has-close-icon {
-          padding-top: 14px;
-        }
-      }
-    }
-  }
 }

@@ -13,11 +13,10 @@
         color: mat-color($primary, 0.54);
       }
     }
-    .upload-progress-content {
-      background-color: mat-color($background, background);
-    }
+  }
 
-
+  .upload-progress-container > div {
+    background-color: mat-color($background, background);
   }
 
 

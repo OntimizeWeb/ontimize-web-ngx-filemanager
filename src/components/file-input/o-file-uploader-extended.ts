@@ -1,7 +1,38 @@
 import { OFileUploader } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-uploader.class';
 import { OFileItem } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-item.class';
+import { OFormComponent, OntimizeFileService } from 'ontimize-web-ngx';
 
 export class OFileUploaderExtended extends OFileUploader {
+
+  protected form: OFormComponent;
+  protected workspaceKey: string;
+  parentKey: string;
+  protected filemanagerService: any;
+
+  protected parentItem: any;
+
+  constructor(
+    service: OntimizeFileService,
+    entity: string,
+    form: OFormComponent,
+    workspaceKey: string,
+    parentKey: string,
+    filemanagerService: any
+  ) {
+    super(service, entity);
+    this.form = form;
+    this.workspaceKey = workspaceKey;
+    this.parentKey = parentKey;
+    this.filemanagerService = filemanagerService;
+  }
+
+  setParentItem(val: any) {
+    this.parentItem = val;
+  }
+
+  getParentItem(): any {
+    return this.parentItem;
+  }
 
   /**
    * Uploads a single file on a single request.
@@ -25,9 +56,15 @@ export class OFileUploaderExtended extends OFileUploader {
       this._uploadSuscription.unsubscribe();
     }
 
+    const workspaceId = this.parentItem[this.workspaceKey];
+    let folderId = undefined;
+    if (this.parentKey && this.parentItem.hasOwnProperty(this.parentKey)) {
+      folderId = this.parentItem[this.parentKey];
+    }
+
     var self = this;
-    this._uploadSuscription = item._uploadSuscription = this.service.upload([item], this.entity, this.data).subscribe(
-      resp => {
+    this._uploadSuscription = item._uploadSuscription =
+      this.filemanagerService.upload([item], workspaceId, folderId, this.data).subscribe(resp => {
         if (resp.loaded && resp.total) {
           let progress = Math.round(resp.loaded * 100 / resp.total);
           self._onProgressItem(item, progress);
@@ -38,9 +75,9 @@ export class OFileUploaderExtended extends OFileUploader {
           self._onErrorItem(item, 'Unknow error');
         }
       },
-      err => self._onErrorItem(item, err),
-      () => self._onCompleteItem(item)
-    );
+        err => self._onErrorItem(item, err),
+        () => self._onCompleteItem(item)
+      );
   }
 
 }
