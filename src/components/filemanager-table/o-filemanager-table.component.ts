@@ -225,47 +225,14 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  onContextDownloadFile(event) {
-
-    // const tableService = this.oTable.dataService;
-    // if (tableService && this.oTable.getSelectedItems().length > 0) {
-    //   if (this.oTable.getSelectedItems().length === 1) {
-    //     let file: FileClass = this.oTable.getSelectedItems()[0];
-    //     if (!file.directory) {
-    //       tableService.download(file).subscribe(resp => {
-    //         if (resp['loaded']) {
-    //           // TODO
-    //           console.log(resp);
-    //         }
-    //       }, err => {
-    //         if (err && typeof err !== 'object') {
-    //           this.dialogService.alert('ERROR', err);
-    //         } else {
-    //           this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
-    //         }
-    //       });
-    //     }
-
-    if (event && event.data) {
-      const tableService = this.oTable.dataService;
-      if (tableService && (this.downloadMethod in tableService)) {
-        tableService[this.downloadMethod](event.data).subscribe(res => {
-          // TODO
-          console.log(res);
-        }, err => {
-          if (err && typeof err !== 'object') {
-            this.dialogService.alert('ERROR', err);
-          } else {
-            this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
-          }
-        });
-      }
-
+  onContextDownloadFile() {
+    const tableService = this.oTable.dataService;
+    if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
       let workspaceId = this.oTable.getParentItem()[this.workspaceKey];
 
-      tableService.downloadMultiple(workspaceId, this.oTable.getSelectedItems()).subscribe(asdf => {
+      tableService[this.downloadMethod](workspaceId, this.oTable.getSelectedItems()).subscribe(res => {
         // TODO
-        console.log(asdf);
+        console.log(res);
       }, err => {
         if (err && typeof err !== 'object') {
           this.dialogService.alert('ERROR', err);

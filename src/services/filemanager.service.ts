@@ -70,7 +70,11 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  public download(file: FileClass): Observable<any> {
+  public download(workspaceId: any, files: FileClass[]): Observable<any> {
+    let file: FileClass = files[0];
+    if (files.length > 1 || file.directory) {
+      return this.downloadMultiple(workspaceId, files);
+    }
 
     let url = this._urlBase + this.path + '/getFile/' + file.id;
 
