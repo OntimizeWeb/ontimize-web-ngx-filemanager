@@ -30,8 +30,10 @@ export class DomService {
 
   removeComponentFromBody(componentRef: any, timeout: number = 0) {
     setTimeout(() => {
-      this.appRef.detachView(componentRef.hostView);
-      componentRef.destroy();
+      if (componentRef && componentRef.hostView) {
+        this.appRef.detachView(componentRef.hostView);
+        componentRef.destroy();
+      }
     }, timeout);
   }
 
