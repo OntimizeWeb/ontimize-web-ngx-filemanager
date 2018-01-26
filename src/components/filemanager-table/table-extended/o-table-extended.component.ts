@@ -4,6 +4,7 @@ import { MdDialogConfig } from '@angular/material';
 
 import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
 import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component';
+import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 
 @Component({
   selector: 'o-table-extended',
@@ -27,7 +28,7 @@ import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component
     '[class.o-table]': 'true',
     '[class.ontimize-table]': 'true',
     '[class.o-table-fixed]': 'fixedHeader',
-    '(document:click)': 'handleDocumentClick($event)'
+    '(document:click)': 'handleDOMClick($event)'
   }
 })
 
@@ -40,12 +41,76 @@ export class OTableExtendedComponent extends OTableComponent {
 
   protected workspaceId: any;
 
+  protected clickTimer;
+  protected clickDelay = 200;
+  protected clickPrevent = false;
+
   setParentItem(val: any) {
     this.parentItem = val;
   }
 
   getParentItem(): any {
     return this.parentItem;
+  }
+
+  setDatasource() {
+    this.dataSource = new OTableExtendedDataSource(this);
+    if (this.daoTable) {
+      this.dataSource.resultsLength = this.daoTable.data.length;
+    }
+  }
+
+  handleDOMClick(event) {
+    const tableContent = this.elRef.nativeElement;
+    const overlayContainer = document.body.getElementsByClassName('cdk-overlay-container')[0];
+    if (overlayContainer && overlayContainer.contains(event.target)) {
+      return;
+    }
+    if (tableContent && !tableContent.contains(event.target) && this.selection && this.selection.selected.length) {
+      this.clearSelection();
+    }
+  }
+
+  handleDoubleClick(item: any) {
+    clearTimeout(this.clickTimer);
+    this.clickPrevent = true;
+    super.handleDoubleClick(item);
+  }
+
+  handleClick(item: any, $event?) {
+    const self = this;
+    this.clickTimer = setTimeout(() => {
+      if (!self.clickPrevent) {
+        self.doClick(item, $event);
+      }
+      self.clickPrevent = false;
+    }, this.clickDelay);
+  }
+
+  doClick(item: any, $event?) {
+    if ($event.ctrlKey || $event.metaKey) {
+      // TODO: test $event.metaKey on MAC
+      this.selectedRow(item);
+      ObservableWrapper.callEmit(this.onClick, item);
+      return;
+    } else if ($event.shiftKey) {
+      if (this.selection.selected.length > 0) {
+        let first = this.dataSource.renderedData.indexOf(this.selectedItems[0]);
+        let last = this.dataSource.renderedData.indexOf(item);
+        let indexFrom = Math.min(first, last);
+        let indexTo = Math.max(first, last);
+        this.selection.clear();
+        this.dataSource.renderedData.slice(indexFrom, indexTo + 1).forEach(e => this.selectedRow(e));
+        ObservableWrapper.callEmit(this.onClick, this.selection.selected);
+        return;
+      }
+    }
+    if (this.selection.selected.length > 0 && !(this.selection.selected.length === 1 && this.selection.selected.indexOf(item) !== -1)) {
+      this.selection.clear();
+      this.selectedItems = [];
+    }
+    this.selectedRow(item);
+    ObservableWrapper.callEmit(this.onClick, item);
   }
   /**
      * This method manages the call to the service
@@ -118,43 +183,6 @@ export class OTableExtendedComponent extends OTableComponent {
     return queryArguments;
   }
 
-  handleDocumentClick(event) {
-    const tableContent = this.elRef.nativeElement;//.querySelectorAll('#tableContent')[0];
-    const overlayContainer = document.body.getElementsByClassName('cdk-overlay-container')[0];
-    if (overlayContainer && overlayContainer.contains(event.target)) {
-      return;
-    }
-    if (tableContent && !tableContent.contains(event.target) && this.selection && this.selection.selected.length) {
-      this.clearSelection();
-    }
-  }
-
-  handleClick(item: any, $event?) {
-    if ($event.ctrlKey || $event.metaKey) {
-      // TODO: test $event.metaKey on MAC
-      this.selectedRow(item);
-      ObservableWrapper.callEmit(this.onClick, item);
-      return;
-    } else if ($event.shiftKey) {
-      if (this.selection.selected.length > 0) {
-        let first = this.dataSource.renderedData.indexOf(this.selectedItems[0]);
-        let last = this.dataSource.renderedData.indexOf(item);
-        let indexFrom = Math.min(first, last);
-        let indexTo = Math.max(first, last);
-        this.selection.clear();
-        this.dataSource.renderedData.slice(indexFrom, indexTo + 1).forEach(e => this.selectedRow(e));
-        ObservableWrapper.callEmit(this.onClick, this.selection.selected);
-        return;
-      }
-    }
-    if (this.selection.selected.length > 0 && !(this.selection.selected.length === 1 && this.selection.selected.indexOf(item) !== -1)) {
-      this.selection.clear();
-      this.selectedItems = [];
-    }
-    this.selectedRow(item);
-    ObservableWrapper.callEmit(this.onClick, item);
-  }
-
   selectedRow(row: any) {
     this.selection.toggle(row);
     let index = this.selectedItems.indexOf(row);
@@ -171,19 +199,15 @@ export class OTableExtendedComponent extends OTableComponent {
     return this.selection.selected.indexOf(item) !== -1;
   }
 
-  remove(clearSelectedItems: boolean = false) {
-    if (!(this.keysArray.length > 0) || !(this.selectedItems.length > 0)) {
+   remove(clearSelectedItems: boolean = false) {
+    if ((this.keysArray.length === 0) || this.selectedItems.length === 0) {
       return;
     }
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          let files = [];
-          this.selectedItems.map(item => {
-            files.push(item);
-          });
           let workspaceId = this.parentItem[this.workspaceKey];
-          this.dataService[this.deleteMethod](files, workspaceId).subscribe(res => {
+          this.dataService[this.deleteMethod](this.selectedItems, workspaceId).subscribe(res => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selectedItems);
           }, error => {
@@ -205,7 +229,6 @@ export class OTableExtendedComponent extends OTableComponent {
     let cfg: MdDialogConfig = {
       role: 'dialog',
       disableClose: false,
-      panelClass: 'cdk-overlay-pane-custom',
       data: {
       }
     };
@@ -223,12 +246,12 @@ export class OTableExtendedComponent extends OTableComponent {
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    let workspaceId = this.parentItem[this.workspaceKey];
-    let folderId;
+    const workspaceId = this.parentItem[this.workspaceKey];
+    let kv = {};
     if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-      folderId = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
     }
-    tableService[this.addFolderMethod](workspaceId, folderName, folderId).subscribe(res => {
+    tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(res => {
       //
     }, err => {
       if (err && typeof err !== 'object') {
