@@ -105,9 +105,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       self.breadcrumbs = array;
     });
 
-    this.onLanguageChangeSubscribe = this.translateService.onLanguageChanged.subscribe(res => {
-      self.translateTable();
-    });
+    this.onLanguageChangeSubscribe = this.translateService.onLanguageChanged.subscribe(() => self.translateTable());
   }
 
   ngOnInit() {
@@ -123,7 +121,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.translateTable();
 
     if (this.oFileInput) {
-      this.fileChangeSubscription = this.oFileInput.onChange.subscribe(data => {
+      this.fileChangeSubscription = this.oFileInput.onChange.subscribe(() => {
         this.showUploaderStatus = true;
         this.doReloadQuery = true;
         this.oFileInput.uploader.setParentItem(this.oTable.getParentItem());
@@ -253,8 +251,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return event && !event.directory;
   }
 
-  cmShowDownloadOpt(item: FileClass) {
-    return this.oTable.getSelectedItems().length > 0 ? true : item && !item.directory;
+  cmShowOpenOpt(item: FileClass) {
+    return this.oTable.getSelectedItems().length === 1 && item && item.directory;
   }
 
   get breadcrumbs(): Array<any> {

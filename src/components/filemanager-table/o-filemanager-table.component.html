@@ -40,8 +40,8 @@
   </o-table-extended>
 
   <o-context-menu #itemsContextMenu>
+    <o-context-menu-item icon="folder_open" [label]="openFolderLabel" [visible]="cmShowOpenOpt.bind(this)" (execute)="onContextOpenFolder($event)"></o-context-menu-item>
     <o-context-menu-item icon="file_download" [label]="downloadLabel" (execute)="onContextDownloadFile()"></o-context-menu-item>
-    <o-context-menu-item icon="folder_open" [label]="openFolderLabel" [visible]="isDirectoryContextItem" (execute)="onContextOpenFolder($event)"></o-context-menu-item>
     <o-context-menu-item icon="delete" label="TABLE.BUTTONS.DELETE" (execute)="onContextDelete($event)"></o-context-menu-item>
   </o-context-menu>
 
