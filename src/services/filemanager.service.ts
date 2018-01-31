@@ -1,14 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
-// import { Http, Headers, RequestOptions, RequestMethod } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/share';
 
 import { OntimizeEEService } from 'ontimize-web-ngx';
 
 import { FileClass } from '../core/file.class';
+import { Subscriber } from 'rxjs/Subscriber';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService {
@@ -27,7 +26,7 @@ export class FileManagerService extends OntimizeEEService {
     }
   }
 
-  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+  queryFiles(workspaceId: any, kv?: Object, attrs?: Array<string>): Observable<FileClass[]> {
     let url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
 
     let authorizationToken = 'Bearer ' + this._sessionid;
@@ -39,11 +38,11 @@ export class FileManagerService extends OntimizeEEService {
 
     let body = JSON.stringify({
       filter: kv,
-      columns: av
+      columns: attrs
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer => _innerObserver = observer).share();
+    let dataObservable: Observable<FileClass[]> = new Observable((observer: Subscriber<FileClass[]>) => _innerObserver = observer).share();
 
     let request = new HttpRequest('POST', url, body, {
       headers: headers
@@ -204,7 +203,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  upload(files: any[], workspaceId: any, folderId: any): Observable<any> {
+  upload(workspaceId: any, folderId: any, files: any[]): Observable<any> {
     const url = this._urlBase + this.path + '/insertFile/' + workspaceId;
     const authorizationToken = 'Bearer ' + this._sessionid;
     const headers: HttpHeaders = new HttpHeaders({
@@ -262,7 +261,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  deleteFiles(files: Object[] = [], workspaceId: any, sqltypes?: Object): Observable<any> {
+  deleteFiles(workspaceId: any, files: FileClass[]): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
     let authorizationToken = 'Bearer ' + this._sessionid;
@@ -273,8 +272,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let body = JSON.stringify({
-      fileList: files,
-      sqltypes: sqltypes
+      fileList: files
     });
 
     let request = new HttpRequest('POST', url, body, {
@@ -288,7 +286,7 @@ export class FileManagerService extends OntimizeEEService {
     this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
-      .subscribe((resp: HttpResponse<File>) => {
+      .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {
         if (error.status === 401) {
@@ -324,7 +322,7 @@ export class FileManagerService extends OntimizeEEService {
     this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
-      .subscribe((resp: HttpResponse<File>) => {
+      .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {
         if (error.status === 401) {

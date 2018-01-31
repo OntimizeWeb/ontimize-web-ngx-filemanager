@@ -208,7 +208,7 @@ export class OTableExtendedComponent extends OTableComponent {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
           let workspaceId = this.parentItem[this.workspaceKey];
-          this.dataService[this.deleteMethod](this.selectedItems, workspaceId).subscribe(res => {
+          this.dataService[this.deleteMethod](workspaceId, this.selectedItems).subscribe(res => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selectedItems);
           }, error => {

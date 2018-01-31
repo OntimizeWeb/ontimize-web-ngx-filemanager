@@ -65,7 +65,7 @@ export class OFileUploaderExtended extends OFileUploader {
 
     const self = this;
     this._uploadSuscription = item._uploadSuscription =
-      this.filemanagerService.upload([item], workspaceId, folderId).subscribe(resp => {
+      this.filemanagerService.upload(workspaceId, folderId, [item]).subscribe(resp => {
         if (resp.loaded && resp.total) {
           let progress = Math.round(resp.loaded * 100 / resp.total);
           self._onProgressItem(item, progress);
