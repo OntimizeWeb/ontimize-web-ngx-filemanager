@@ -1,13 +1,10 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
-
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/share';
-
 import { OntimizeEEService } from 'ontimize-web-ngx';
-
 import { FileClass } from '../core/file.class';
-import { Subscriber } from 'rxjs/Subscriber';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService {
@@ -26,29 +23,37 @@ export class FileManagerService extends OntimizeEEService {
     }
   }
 
-  queryFiles(workspaceId: any, kv?: Object, attrs?: Array<string>): Observable<FileClass[]> {
-    let url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
+  protected manageError(error: any, observer: any) {
+    if (error.status === 401) {
+      this.redirectLogin(true);
+    } else {
+      observer.error(error);
+    }
+  }
 
-    let authorizationToken = 'Bearer ' + this._sessionid;
-    let headers: HttpHeaders = new HttpHeaders({
+  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+    const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
+
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json;charset=UTF-8',
       'Authorization': authorizationToken
     });
 
-    let body = JSON.stringify({
+    const body = JSON.stringify({
       filter: kv,
-      columns: attrs
+      columns: av
     });
 
     let _innerObserver: any;
-    let dataObservable: Observable<FileClass[]> = new Observable((observer: Subscriber<FileClass[]>) => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
 
-    let request = new HttpRequest('POST', url, body, {
+    const request = new HttpRequest('POST', url, body, {
       headers: headers
     });
 
-    let self = this;
+    const self = this;
     this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
@@ -59,41 +64,36 @@ export class FileManagerService extends OntimizeEEService {
           _innerObserver.error(resp);
         }
       }, error => {
-        if (error.status === 401) {
-          self.redirectLogin(true);
-        } else {
-          _innerObserver.error(error);
-        }
+        self.manageError(error, _innerObserver);
       }, () => _innerObserver.complete());
 
     return dataObservable;
   }
 
-  public download(workspaceId: any, files: FileClass[]): Observable<any> {
-    let file: FileClass = files[0];
+  download(workspaceId: any, files: FileClass[]): Observable<any> {
+    const file: FileClass = files[0];
     if (files.length > 1 || file.directory) {
       return this.downloadMultiple(workspaceId, files);
     }
 
-    let url = this._urlBase + this.path + '/getFile/' + file.id;
+    const url = this._urlBase + this.path + '/getFile/' + file.id;
 
-    let authorizationToken = 'Bearer ' + this._sessionid;
-    let headers: HttpHeaders = new HttpHeaders({
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Authorization': authorizationToken
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer =>
-      _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
 
-    let request = new HttpRequest('GET', url, null, {
+    const request = new HttpRequest('GET', url, null, {
       headers: headers,
       reportProgress: true,
       responseType: 'blob'
     });
 
-    let self = this;
+    const self = this;
     this.httpClient
       .request(request)
       .subscribe((resp) => {
@@ -106,64 +106,55 @@ export class FileManagerService extends OntimizeEEService {
         } else if (HttpEventType.Response === resp.type) {
           // Full response received
           if (resp.body) {
-            let fileURL = URL.createObjectURL(resp.body);
-            let a = document.createElement('a');
-            a.href = fileURL;
-            a.download = file.name;
-            a.click();
+            self.createDownloadLink(resp['body'], file.name);
             _innerObserver.next(resp);
           } else {
             _innerObserver.error(resp.body);
           }
         }
       }, error => {
-        if (error.status === 401) {
-          self.redirectLogin(true);
-        } else {
-          _innerObserver.error(error);
-        }
+        self.manageError(error, _innerObserver);
       }, () => _innerObserver.complete());
 
     return dataObservable;
   }
 
-  public downloadMultiple(workspaceId: any, files: FileClass[]): Observable<any> {
+  downloadMultiple(workspaceId: any, files: FileClass[]): Observable<any> {
     // Send data to generate zip file
-    let url = this._urlBase + this.path + '/getFiles/' + workspaceId;
+    const url = this._urlBase + this.path + '/getFiles/' + workspaceId;
 
-    let authorizationToken = 'Bearer ' + this._sessionid;
-    let headers: HttpHeaders = new HttpHeaders({
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Authorization': authorizationToken
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer =>
-      _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
 
-    let request = new HttpRequest('POST', url, files, {
+    const request = new HttpRequest('POST', url, files, {
       headers: headers,
       responseType: 'text'
     });
 
-    let self = this;
-    this.httpClient
+    const self = this;
+    const getZipDataSubscription = this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
       .subscribe((resp: HttpResponse<any>) => {
-        let body = JSON.parse(resp.body);
-        let zipFileName = body.file;
+        const body = JSON.parse(resp.body);
+        const zipFileName = body.file;
 
         // Download zip file
-        let url = this._urlBase + this.path + '/getZipFile/' + zipFileName.substring(0, zipFileName.lastIndexOf('.'));
+        const url = this._urlBase + this.path + '/getZipFile/' + zipFileName.substring(0, zipFileName.lastIndexOf('.'));
 
-        let request = new HttpRequest('GET', url, null, {
+        const request = new HttpRequest('GET', url, null, {
           headers: headers,
           reportProgress: true,
           responseType: 'blob'
         });
 
-        self.httpClient
+        const downloadDataSubscription = self.httpClient
           .request(request)
           .subscribe(resp => {
             if (HttpEventType.DownloadProgress === resp.type) {
@@ -175,32 +166,37 @@ export class FileManagerService extends OntimizeEEService {
             } else if (HttpEventType.Response === resp.type) {
               // Full response received
               if (resp.body) {
-                let fileURL = URL.createObjectURL(resp['body']);
-                let a = document.createElement('a');
-                a.href = fileURL;
-                a.download = zipFileName;
-                a.click();
+                self.createDownloadLink(resp['body'], zipFileName);
                 _innerObserver.next(resp);
               } else {
                 _innerObserver.error(resp);
               }
             }
-          }, error => {
-            if (error.status === 401) {
-              self.redirectLogin(true);
-            } else {
-              _innerObserver.error(error);
-            }
-          }, () => _innerObserver.complete());
-      }, error => {
-        if (error.status === 401) {
-          self.redirectLogin(true);
-        } else {
-          _innerObserver.error(error);
-        }
-      }, () => _innerObserver.complete());
 
+          }, error => {
+            self.manageError(error, _innerObserver);
+          }, () => _innerObserver.complete());
+        _innerObserver.next({
+          subscription: downloadDataSubscription,
+          name: zipFileName
+        });
+      }, error => {
+        self.manageError(error, _innerObserver);
+      });
+    setTimeout(() => {
+      _innerObserver.next({
+        subscription: getZipDataSubscription
+      });
+    });
     return dataObservable;
+  }
+
+  protected createDownloadLink(body: any, zipFileName: string) {
+    const fileURL = URL.createObjectURL(body);
+    const a = document.createElement('a');
+    a.href = fileURL;
+    a.download = zipFileName;
+    a.click();
   }
 
   upload(workspaceId: any, folderId: any, files: any[]): Observable<any> {
@@ -221,7 +217,8 @@ export class FileManagerService extends OntimizeEEService {
       toUpload.append('name', item.name);
       toUpload.append('file', item.file);
     });
-    if (folderId) {
+
+    if (folderId !== undefined) {
       toUpload.append('folderId', folderId);
     }
 
@@ -231,69 +228,63 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     const self = this;
-    this.httpClient
-      .request(request)
-      .subscribe(resp => {
-        if (HttpEventType.UploadProgress === resp.type) {
-          // Upload progress event received
-          const progressData = {
-            loaded: resp.loaded,
-            total: resp.total
-          };
-          _innerObserver.next(progressData);
-        } else if (HttpEventType.Response === resp.type) {
-          // Full response received
-          if (resp.body) {
-            _innerObserver.next(resp.body);
-          } else {
-            _innerObserver.error(resp);
+    let httpSubscription =
+      this.httpClient
+        .request(request)
+        .subscribe(resp => {
+          if (HttpEventType.UploadProgress === resp.type) {
+            // Upload progress event received
+            const progressData = {
+              loaded: resp.loaded,
+              total: resp.total
+            };
+            _innerObserver.next(progressData);
+          } else if (HttpEventType.Response === resp.type) {
+            // Full response received
+            if (resp.body) {
+              _innerObserver.next(resp.body);
+            } else {
+              _innerObserver.error(resp);
+            }
           }
-        }
-      }, error => {
-        console.log(error);
-        if (error.status === 401) {
-          self.redirectLogin(true);
-        } else {
-          _innerObserver.error(error);
-        }
-      }, () => _innerObserver.complete());
-
+        }, error => {
+          self.manageError(error, _innerObserver);
+        }, () => _innerObserver.complete());
+    files.forEach(item => {
+      item._uploadSuscription = httpSubscription;
+    });
     return dataObservable;
   }
 
-  deleteFiles(workspaceId: any, files: FileClass[]): Observable<any> {
+  deleteFiles(workspaceId: any, files: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
-    let authorizationToken = 'Bearer ' + this._sessionid;
-    let headers: HttpHeaders = new HttpHeaders({
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json;charset=UTF-8',
       'Authorization': authorizationToken
     });
 
-    let body = JSON.stringify({
+    const body = JSON.stringify({
       fileList: files
     });
 
-    let request = new HttpRequest('POST', url, body, {
+    const request = new HttpRequest('POST', url, body, {
       headers: headers
     });
 
     let _innerObserver: any;
-    let dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
 
-    let self = this;
+    const self = this;
     this.httpClient
       .request(request)
       .filter(resp => HttpEventType.Response === resp.type)
       .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {
-        if (error.status === 401) {
-          self.redirectLogin(true);
-        } else {
-          _innerObserver.error(error);
-        }
+        self.manageError(error, _innerObserver);
       }, () => _innerObserver.complete());
     return dataObservable;
   }
@@ -325,11 +316,7 @@ export class FileManagerService extends OntimizeEEService {
       .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {
-        if (error.status === 401) {
-          self.redirectLogin(true);
-        } else {
-          _innerObserver.error(error);
-        }
+        self.manageError(error, _innerObserver);
       }, () => _innerObserver.complete());
     return dataObservable;
   }
