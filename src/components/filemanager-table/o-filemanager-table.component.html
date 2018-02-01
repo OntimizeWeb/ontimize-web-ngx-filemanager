@@ -2,21 +2,20 @@
   <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no" (onErrorFile)="onUploadError($event)"
     (onUploadFile)="onUploadedFile($event)" [workspace-key]="workspaceKey">
   </o-file-input-extended>
-  <!-- [parent-key]="OTableComponent.FM_FOLDER_PARENT_KEY" -->
 
-  <div fxLayout="row" fxFill layout-padding class="filemanager-breadcrumb">
+  <!-- <div fxLayout="row" fxFill layout-padding class="filemanager-breadcrumb">
     <md-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</md-icon>
     <div *ngFor="let item of breadcrumbs; let i = index" (click)="onBreadcrumbItemClick(item.filter, i)" fxLayout="row" fxLayoutAlign="center center"
       class="breadcrumb-item">
       <md-icon color="accent">chevron_right</md-icon>
       <div class="breadcrumb-item-text">{{ item.item.name }}</div>
     </div>
-  </div>
+  </div> -->
 
   <o-table-extended #oTable attr="filemanager" title="FILES" [service]="service" [service-type]="serviceType" [workspace-key]="workspaceKey"
     [parent-keys]="parentKeys" keys="id" columns="id;name;size;creationDate;directory" visible-columns="directory;name;size;creationDate"
     sort-columns="name" show-table-buttons-text="yes" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no"
-    pagination-controls="no" query-on-init="no" detail-mode="none" select-all-checkbox="yes" (onDoubleClick)="onTableDoubleClick($event)"
+    pagination-controls="no" query-on-init="no" detail-mode="none" [select-all-checkbox]="selectAllCheckbox" (onDoubleClick)="onTableDoubleClick($event)"
     [query-method]="queryMethod" [delete-method]="deleteMethod" [add-folder-method]="addFolderMethod">
 
     <!-- <o-table-option label="TABLE.BUTTONS.DELETE" *ngIf="oTable.showDeleteButton"></o-table-option> -->
