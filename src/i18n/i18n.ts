@@ -3,8 +3,6 @@ export var MAP = {
   'en': {
     'name': 'Name',
     'size': 'Size',
-    'OPEN_FOLDER': 'Open',
-    'DOWNLOAD_FILE': 'Download',
     'creationDate': 'Creation date',
     'CONTEXT_MENU.OPEN_FOLDER': 'Open',
     'CONTEXT_MENU.DOWNLOAD_FILE': 'Download',
@@ -17,17 +15,24 @@ export var MAP = {
     'MESSAGES.UPLOADING_MULTIPLE_FILE': 'Uploading elements',
     'MESSAGES.UPLOADING_COMPLETED': 'Uploading completed',
     'MESSAGES.UPLOADING_ERROR': 'An error has occurred',
+    'MESSAGES.UPLOADING_CANCELLED': 'Uploading cancelled',
     'MESSAGES.CONFIRM_DISCARD_UPLOAD_TITLE': 'Are you sure you want to discard the upload?',
-    'MESSAGES.CONFIRM_DISCARD_UPLOAD_TEXT': 'Uploading is not completed'
+    'MESSAGES.CONFIRM_DISCARD_UPLOAD_TEXT': 'Uploading is not completed',
+
+    'MESSAGES.PREPARE_DOWNLOAD' : 'Preparing download',
+    'MESSAGES.DOWNLOADING': 'Downloading elements',
+    'MESSAGES.DOWNLOAD_COMPLETED' : 'Download completed',
+    'MESSAGES.DOWNLOAD_CANCELLED' : 'Download cancelled',
+    'MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TITLE' : 'Are you sure you want to discard the download?',
+    'MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TEXT' : 'Downloading is not completed',
+    'MESSAGES.COMPRESSING_FILES' : 'Compressing files'
   },
 
   // Spanish
   'es': {
     'name': 'Nombre',
     'size': 'Tamaño',
-    'created': 'Fecha de creación',
-    'OPEN_FOLDER': 'Abrir',
-    'DOWNLOAD_FILE': 'Descargar',
+    'creationDate': 'Fecha de creación',
     'CONTEXT_MENU.OPEN_FOLDER': 'Abrir',
     'CONTEXT_MENU.DOWNLOAD_FILE': 'Descargar',
     'MESSAGES.ERROR_DOWNLOAD': 'Error al descargar el fichero del servidor.',
@@ -39,7 +44,16 @@ export var MAP = {
     'MESSAGES.UPLOADING_MULTIPLE_FILE': 'Subiendo elementos',
     'MESSAGES.UPLOADING_COMPLETED': 'Subida completada',
     'MESSAGES.UPLOADING_ERROR': 'Ha ocurrido un error',
+    'MESSAGES.UPLOADING_CANCELLED': 'Subida cancelada',
     'MESSAGES.CONFIRM_DISCARD_UPLOAD_TITLE': '¿Está seguro de que quiere cancelar la subida?',
-    'MESSAGES.CONFIRM_DISCARD_UPLOAD_TEXT': 'La subida no se ha completado'
+    'MESSAGES.CONFIRM_DISCARD_UPLOAD_TEXT': 'La subida no se ha completado',
+
+    'MESSAGES.PREPARE_DOWNLOAD' : 'Preparando descarga',
+    'MESSAGES.DOWNLOADING' : 'Descargando elementos',
+    'MESSAGES.DOWNLOAD_COMPLETED' : 'Descarga completada',
+    'MESSAGES.DOWNLOAD_CANCELLED' : 'Descarga cancelada',
+    'MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TITLE' : '¿Está seguro de que quiere cancelar la descarga?',
+    'MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TEXT' : 'La descarga no se ha completado',
+    'MESSAGES.COMPRESSING_FILES' : 'Comprimiendo elementos'
   }
 };
