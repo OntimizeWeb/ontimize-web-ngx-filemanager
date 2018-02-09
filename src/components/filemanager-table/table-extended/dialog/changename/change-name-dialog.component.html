@@ -1,0 +1,13 @@
+<span md-dialog-title>{{ title }}</span>
+<md-dialog-content>
+  <md-form-field class="filename-form-field">
+    <input mdInput #inputRef [formControl]="filenameFormControl" [(ngModel)]="filename" placeholder="{{ placeholder }}" (keydown)="onKeyDown($event)"
+      required>
+    <md-error *ngIf="filenameFormControl.hasError('invalidFileName')">{{ 'VALIDATE.FILENAME.INVALID' | oFileManagerTranslate }}</md-error>
+    <md-error *ngIf="filenameFormControl.hasError('required')">{{ 'FORM_VALIDATION.REQUIRED' | oTranslate }}</md-error>
+  </md-form-field>
+</md-dialog-content>
+<md-dialog-actions fxLayoutAlign="end center">
+  <button md-button [md-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
+  <button md-button [disabled]="inputRef.value.length === 0" (click)="submit()">{{ 'ACCEPT' | oTranslate }}</button>
+</md-dialog-actions>

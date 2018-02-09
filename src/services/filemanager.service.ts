@@ -333,5 +333,43 @@ export class FileManagerService extends OntimizeEEService {
       }, () => _innerObserver.complete());
     return dataObservable;
   }
-}
 
+  changeFileName(name: string, file: FileClass): Observable<any> {
+    const url = this._urlBase + this.path + '/fileUpdate';
+    const authorizationToken = 'Bearer ' + this._sessionid;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
+
+    const body = JSON.stringify({
+      file: file,
+      params: { name: name }
+    });
+
+    const request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
+
+    let _innerObserver: any;
+    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+
+    const self = this;
+    this.httpClient
+      .request(request)
+      .filter(resp => HttpEventType.Response === resp.type)
+      .subscribe((resp: HttpResponse<any>) => {
+        _innerObserver.next(resp);
+      }, error => {
+        if (error.status === 401) {
+          self.redirectLogin(true);
+        } else {
+          _innerObserver.error(error);
+        }
+      }, () => _innerObserver.complete());
+
+    return dataObservable;
+  }
+
+}

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
+import { MdDialog, MdDialogConfig } from '@angular/material';
 
 import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
@@ -9,6 +10,7 @@ import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-ta
 import { FileManagerStateService } from '../../services/filemanager-state.service';
 import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core/o-filemanager-translate.pipe';
 import { OTableExtendedModule, OTableExtendedComponent } from './table-extended/o-table-extended.component';
+import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
 import { OFileInputExtendedModule, OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
 import { FileClass } from '../../core/file.class';
 import { DomService } from '../../services/dom.service';
@@ -60,6 +62,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   queryMethod: string = 'queryFiles';
   deleteMethod: string = 'deleteFiles';
   addFolderMethod: string = 'insertFolder';
+  changeNameMethod: string = 'changeFileName';
 
   protected uploadMethod: string = 'upload';
   protected downloadMethod: string = 'download';
@@ -77,6 +80,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected translatePipe: OFileManagerTranslatePipe;
   protected onLanguageChangeSubscribe: any;
 
+  protected dialog: MdDialog;
   protected dialogService: DialogService;
   protected doReloadQuery: boolean;
 
@@ -93,6 +97,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.stateService = this.injector.get(FileManagerStateService);
     this.dialogService = this.injector.get(DialogService);
     this.domService = this.injector.get(DomService);
+    this.dialog = this.injector.get(MdDialog);
 
     const self = this;
     if (this.oForm) {
@@ -167,6 +172,10 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return this.translatePipe.transform('CONTEXT_MENU.DOWNLOAD_FILE');
   }
 
+  get changeNameLabel(): string {
+    return this.translatePipe.transform('CONTEXT_MENU.CHANGE_NAME');
+  }
+
   get openFolderLabel(): string {
     return this.translatePipe.transform('CONTEXT_MENU.OPEN_FOLDER');
   }
@@ -238,6 +247,47 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
           this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
         }
       });
+    }
+  }
+
+  onContextChangeName(event): void {
+    if (event && event.data) {
+      let dialogData: ChangeNameDialogData = {
+        title: 'CHANGE_NAME_TITLE',
+        placeholder: 'newName',
+        defaultValue: event.data.name,
+        fileData: event.data
+      };
+
+      let cfg: MdDialogConfig = {
+        role: 'dialog',
+        disableClose: false,
+        data: dialogData
+      };
+      let dialogRef = this.dialog.open(ChangeNameDialogComponent, cfg);
+      const self = this;
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          self.changeFileName(result, event.data);
+        }
+      });
+    }
+  }
+
+  changeFileName(name: string, file: FileClass): void {
+    let tableService = this.oTable.dataService;
+    if (tableService && (this.changeNameMethod in tableService)) {
+      let self = this;
+      tableService[this.changeNameMethod](name, file).subscribe(
+        () => {
+          // do nothing
+        }, err => {
+          if (err && typeof err !== 'object') {
+            self.dialogService.alert('ERROR', err);
+          }
+        }, () => {
+          self.oTable.reloadData();
+        });
     }
   }
 
@@ -331,6 +381,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     OFileManagerTableComponent,
     OTableColumnRendererFileTypeComponent,
     OTableColumnRendererFileSizeComponent,
+    ChangeNameDialogComponent,
     UploadProgressComponent
   ],
   imports: [
@@ -342,6 +393,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     OFileManagerTranslateModule
   ],
   entryComponents: [
+    ChangeNameDialogComponent,
     UploadProgressComponent
   ],
   exports: [OFileManagerTableComponent],

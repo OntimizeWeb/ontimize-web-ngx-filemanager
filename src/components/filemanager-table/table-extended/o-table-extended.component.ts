@@ -208,7 +208,7 @@ export class OTableExtendedComponent extends OTableComponent {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
           let workspaceId = this.parentItem[this.workspaceKey];
-          this.dataService[this.deleteMethod](workspaceId, this.selectedItems).subscribe(res => {
+          this.dataService[this.deleteMethod](workspaceId, this.selectedItems).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selectedItems);
           }, error => {
@@ -229,9 +229,7 @@ export class OTableExtendedComponent extends OTableComponent {
   onAddFolder() {
     let cfg: MdDialogConfig = {
       role: 'dialog',
-      disableClose: false,
-      data: {
-      }
+      disableClose: false
     };
     let dialogRef = this.dialog.open(FolderNameDialogComponent, cfg);
     const self = this;
@@ -252,15 +250,12 @@ export class OTableExtendedComponent extends OTableComponent {
     if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
       kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
     }
-    tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(res => {
-      //
+    tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(() => {
+      // do nothing
     }, err => {
       if (err && typeof err !== 'object') {
         this.dialogService.alert('ERROR', err);
       }
-      // else {
-      //   this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
-      // }
     }, () => {
       this.reloadData();
     });
