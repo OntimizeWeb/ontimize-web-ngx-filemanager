@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpEventType } from '@angular/common/http';
+
 import { Subscription } from 'rxjs/Subscription';
 import { MdDialog, MdDialogConfig } from '@angular/material';
 
@@ -15,6 +17,7 @@ import { OFileInputExtendedModule, OFileInputExtendedComponent } from '../file-i
 import { FileClass } from '../../core/file.class';
 import { DomService } from '../../services/dom.service';
 import { UploadProgressComponent } from '../status/upload/upload-progress.component';
+import { DownloadProgressComponent } from '../status/download/download-progress.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'workspaceKey: workspace-key',
@@ -23,7 +26,8 @@ export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'autoHideUpload : auto-hide-upload',
   'autoHideTimeout : auto-hide-timeout',
   'serviceType : service-type',
-  'newFolderButton: new-folder-button'
+  'newFolderButton: new-folder-button',
+  'selectAllCheckbox: select-all-checkbox'
 ];
 
 export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
@@ -52,12 +56,13 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected service: string;
   protected parentKeys: string;
   @InputConverter()
-  autoHideUpload: boolean = false;
+  autoHideUpload: boolean = true;
   @InputConverter()
-  autoHideTimeout: number = 1500;
+  autoHideTimeout: number = 20000;
   serviceType: string;
   @InputConverter()
   newFolderButton: boolean = false;
+  selectAllCheckbox: string;
 
   queryMethod: string = 'queryFiles';
   deleteMethod: string = 'deleteFiles';
@@ -70,7 +75,6 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected onFormDataSubscribe: Subscription;
   protected stateService: FileManagerStateService;
   protected stateSubscription: Subscription;
-  protected _breadcrumbs: Array<any> = [];
 
   @ViewChild('oTable') oTable: OTableExtendedComponent;
   @ViewChild('oFileInput') oFileInput: OFileInputExtendedComponent;
@@ -87,6 +91,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected domService: DomService;
   protected uploadProgressComponentRef: any;
   protected fileChangeSubscription: Subscription;
+
+  protected downloadProgressComponentRef: any;
 
   constructor(
     protected injector: Injector,
@@ -107,7 +113,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     this.stateSubscription = this.stateService.getStateObservable().subscribe(array => {
-      self.breadcrumbs = array;
+      self.oTable.breadcrumbs = array;
     });
 
     this.onLanguageChangeSubscribe = this.translateService.onLanguageChanged.subscribe(() => self.translateTable());
@@ -117,6 +123,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     if (!this.serviceType) {
       this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
     }
+    this.oTable.setStateService(this.stateService);
   }
 
   ngAfterViewInit() {
@@ -146,6 +153,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       this.onLanguageChangeSubscribe.unsubscribe();
     }
     this.destroyUploadProgress();
+    this.destroyDownloadProgress();
     if (this.fileChangeSubscription) {
       this.fileChangeSubscription.unsubscribe();
     }
@@ -203,27 +211,15 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  onUploadedFile() {
+  onUploadedFile(arg: any) {
     if (this.uploadProgressComponentRef) {
       this.uploadProgressComponentRef.instance.title = this.translatePipe.transform('MESSAGES.UPLOADING_COMPLETED');
     }
     this.removeUploadProggressComponent();
+    this.oFileInput.uploader.removeFile(arg.item);
     if (this.doReloadQuery) {
       this.oTable.reloadData();
     }
-  }
-
-  onGoToRootFolderClick() {
-    this.stateService.restart();
-    const filter = this.stateService.getFormParentItem();
-    this.oTable.setParentItem(filter);
-    this.oTable.queryData(filter);
-  }
-
-  onBreadcrumbItemClick(filter: any, index: number) {
-    this.stateService.restart(index);
-    this.oTable.setParentItem(filter);
-    this.oTable.queryData(filter);
   }
 
   onContextOpenFolder(event) {
@@ -235,11 +231,26 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   onContextDownloadFile() {
     const tableService = this.oTable.dataService;
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      let workspaceId = this.oTable.getParentItem()[this.workspaceKey];
-
-      tableService[this.downloadMethod](workspaceId, this.oTable.getSelectedItems()).subscribe(res => {
-        // TODO
-        console.log(res);
+      const workspaceId = this.oTable.getParentItem()[this.workspaceKey];
+      const selectedItems = this.oTable.getSelectedItems();
+      let downloadId = undefined;
+      if (selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0].directory)) {
+        downloadId = this.generateUniqueId();
+        this.showDownloaderStatus(downloadId, { filesQuantity: selectedItems.length });
+      }
+      const self = this;
+      tableService[this.downloadMethod](workspaceId, selectedItems).subscribe(resp => {
+        if (resp.subscription) {
+          self.updateDownloaderStatus(downloadId, resp);
+        } else if (resp.loaded && resp.total) {
+          let progress = Math.round(resp.loaded * 100 / resp.total);
+          self.updateDownloaderStatus(downloadId, { progress: progress });
+          console.log(progress);
+        } else if (resp.status === 200 && resp.type === HttpEventType.Response) {
+          self.updateDownloaderStatus(downloadId, {
+            downloaded: true
+          });
+        }
       }, err => {
         if (err && typeof err !== 'object') {
           this.dialogService.alert('ERROR', err);
@@ -305,14 +316,6 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return this.oTable.getSelectedItems().length === 1 && item && item.directory;
   }
 
-  get breadcrumbs(): Array<any> {
-    return this._breadcrumbs;
-  }
-
-  set breadcrumbs(arg: Array<any>) {
-    this._breadcrumbs = arg;
-  }
-
   get showUploaderStatus(): boolean {
     return this._showUploaderStatus;
   }
@@ -325,11 +328,12 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       const instance: UploadProgressComponent = this.uploadProgressComponentRef.instance;
       instance.onCloseFunction = this.closeUploadProgressComponent.bind(this);
       instance.onCancelItemUpload = this.cancelFileUpload.bind(this);
+      instance.translatePipe = this.translatePipe;
     }
     if (val && this.uploadProgressComponentRef) {
       const instance: UploadProgressComponent = this.uploadProgressComponentRef.instance;
-      let files = this.oFileInput.uploader.files;
-      instance.uploaderFiles = createComp ? files.filter(item => !item.isUploaded) : files;
+      let files = this.oFileInput.uploader.files.filter(item => !item.isUploaded && !item.isCancel);
+      instance.uploaderFiles = createComp ? files : instance.uploaderFiles.concat(files);
       let title = this.translatePipe.transform('MESSAGES.UPLOADING_SINGLE_FILE');
       if (instance.uploaderFiles.length > 1) {
         title = this.translatePipe.transform('MESSAGES.UPLOADING_MULTIPLE_FILE');
@@ -345,10 +349,11 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   closeUploadProgressComponent() {
     let allUploaded: boolean = true;
     this.oFileInput.uploader.files.forEach(file => {
-      allUploaded = allUploaded && file.isUploaded;
+      allUploaded = allUploaded && !file.pendingUpload;
     });
     if (allUploaded) {
       this.removeUploadProggressComponent(true);
+      this.oFileInput.uploader.clear();
     } else {
       const dialogTitle = this.translatePipe.transform('MESSAGES.CONFIRM_DISCARD_UPLOAD_TITLE');
       const dialogMsg = this.translatePipe.transform('MESSAGES.CONFIRM_DISCARD_UPLOAD_TEXT');
@@ -374,6 +379,85 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.domService.removeComponentFromBody(this.uploadProgressComponentRef, auto ? 0 : this.autoHideTimeout);
     this.uploadProgressComponentRef = undefined;
   }
+
+  protected generateUniqueId(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  protected updateDownloaderStatus(downloadId: string, data: any) {
+    if (this.downloadProgressComponentRef) {
+      const instance: DownloadProgressComponent = this.downloadProgressComponentRef.instance;
+      let downloadData = instance.files.filter((item) => item.id === downloadId)[0];
+      if (downloadData) {
+        instance.title = this.translatePipe.transform('MESSAGES.DOWNLOADING');
+        Object.keys(data).forEach((key) => {
+          downloadData[key] = data[key];
+        });
+        instance.files = instance.files.slice();
+        if (data && data.downloaded) {
+          let allDownloaded: boolean = true;
+          instance.files.forEach(file => {
+            allDownloaded = allDownloaded && (file.downloaded || file.cancelled);
+          });
+          instance.title = this.translatePipe.transform('MESSAGES.DOWNLOAD_COMPLETED');
+        }
+      }
+    }
+  }
+
+  showDownloaderStatus(downloadId: string, data: any) {
+    if (!this.downloadProgressComponentRef) {
+      this.downloadProgressComponentRef = this.domService.appendComponentToBody(DownloadProgressComponent);
+      const instance: DownloadProgressComponent = this.downloadProgressComponentRef.instance;
+      instance.onCloseFunction = this.closeDownloadProgressComponent.bind(this);
+      instance.translatePipe = this.translatePipe;
+    }
+    if (this.downloadProgressComponentRef) {
+      const instance: DownloadProgressComponent = this.downloadProgressComponentRef.instance;
+      instance.files = instance.files.concat([{ id: downloadId }]);
+      instance.title = this.translatePipe.transform('MESSAGES.PREPARE_DOWNLOAD');
+    }
+    if (data !== undefined) {
+      this.updateDownloaderStatus(downloadId, data);
+    }
+  }
+
+  closeDownloadProgressComponent() {
+    let allDownloaded: boolean = true;
+    if (this.downloadProgressComponentRef) {
+      const instance: DownloadProgressComponent = this.downloadProgressComponentRef.instance;
+      instance.files.forEach(file => {
+        allDownloaded = allDownloaded && (file.downloaded || file.cancelled);
+      });
+    }
+    if (allDownloaded) {
+      this.removeDownloadProggressComponent(true);
+    } else {
+      const dialogTitle = this.translatePipe.transform('MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TITLE');
+      const dialogMsg = this.translatePipe.transform('MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TEXT');
+      const self = this;
+      this.dialogService.confirm(dialogTitle, dialogMsg).then(res => {
+        if (res) {
+          self.removeDownloadProggressComponent(true);
+        }
+      });
+    }
+  }
+
+  removeDownloadProggressComponent(auto: boolean = false) {
+    if (this.autoHideUpload || auto) {
+      this.destroyDownloadProgress();
+    }
+  }
+
+  protected destroyDownloadProgress(auto: boolean = false) {
+    this.domService.removeComponentFromBody(this.downloadProgressComponentRef, auto ? 0 : this.autoHideTimeout);
+    this.downloadProgressComponentRef = undefined;
+  }
+
 }
 
 @NgModule({
@@ -382,7 +466,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     OTableColumnRendererFileTypeComponent,
     OTableColumnRendererFileSizeComponent,
     ChangeNameDialogComponent,
-    UploadProgressComponent
+    UploadProgressComponent,
+    DownloadProgressComponent
   ],
   imports: [
     CommonModule,
@@ -394,7 +479,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   ],
   entryComponents: [
     ChangeNameDialogComponent,
-    UploadProgressComponent
+    UploadProgressComponent,
+    DownloadProgressComponent
   ],
   exports: [OFileManagerTableComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

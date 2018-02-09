@@ -1,9 +1,8 @@
-.upload-progress {
+.download-progress {
 
-
-  .upload-progress-container {
+  .download-progress-container {
     &:not(.opened) {
-      .upload-progress-content {
+      .download-progress-content {
         overflow: hidden;
       }
     }
@@ -31,7 +30,7 @@
       flex: 1 1 auto;
     }
 
-    .upload-progress-content {
+    .download-progress-content {
       max-height: 240px;
       overflow: auto;
       padding: 0 2px;
@@ -61,17 +60,14 @@
             }
           }
         }
-        .file-name.uploading {
-          opacity: 0.35;
-        }
+        .file-name.downloading,
         .file-cancelled-text {
           opacity: 0.35;
-          margin-left: 24px;
         }
         .cancelled {
           opacity: 0.5;
         }
-        .uploaded {
+        .downloaded {
           color: #0f9d58;
         }
         .error {

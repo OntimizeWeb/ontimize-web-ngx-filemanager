@@ -8,7 +8,7 @@
         <o-table-button *ngIf="showDeleteButton" (onClick)="remove()" label="TABLE.BUTTONS.DELETE" icon="delete"></o-table-button>
       </div>
       <span class="fill-remaining"></span>
-      <div *ngIf="oTableOptions.filter" class="quickFilter" fxLayout="row">
+      <div *ngIf="quickFilter" class="quickFilter" fxLayout="row">
         <md-form-field floatPlaceholder="never">
           <input mdInput #filter placeholder="{{'TABLE.FILTER' | oTranslate}}">
           <span class="icon-btn" mdPrefix fxFlexLayout="flex-end">
@@ -33,6 +33,17 @@
         </md-menu>
       </ng-container>
     </div>
+
+    <!-- FILEMANAGER BREADCRUMB -->
+    <div *ngIf="breadcrumbs.length > 0" fxLayout="row" fxFill layout-padding class="filemanager-breadcrumb">
+      <md-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</md-icon>
+      <div *ngFor="let item of breadcrumbs; let i = index" (click)="onBreadcrumbItemClick(item.filter, i)" fxLayout="row" fxLayoutAlign="center center"
+        class="breadcrumb-item">
+        <md-icon color="accent">chevron_right</md-icon>
+        <div class="breadcrumb-item-text">{{ item.item.name }}</div>
+      </div>
+    </div>
+
 
     <md-table #table class="header-fixed" mdSort [class]="rowHeight">
       <!--Checkbox Column -->
@@ -97,15 +108,14 @@
 
       <md-header-row *cdkHeaderRowDef="[]" style.display="none"></md-header-row>
 
-      <md-row *cdkRowDef="let row; columns: oTableOptions.visibleColumns;" (click)="handleClick(row, $event)" (dblclick)="handleDoubleClick(row)"
+      <md-row *cdkRowDef="let row; columns: oTableOptions.visibleColumns;" (click)="handleClick(row, $event)" (dblclick)="handleDoubleClick(row, $event)"
         [oContextMenu]="tableContextMenu" [oContextMenuData]="row" [class.selected]="isSelected(row)">
       </md-row>
 
     </md-table>
 
     <!--TABLE EMPTY-->
-    <div class="mat-row o-table-no-results" [style.display]="dataSource.resultsLength > 0 ? 'none' : ''" *ngIf="daoTable.isLoadingResults"
-      fxLayoutAlign="center center">
+    <div class="mat-row o-table-no-results" *ngIf="dataSource !== undefined && dataSource.resultsLength === 0" fxLayoutAlign="center center">
       {{'TABLE.EMPTY' | oTranslate}}
     </div>
 
@@ -113,7 +123,7 @@
     <o-table-aggregate [o-table-options]="oTableOptions" [datasource]="dataSource" *ngIf="showTotals"> </o-table-aggregate>
 
     <!--LOADING-->
-    <div *ngIf="!daoTable.isLoadingResults">
+    <div *ngIf="daoTable.isLoadingResults" class="spinner-container">
       <md-progress-spinner mode="indeterminate" style="margin:0 auto;" *ngIf="daoTable.isLoadingResults"></md-progress-spinner>
     </div>
 

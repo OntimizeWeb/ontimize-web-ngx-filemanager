@@ -5,6 +5,7 @@ import { MdDialogConfig } from '@angular/material';
 import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
 import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
+import { FileManagerStateService } from '../../../services/filemanager-state.service';
 
 @Component({
   selector: 'o-table-extended',
@@ -44,6 +45,9 @@ export class OTableExtendedComponent extends OTableComponent {
   protected clickTimer;
   protected clickDelay = 200;
   protected clickPrevent = false;
+
+  protected stateService: FileManagerStateService;
+  protected _breadcrumbs: Array<any> = [];
 
   setParentItem(val: any) {
     this.parentItem = val;
@@ -261,6 +265,30 @@ export class OTableExtendedComponent extends OTableComponent {
     });
   }
 
+  setStateService(service: FileManagerStateService) {
+    this.stateService = service;
+  }
+
+  get breadcrumbs(): Array<any> {
+    return this._breadcrumbs;
+  }
+
+  set breadcrumbs(arg: Array<any>) {
+    this._breadcrumbs = arg;
+  }
+
+  onGoToRootFolderClick() {
+    this.stateService.restart();
+    const filter = this.stateService.getFormParentItem();
+    this.setParentItem(filter);
+    this.queryData(filter);
+  }
+
+  onBreadcrumbItemClick(filter: any, index: number) {
+    this.stateService.restart(index);
+    this.setParentItem(filter);
+    this.queryData(filter);
+  }
 }
 
 @NgModule({

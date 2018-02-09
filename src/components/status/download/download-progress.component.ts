@@ -2,25 +2,25 @@ import { Component, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { OFileManagerTranslatePipe } from '../../../core/o-filemanager-translate.pipe';
 
-export const DEFAULT_INPUTS_UPLOAD_PROGRESS = [
+export const DEFAULT_INPUTS_DOWNLOAD_PROGRESS = [
   'title',
-  'uploaderFiles : files'
+  'files'
 ];
 
-export const DEFAULT_OUTPUTS_UPLOAD_PROGRESS = [
+export const DEFAULT_OUTPUTS_DOWNLOAD_PROGRESS = [
 ];
 
 export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,1)';
 
 @Component({
-  selector: 'upload-progress',
-  templateUrl: './upload-progress.component.html',
-  styleUrls: ['./upload-progress.component.scss'],
-  inputs: DEFAULT_INPUTS_UPLOAD_PROGRESS,
-  outputs: DEFAULT_OUTPUTS_UPLOAD_PROGRESS,
+  selector: 'download-progress',
+  templateUrl: './download-progress.component.html',
+  styleUrls: ['./download-progress.component.scss'],
+  inputs: DEFAULT_INPUTS_DOWNLOAD_PROGRESS,
+  outputs: DEFAULT_OUTPUTS_DOWNLOAD_PROGRESS,
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.upload-progress]': 'true'
+    '[class.download-progress]': 'true'
   },
   animations: [
     trigger('contentExpansion', [
@@ -36,13 +36,12 @@ export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,
   ]
 })
 
-export class UploadProgressComponent implements AfterViewInit {
+export class DownloadProgressComponent implements AfterViewInit {
   _title: string;
-  protected _uploaderFiles: any[] = [];
+  protected _files: any[] = [];
 
   isOpened: boolean = false;
   onCloseFunction: Function;
-  onCancelItemUpload: Function;
 
   protected collapsed: boolean = false;
   translatePipe: OFileManagerTranslatePipe;
@@ -70,22 +69,31 @@ export class UploadProgressComponent implements AfterViewInit {
     return this.isOpened ? 'opened' : 'closed';
   }
 
-  onCancelFileUpload(file: any) {
-    if (this.onCancelItemUpload) {
-      this.onCancelItemUpload(file);
+  onCancelFileDownload(file: any) {
+    if (file.subscription) {
+      file.subscription.unsubscribe();
+      file.cancelled = true;
     }
   }
 
-  get cancelledUploadText(): string {
-    return this.translatePipe.transform('MESSAGES.UPLOADING_CANCELLED');
+  getText(file: any): string {
+    if (file && file.name) {
+      return file.name;
+    }
+    const quantityStr = file && file.filesQuantity ? '  (' + file.filesQuantity + ')' : '';
+    return this.translatePipe.transform('MESSAGES.COMPRESSING_FILES') + quantityStr;
   }
 
-  get uploaderFiles(): any[] {
-    return this._uploaderFiles;
+  get cancelledDownloadText(): string {
+    return this.translatePipe.transform('MESSAGES.DOWNLOAD_CANCELLED');
   }
 
-  set uploaderFiles(arg: any[]) {
-    this._uploaderFiles = arg;
+  get files(): any[] {
+    return this._files;
+  }
+
+  set files(arg: any[]) {
+    this._files = arg;
   }
 
   get title(): string {
