@@ -2,6 +2,8 @@ import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_EL
 import { CommonModule } from '@angular/common';
 import { MdDialogConfig } from '@angular/material';
 
+import { ServiceUtils } from 'ontimize-web-ngx';
+
 import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
 import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
@@ -137,15 +139,15 @@ export class OTableExtendedComponent extends OTableComponent {
     this.pendingQuery = false;
     this.pendingQueryFilter = undefined;
 
-    parentItem = this.getParentItemFromForm(parentItem);
+    parentItem = ServiceUtils.getParentItemFromForm(parentItem, this._pKeysEquiv, this.form);
 
     let formData = this.form.formData;
     this.workspaceId = formData[this.workspaceKey] ? formData[this.workspaceKey].value : undefined;
 
-    if (this.workspaceId === undefined || ((this.dataParentKeys.length > 0) && (typeof (parentItem) === 'undefined'))) {
+    if (this.workspaceId === undefined || (Object.keys(this._pKeysEquiv).length > 0) && parentItem === undefined) {
       this.setData([], []);
     } else {
-      let filter = this.getFilterUsingParentKeys(parentItem);
+      let filter = ServiceUtils.getFilterUsingParentKeys(parentItem, this._pKeysEquiv);
 
       if (parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
         filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
