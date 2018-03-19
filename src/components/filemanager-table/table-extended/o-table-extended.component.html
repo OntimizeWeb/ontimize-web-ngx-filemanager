@@ -102,7 +102,7 @@
         </ng-container>
         <mat-cell *cdkCellDef="let row" [fxFlex]="column.width" [ngClass]="column.className">
           <ng-container *ngIf="!column.renderer">{{ row[column.name] }}</ng-container>
-          <ng-template *ngIf="column.renderer" [ngTemplateOutlet]="column.renderer.templateref" [ngOutletContext]="{cellvalue: row[column.name],rowvalue:row}"></ng-template>
+          <ng-template *ngIf="column.renderer" [ngTemplateOutlet]="column.renderer.templateref" [ngTemplateOutletContext]="{cellvalue: row[column.name],rowvalue:row}"></ng-template>
         </mat-cell>
       </ng-container>
 
