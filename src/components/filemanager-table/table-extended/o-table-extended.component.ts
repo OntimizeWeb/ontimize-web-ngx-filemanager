@@ -1,6 +1,6 @@
 import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MdDialogConfig } from '@angular/material';
+import { MatDialogConfig } from '@angular/material';
 
 import { ServiceUtils } from 'ontimize-web-ngx';
 
@@ -125,7 +125,7 @@ export class OTableExtendedComponent extends OTableComponent {
      */
   queryData(parentItem: any = undefined, ovrrArgs?: any) {
     // If exit tab and not is active then waiting call queryData
-    if (this.mdTabContainer && !this.mdTabContainer.isActive) {
+    if (this.tabContainer && !this.tabContainer.isActive) {
       this.pendingQuery = true;
       this.pendingQueryFilter = parentItem;
       return;
@@ -233,7 +233,7 @@ export class OTableExtendedComponent extends OTableComponent {
   }
 
   onAddFolder() {
-    let cfg: MdDialogConfig = {
+    let cfg: MatDialogConfig = {
       role: 'dialog',
       disableClose: false
     };

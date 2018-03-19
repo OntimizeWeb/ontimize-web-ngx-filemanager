@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { OFileManagerTranslatePipe } from '../../../../../core/o-filemanager-translate.pipe';
 import { FileClass } from '../../../../../core';
@@ -43,10 +43,10 @@ export class ChangeNameDialogComponent implements AfterViewInit {
 
   constructor(
     protected injector: Injector,
-    public dialogRef: MdDialogRef<ChangeNameDialogData>
+    public dialogRef: MatDialogRef<ChangeNameDialogData>
   ) {
     this.translatePipe = new OFileManagerTranslatePipe(this.injector);
-    this.data = this.injector.get(MD_DIALOG_DATA);
+    this.data = this.injector.get(MAT_DIALOG_DATA);
     this.filename = this.defaultValue;
   }
 

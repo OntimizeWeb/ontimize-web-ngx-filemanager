@@ -1,7 +1,7 @@
 <div [@containerPosition]="_getContainerState()" [class.opened]="isOpened" class="download-progress-container mat-elevation-z4"
   fxLayout="column" fxLayoutAlign="center center" fxFlex="30">
 
-  <md-toolbar color="primary" class="download-progress-toolbar">
+  <mat-toolbar color="primary" class="download-progress-toolbar">
     <div class="mat-toolbar-tools" fxLayout="row" fxFill fxLayoutAlign="start center">
 
       <div *ngIf="title" fxLayout="row" fxLayoutAlign="center center">
@@ -9,20 +9,20 @@
       </div>
       <span class="fill-remaining"></span>
 
-      <button type="button" md-icon-button (click)="onToggleCollapse()">
-        <md-icon *ngIf="!collapsed">keyboard_arrow_down</md-icon>
-        <md-icon *ngIf="collapsed">keyboard_arrow_up</md-icon>
+      <button type="button" mat-icon-button (click)="onToggleCollapse()">
+        <mat-icon *ngIf="!collapsed">keyboard_arrow_down</mat-icon>
+        <mat-icon *ngIf="collapsed">keyboard_arrow_up</mat-icon>
       </button>
 
-      <button type="button" md-icon-button (click)="onClose()">
-        <md-icon>close</md-icon>
+      <button type="button" mat-icon-button (click)="onClose()">
+        <mat-icon>close</mat-icon>
       </button>
     </div>
-  </md-toolbar>
+  </mat-toolbar>
 
   <div [class.collapsed]="collapsed" class="download-progress-content" [@contentExpansion]="_getExpandedState()">
-    <md-list fxFlex>
-      <md-list-item *ngFor="let file of files">
+    <mat-list fxFlex>
+      <mat-list-item *ngFor="let file of files">
         <div fxLayout="row" fxLayoutAlign="space-between center" class="file-data">
           <span class="file-name" [class.downloading]="!file.downloaded" *ngIf="!file.cancelled"> {{ getText(file) }} </span>
           <span class="file-cancelled-text" *ngIf="file.cancelled"> {{ cancelledDownloadText }} </span>
@@ -32,16 +32,16 @@
             mode="indeterminate" class="uploading">
           </mat-progress-spinner>
 
-          <button type="button" md-icon-button *ngIf="!file.downloaded && !file.cancelled" (click)="onCancelFileDownload(file)">
-            <md-icon>close</md-icon>
+          <button type="button" mat-icon-button *ngIf="!file.downloaded && !file.cancelled" (click)="onCancelFileDownload(file)">
+            <mat-icon>close</mat-icon>
           </button>
 
-          <md-icon *ngIf="file.downloaded" class="downloaded">check_circle</md-icon>
-          <!-- <md-icon *ngIf="file.isUploaded && file.isError" class="error">error</md-icon>  -->
-          <md-icon *ngIf="file.cancelled" class="cancelled">warning</md-icon>
+          <mat-icon *ngIf="file.downloaded" class="downloaded">check_circle</mat-icon>
+          <!-- <mat-icon *ngIf="file.isUploaded && file.isError" class="error">error</mat-icon>  -->
+          <mat-icon *ngIf="file.cancelled" class="cancelled">warning</mat-icon>
         </div>
-      </md-list-item>
-    </md-list>
+      </mat-list-item>
+    </mat-list>
   </div>
 
 </div>

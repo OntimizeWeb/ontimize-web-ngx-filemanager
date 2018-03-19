@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, Injector } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { OFileManagerTranslatePipe } from '../../../../core/o-filemanager-translate.pipe';
 
 @Component({
@@ -15,7 +15,7 @@ export class FolderNameDialogComponent {
   protected translatePipe: OFileManagerTranslatePipe;
   constructor(
     protected injector: Injector,
-    public dialogRef: MdDialogRef<FolderNameDialogComponent>
+    public dialogRef: MatDialogRef<FolderNameDialogComponent>
   ) {
     this.translatePipe = new OFileManagerTranslatePipe(this.injector);
   }
