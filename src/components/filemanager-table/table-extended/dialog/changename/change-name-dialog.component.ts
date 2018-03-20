@@ -12,7 +12,7 @@ export class ChangeNameDialogData {
   fileData?: FileClass;
 }
 
-export const FILENAME_REGEXP = /^[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]*$/;
+export const FILENAME_REGEXP = /^[0-9a-zA-Z\u00C0-\u00FF\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]*$/;
 
 export function fileNameValidator(control: FormControl) {
   if ((void 0 !== control.value) && FILENAME_REGEXP.test(control.value)) {

@@ -1,6 +1,9 @@
-import { Component, ViewEncapsulation, Injector } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+
 import { MatDialogRef } from '@angular/material';
-import { OFileManagerTranslatePipe } from '../../../../core/o-filemanager-translate.pipe';
+
+import { OFileManagerTranslatePipe } from '../../../../../core/o-filemanager-translate.pipe';
 
 @Component({
   selector: 'folder-name-dialog',
@@ -12,7 +15,16 @@ import { OFileManagerTranslatePipe } from '../../../../core/o-filemanager-transl
   }
 })
 export class FolderNameDialogComponent {
+
+  public foldername: string;
+  public foldernameFormControl = new FormControl('', [
+    Validators.required
+  ]);
+
+  @ViewChild('folderNameRef') inputRef: ElementRef;
+
   protected translatePipe: OFileManagerTranslatePipe;
+
   constructor(
     protected injector: Injector,
     public dialogRef: MatDialogRef<FolderNameDialogComponent>
@@ -28,5 +40,16 @@ export class FolderNameDialogComponent {
     return this.translatePipe.transform('name');
   }
 
+  onKeyDown(e: Event): void {
+    if (e['keyCode'] === 13) {
+      this.submit();
+    }
+  }
+
+  submit(): void {
+    if (!this.foldernameFormControl.invalid) {
+      this.dialogRef.close(this.inputRef.nativeElement.value);
+    }
+  }
 
 }

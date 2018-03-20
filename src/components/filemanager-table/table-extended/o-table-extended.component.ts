@@ -5,7 +5,7 @@ import { MatDialogConfig } from '@angular/material';
 import { ServiceUtils } from 'ontimize-web-ngx';
 
 import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
-import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component';
+import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 
@@ -207,16 +207,16 @@ export class OTableExtendedComponent extends OTableComponent {
   }
 
   remove(clearSelectedItems: boolean = false) {
-    if ((this.keysArray.length === 0) || this.selectedItems.length === 0) {
+    if ((this.keysArray.length === 0) || this.selection.isEmpty()) {
       return;
     }
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
           let workspaceId = this.parentItem[this.workspaceKey];
-          this.dataService[this.deleteMethod](workspaceId, this.selectedItems).subscribe(() => {
+          this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
-            ObservableWrapper.callEmit(this.onRowDeleted, this.selectedItems);
+            ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
           }, error => {
             this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
           }, () => {
@@ -227,7 +227,7 @@ export class OTableExtendedComponent extends OTableComponent {
           this.deleteLocalItems();
         }
       } else if (clearSelectedItems) {
-        this.selectedItems = [];
+        this.clearSelection();
       }
     });
   }

@@ -1,6 +1,6 @@
 <div class="expandable-container" [style.display]="isVisible()? '' : 'none'">
   <div class="o-table-container">
-    <div class="toolbar" fxLayout="row" fxLayoutAlign="space-between center">
+    <div #tableToolbar class="toolbar" fxLayout="row" fxLayoutAlign="space-between center">
       <div class="buttons">
         <o-table-button *ngIf="insertButton" (onClick)="add()" label="TABLE.BUTTONS.ADD" icon="add"> </o-table-button>
         <o-table-button *ngIf="refreshButton" (onClick)="reloadData()" label="TABLE.BUTTONS.REFRESH" icon="autorenew"> </o-table-button>
@@ -44,12 +44,11 @@
       </div>
     </div>
 
-
-    <mat-table #table class="header-fixed" matSort [class]="rowHeight">
+    <mat-table #tableHeader matSort [class]="rowHeight" class="header-fixed" [class.mat-table]="true">
       <!--Checkbox Column -->
       <ng-container [cdkColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
         <mat-header-cell *cdkHeaderCellDef>
-          <mat-checkbox (change)="masterToggle($event)" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="masterToggle($event)" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
         </mat-header-cell>
       </ng-container>
 
@@ -74,11 +73,21 @@
 
     </mat-table>
 
-    <mat-table #table [trackBy]="getTrackByFunction()" [dataSource]="dataSource" matSort [class]="rowHeight" id="tableContent">
+    <!--TABLE EMPTY-->
+    <div class="mat-row o-table-no-results {{ rowHeight }}" *ngIf="dataSource !== undefined && dataSource.resultsLength === 0"
+      fxLayoutAlign="center center">
+      {{'TABLE.EMPTY' | oTranslate}}
+      <ng-container *ngIf="quickFilter && oTableQuickFilterComponent && oTableQuickFilterComponent.value && oTableQuickFilterComponent.value.length > 0">
+        {{ 'TABLE.EMPTY_USING_FILTER' | oTranslate : { values: [oTableQuickFilterComponent.value] } }}
+      </ng-container>
+    </div>
+
+    <mat-table #table [trackBy]="getTrackByFunction()" [dataSource]="dataSource" matSort [class]="rowHeight" [class.content-table]="true"
+      [class.mat-table]="true" id="tableContent">
       <!--Checkbox Column -->
       <ng-container [cdkColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
         <mat-header-cell *cdkHeaderCellDef>
-          <mat-checkbox (change)="masterToggle($event)" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="masterToggle($event)" [checked]="isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
         </mat-header-cell>
         <mat-cell *cdkCellDef="let row">
           <mat-checkbox name="id[]" (click)="$event.stopPropagation()" (change)="$event ? selectedRow(row) : null" [checked]="selection.isSelected(row)">
@@ -114,11 +123,6 @@
 
     </mat-table>
 
-    <!--TABLE EMPTY-->
-    <div class="mat-row o-table-no-results" *ngIf="dataSource !== undefined && dataSource.resultsLength === 0" fxLayoutAlign="center center">
-      {{'TABLE.EMPTY' | oTranslate}}
-    </div>
-
     <!--TABLE AGGREGATE-->
     <o-table-aggregate [o-table-options]="oTableOptions" [datasource]="dataSource" *ngIf="showTotals"> </o-table-aggregate>
 
@@ -128,8 +132,8 @@
     </div>
 
     <!--TABLE PAGINATOR-->
-    <mat-paginator *ngIf="paginator" #matpaginator [length]="dataSource?.resultsLength" [pageIndex]="paginator.pageIndex" [pageSize]="rowQueryCache || paginator.pageSize"
-      [pageSizeOptions]="paginator.pageSizeOptions"></mat-paginator>
+    <!-- <mat-paginator *ngIf="paginator" #matpaginator [length]="dataSource?.resultsLength" [pageIndex]="paginator.pageIndex" [pageSize]="queryRows"
+      [pageSizeOptions]="paginator.pageSizeOptions" (page)="onChangePage($event)"></mat-paginator> -->
 
   </div>
 </div>
