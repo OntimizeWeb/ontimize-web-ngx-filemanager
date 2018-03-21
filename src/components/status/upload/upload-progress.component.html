@@ -29,7 +29,8 @@
           <span class="file-cancelled-text" *ngIf="!file.isUploaded && file.isCancel"> {{ cancelledUploadText }} </span>
 
           <span class="fill-remaining"></span>
-          <mat-progress-spinner *ngIf="file.isUploading" color="accent" mode="determinate" [value]="file.progress" class="uploading">
+          <mat-progress-spinner *ngIf="file.isUploading" color="accent" mode="determinate" [value]="file.progress" class="uploading"
+            strokeWidth="3" diameter="24">
           </mat-progress-spinner>
 
           <button type="button" mat-icon-button *ngIf="file.isUploading" (click)="onCancelFileUpload(file)">

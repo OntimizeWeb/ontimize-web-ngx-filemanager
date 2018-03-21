@@ -29,7 +29,7 @@
 
           <span class="fill-remaining"></span>
           <mat-progress-spinner *ngIf="!file.downloaded && !file.cancelled" color="accent" [style.opacity]="file.name !== undefined ? 1 : 0.5"
-            mode="indeterminate" class="uploading">
+            mode="indeterminate" class="uploading" strokeWidth="3" diameter="24">
           </mat-progress-spinner>
 
           <button type="button" mat-icon-button *ngIf="!file.downloaded && !file.cancelled" (click)="onCancelFileDownload(file)">

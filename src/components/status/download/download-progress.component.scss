@@ -1,4 +1,6 @@
 .download-progress {
+  z-index: 10;
+  position: absolute;
 
   .download-progress-container {
     &:not(.opened) {
@@ -50,10 +52,6 @@
           .file-data {
             width: 100%;
             cursor: default;
-            .mat-progress-spinner {
-              height: 24px;
-              width: 40px;
-            }
             .mat-icon {
               width: 40px;
               text-align: center;
