@@ -66,58 +66,6 @@ export class OTableExtendedComponent extends OTableComponent {
     }
   }
 
-  handleDOMClick(event) {
-    const tableContent = this.elRef.nativeElement;
-    const overlayContainer = document.body.getElementsByClassName('cdk-overlay-container')[0];
-    if (overlayContainer && overlayContainer.contains(event.target)) {
-      return;
-    }
-    if (tableContent && !tableContent.contains(event.target) && this.selection && this.selection.selected.length) {
-      this.clearSelection();
-    }
-  }
-
-  handleDoubleClick(item: any) {
-    clearTimeout(this.clickTimer);
-    this.clickPrevent = true;
-    super.handleDoubleClick(item);
-  }
-
-  handleClick(item: any, $event?) {
-    const self = this;
-    this.clickTimer = setTimeout(() => {
-      if (!self.clickPrevent) {
-        self.doClick(item, $event);
-      }
-      self.clickPrevent = false;
-    }, this.clickDelay);
-  }
-
-  doClick(item: any, $event?) {
-    if ($event.ctrlKey || $event.metaKey) {
-      // TODO: test $event.metaKey on MAC
-      this.selectedRow(item);
-      ObservableWrapper.callEmit(this.onClick, item);
-      return;
-    } else if ($event.shiftKey) {
-      if (this.selection.selected.length > 0) {
-        let first = this.dataSource.renderedData.indexOf(this.selectedItems[0]);
-        let last = this.dataSource.renderedData.indexOf(item);
-        let indexFrom = Math.min(first, last);
-        let indexTo = Math.max(first, last);
-        this.selection.clear();
-        this.dataSource.renderedData.slice(indexFrom, indexTo + 1).forEach(e => this.selectedRow(e));
-        ObservableWrapper.callEmit(this.onClick, this.selection.selected);
-        return;
-      }
-    }
-    if (this.selection.selected.length > 0 && !(this.selection.selected.length === 1 && this.selection.selected.indexOf(item) !== -1)) {
-      this.selection.clear();
-      this.selectedItems = [];
-    }
-    this.selectedRow(item);
-    ObservableWrapper.callEmit(this.onClick, item);
-  }
   /**
      * This method manages the call to the service
      * @param parentItem it is defined if its called from a form
@@ -200,10 +148,6 @@ export class OTableExtendedComponent extends OTableComponent {
     } else if (index !== -1) {
       this.selectedItems.splice(index, 1);
     }
-  }
-
-  isSelected(item): boolean {
-    return this.selection.selected.indexOf(item) !== -1;
   }
 
   remove(clearSelectedItems: boolean = false) {
