@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 
 import { MatDialogRef } from '@angular/material';
 
-import { OFileManagerTranslatePipe } from '../../../../../core/o-filemanager-translate.pipe';
+import { OFileManagerTranslatePipe, fileNameValidator } from '../../../../../core';
 
 @Component({
   selector: 'folder-name-dialog',
@@ -18,7 +18,8 @@ export class FolderNameDialogComponent {
 
   public foldername: string;
   public foldernameFormControl = new FormControl('', [
-    Validators.required
+    Validators.required,
+    fileNameValidator
   ]);
 
   @ViewChild('folderNameRef') inputRef: ElementRef;

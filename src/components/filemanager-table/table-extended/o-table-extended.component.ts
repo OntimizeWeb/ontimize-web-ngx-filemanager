@@ -8,6 +8,7 @@ import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OU
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
+import { OFileManagerTranslateModule } from '../../../core';
 
 @Component({
   selector: 'o-table-extended',
@@ -235,6 +236,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.setParentItem(filter);
     this.queryData(filter);
   }
+
 }
 
 @NgModule({
@@ -247,7 +249,8 @@ export class OTableExtendedComponent extends OTableComponent {
   ],
   imports: [
     CommonModule,
-    OntimizeWebModule
+    OntimizeWebModule,
+    OFileManagerTranslateModule
   ],
   exports: [OTableExtendedComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
