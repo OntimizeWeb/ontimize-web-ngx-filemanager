@@ -43,7 +43,7 @@ export class DownloadProgressComponent implements AfterViewInit {
   isOpened: boolean = false;
   onCloseFunction: Function;
 
-  protected collapsed: boolean = false;
+  collapsed: boolean = false;
   translatePipe: OFileManagerTranslatePipe;
 
   ngAfterViewInit() {

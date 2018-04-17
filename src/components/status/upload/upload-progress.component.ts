@@ -44,7 +44,7 @@ export class UploadProgressComponent implements AfterViewInit {
   onCloseFunction: Function;
   onCancelItemUpload: Function;
 
-  protected collapsed: boolean = false;
+  collapsed: boolean = false;
   translatePipe: OFileManagerTranslatePipe;
 
   ngAfterViewInit() {

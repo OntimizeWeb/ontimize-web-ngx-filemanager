@@ -1,11 +1,11 @@
 import { Injector, ComponentFactoryResolver, ApplicationRef } from '@angular/core';
-import { FileManagerService } from './filemanager.service';
-import { FileManagerStateService } from './filemanager-state.service';
-import { DomService } from './dom.service';
+import { FileManagerService } from './services/filemanager.service';
+import { FileManagerStateService } from './services/filemanager-state.service';
+import { DomService } from './services/dom.service';
 
-export * from './filemanager.service';
-export * from './filemanager-state.service';
-export * from './dom.service';
+export * from './services/filemanager.service';
+export * from './services/filemanager-state.service';
+export * from './services/dom.service';
 
 export function getFileManagerServiceProvider(injector: Injector) {
   return new FileManagerService(injector);

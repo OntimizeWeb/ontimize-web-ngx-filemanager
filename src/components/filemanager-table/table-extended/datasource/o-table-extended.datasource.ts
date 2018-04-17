@@ -10,7 +10,7 @@ export class OTableExtendedDataSource extends OTableDataSource {
   }
   protected getSortedData(data: any[]): any[] {
     if (!this._sort.active || this._sort.direction === '') { return data; }
-    this._sort.sortables.forEach((value, key) => {
+    this._sort.sortables.forEach((value, _key) => {
       this._sort.deregister(value);
     });
 

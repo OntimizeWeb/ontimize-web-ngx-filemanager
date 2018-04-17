@@ -1,9 +1,8 @@
 import { Component, forwardRef, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OFileInputComponent, OSharedModule, DEFAULT_INPUTS_O_FILE_INPUT, DEFAULT_OUTPUTS_O_FILE_INPUT } from 'ontimize-web-ngx';
+import { OFileInputComponent, OSharedModule, DEFAULT_INPUTS_O_FILE_INPUT, DEFAULT_OUTPUTS_O_FILE_INPUT, OFileItem } from 'ontimize-web-ngx';
 
 import { OFileUploaderExtended } from './o-file-uploader-extended';
-import { OFileItem } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-item.class';
 
 @Component({
   selector: 'o-file-input-extended',

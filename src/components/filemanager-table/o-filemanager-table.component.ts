@@ -52,9 +52,9 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
   public static DEFAULT_SERVICE_TYPE = 'FileManagerService';
 
-  protected workspaceKey: string;
-  protected service: string;
-  protected parentKeys: string;
+  workspaceKey: string;
+  service: string;
+  parentKeys: string;
   @InputConverter()
   autoHideUpload: boolean = true;
   @InputConverter()
