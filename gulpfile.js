@@ -2,19 +2,16 @@ const gulp = require('gulp');
 const sass = require('node-sass');
 const inlineTemplates = require('gulp-inline-ng2-template');
 const exec = require('child_process').exec;
-const htmlMinifier = require("html-minifier");/*!!!!*/
 const copyfiles = require('copyfiles');
 const cssimport = require("gulp-cssimport");
 const replace = require('gulp-replace');
-
-
 
 const SCSS_CONF = {
   SRC : './styles.scss',
   DIST: './dist'
 };
 
-gulp.task('filemanager.styles', (callback) => {
+gulp.task('styles', (callback) => {
   return gulp.src(SCSS_CONF.SRC)
   .pipe(cssimport({}))
     .pipe(gulp.dest(SCSS_CONF.DIST));
@@ -46,7 +43,7 @@ gulp.task('copy-theme', (callback) => {
  * @see  https://github.com/ludohenin/gulp-inline-ng2-template
  */
 const INLINE_TEMPLATES_CONF = {
-  SRC: ['./**/*.ts', '!./tmp/**/*', '!./node_modules/**/*', '!./custom-typings.d.ts'],
+  SRC: ['./**/*.ts', '!./tmp/**/*', '!./node_modules/**/*'],
   DIST: './tmp',
   CONFIG: {
     base: '.',
