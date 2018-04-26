@@ -1,5 +1,5 @@
 <div fxLayout="column" [oContextMenu]="tableContextMenu">
-  <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no" (onErrorFile)="onUploadError($event)"
+  <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no" (onErrorFile)="onUploadError()"
     (onUploadFile)="onUploadedFile($event)" [workspace-key]="workspaceKey">
   </o-file-input-extended>
 
