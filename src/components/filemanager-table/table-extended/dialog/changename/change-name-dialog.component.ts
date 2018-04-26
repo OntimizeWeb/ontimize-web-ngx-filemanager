@@ -2,23 +2,13 @@ import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angu
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { OFileManagerTranslatePipe } from '../../../../../core/o-filemanager-translate.pipe';
-import { FileClass } from '../../../../../core';
+import { FileClass, OFileManagerTranslatePipe, fileNameValidator } from '../../../../../core';
 
 export class ChangeNameDialogData {
   title: string;
   placeholder: string;
   defaultValue?: string;
   fileData?: FileClass;
-}
-
-export const FILENAME_REGEXP = /^[0-9a-zA-Z\u00C0-\u00FF\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]*$/;
-
-export function fileNameValidator(control: FormControl) {
-  if ((void 0 !== control.value) && FILENAME_REGEXP.test(control.value)) {
-    return {};
-  }
-  return { 'invalidFileName': true };
 }
 
 @Component({

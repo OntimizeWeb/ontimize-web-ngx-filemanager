@@ -10,7 +10,7 @@ import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-ta
 import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-table-column-renderer-filesize.component';
 
 import { FileManagerStateService } from '../../services/filemanager-state.service';
-import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core/o-filemanager-translate.pipe';
+import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
 import { OTableExtendedModule, OTableExtendedComponent } from './table-extended/o-table-extended.component';
 import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
 import { OFileInputExtendedModule, OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
