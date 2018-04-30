@@ -4,8 +4,6 @@
   "description": "An implementation of file management system for Ontimize Web",
   "scripts": {
     "preinstall": "npm config set package-lock false",
-    "pack": "npm run build && cd dist && npm pack && cd ..",
-    "xxx": "rimraf node_modules/ontimize-web-ngx* && npm install",
     "clean": "o-ngx-lib-builder clean",
     "build": "npm run clean && o-ngx-lib-builder build --package ontimize-web-ngx-filemanager --ng-library ng.ontimizeWebFilemanager"
   },
