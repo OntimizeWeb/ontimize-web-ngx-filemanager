@@ -1,13 +1,14 @@
 import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MdDialogConfig } from '@angular/material';
+import { MatDialogConfig } from '@angular/material';
 
 import { ServiceUtils } from 'ontimize-web-ngx';
 
 import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
-import { FolderNameDialogComponent } from './dialog/folder-name-dialog.component';
+import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
+import { OFileManagerTranslateModule } from '../../../core';
 
 @Component({
   selector: 'o-table-extended',
@@ -66,58 +67,6 @@ export class OTableExtendedComponent extends OTableComponent {
     }
   }
 
-  handleDOMClick(event) {
-    const tableContent = this.elRef.nativeElement;
-    const overlayContainer = document.body.getElementsByClassName('cdk-overlay-container')[0];
-    if (overlayContainer && overlayContainer.contains(event.target)) {
-      return;
-    }
-    if (tableContent && !tableContent.contains(event.target) && this.selection && this.selection.selected.length) {
-      this.clearSelection();
-    }
-  }
-
-  handleDoubleClick(item: any) {
-    clearTimeout(this.clickTimer);
-    this.clickPrevent = true;
-    super.handleDoubleClick(item);
-  }
-
-  handleClick(item: any, $event?) {
-    const self = this;
-    this.clickTimer = setTimeout(() => {
-      if (!self.clickPrevent) {
-        self.doClick(item, $event);
-      }
-      self.clickPrevent = false;
-    }, this.clickDelay);
-  }
-
-  doClick(item: any, $event?) {
-    if ($event.ctrlKey || $event.metaKey) {
-      // TODO: test $event.metaKey on MAC
-      this.selectedRow(item);
-      ObservableWrapper.callEmit(this.onClick, item);
-      return;
-    } else if ($event.shiftKey) {
-      if (this.selection.selected.length > 0) {
-        let first = this.dataSource.renderedData.indexOf(this.selectedItems[0]);
-        let last = this.dataSource.renderedData.indexOf(item);
-        let indexFrom = Math.min(first, last);
-        let indexTo = Math.max(first, last);
-        this.selection.clear();
-        this.dataSource.renderedData.slice(indexFrom, indexTo + 1).forEach(e => this.selectedRow(e));
-        ObservableWrapper.callEmit(this.onClick, this.selection.selected);
-        return;
-      }
-    }
-    if (this.selection.selected.length > 0 && !(this.selection.selected.length === 1 && this.selection.selected.indexOf(item) !== -1)) {
-      this.selection.clear();
-      this.selectedItems = [];
-    }
-    this.selectedRow(item);
-    ObservableWrapper.callEmit(this.onClick, item);
-  }
   /**
      * This method manages the call to the service
      * @param parentItem it is defined if its called from a form
@@ -125,7 +74,7 @@ export class OTableExtendedComponent extends OTableComponent {
      */
   queryData(parentItem: any = undefined, ovrrArgs?: any) {
     // If exit tab and not is active then waiting call queryData
-    if (this.mdTabContainer && !this.mdTabContainer.isActive) {
+    if (this.tabContainer && !this.tabContainer.isActive) {
       this.pendingQuery = true;
       this.pendingQueryFilter = parentItem;
       return;
@@ -202,21 +151,17 @@ export class OTableExtendedComponent extends OTableComponent {
     }
   }
 
-  isSelected(item): boolean {
-    return this.selection.selected.indexOf(item) !== -1;
-  }
-
   remove(clearSelectedItems: boolean = false) {
-    if ((this.keysArray.length === 0) || this.selectedItems.length === 0) {
+    if ((this.keysArray.length === 0) || this.selection.isEmpty()) {
       return;
     }
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
           let workspaceId = this.parentItem[this.workspaceKey];
-          this.dataService[this.deleteMethod](workspaceId, this.selectedItems).subscribe(() => {
+          this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
-            ObservableWrapper.callEmit(this.onRowDeleted, this.selectedItems);
+            ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
           }, error => {
             this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
           }, () => {
@@ -227,13 +172,13 @@ export class OTableExtendedComponent extends OTableComponent {
           this.deleteLocalItems();
         }
       } else if (clearSelectedItems) {
-        this.selectedItems = [];
+        this.clearSelection();
       }
     });
   }
 
   onAddFolder() {
-    let cfg: MdDialogConfig = {
+    let cfg: MatDialogConfig = {
       role: 'dialog',
       disableClose: false
     };
@@ -291,6 +236,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.setParentItem(filter);
     this.queryData(filter);
   }
+
 }
 
 @NgModule({
@@ -303,7 +249,8 @@ export class OTableExtendedComponent extends OTableComponent {
   ],
   imports: [
     CommonModule,
-    OntimizeWebModule
+    OntimizeWebModule,
+    OFileManagerTranslateModule
   ],
   exports: [OTableExtendedComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

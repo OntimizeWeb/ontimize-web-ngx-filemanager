@@ -29,7 +29,8 @@ export var MAP = {
     'MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TEXT': 'Downloading is not completed',
     'MESSAGES.COMPRESSING_FILES': 'Compressing files',
 
-    'VALIDATE.FILENAME.INVALID': 'The following characters are not allowed: \\ / : * ? \" < > |'
+    // 'VALIDATE.FILENAME.INVALID': 'The following characters are not allowed: \\ / : * ? \" < > |'
+    'VALIDATE.FILENAME.INVALID': 'The following characters are not allowed: \^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_'
   },
 
   // Spanish
@@ -62,6 +63,7 @@ export var MAP = {
     'MESSAGES.CONFIRM_DISCARD_DOWNLOAD_TEXT': 'La descarga no se ha completado',
     'MESSAGES.COMPRESSING_FILES': 'Comprimiendo elementos',
 
-    'VALIDATE.FILENAME.INVALID': 'No puede contener ninguno de los siguientes caracteres: \\ / : * ? \" < > |'
+    // 'VALIDATE.FILENAME.INVALID': 'No puede contener ninguno de los siguientes caracteres: \\ / : * ? \" < > |'
+    'VALIDATE.FILENAME.INVALID': 'No puede contener ninguno de los siguientes caracteres: \^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_'
   }
 };

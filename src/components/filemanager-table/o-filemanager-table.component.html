@@ -1,13 +1,13 @@
 <div fxLayout="column" [oContextMenu]="tableContextMenu">
-  <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no" (onErrorFile)="onUploadError($event)"
+  <o-file-input-extended #oFileInput attr="fileUpload" [service-type]="serviceType" max-file-size="10000" multiple="no" (onErrorFile)="onUploadError()"
     (onUploadFile)="onUploadedFile($event)" [workspace-key]="workspaceKey">
   </o-file-input-extended>
 
   <!-- <div fxLayout="row" fxFill layout-padding class="filemanager-breadcrumb">
-    <md-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</md-icon>
+    <mat-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</mat-icon>
     <div *ngFor="let item of breadcrumbs; let i = index" (click)="onBreadcrumbItemClick(item.filter, i)" fxLayout="row" fxLayoutAlign="center center"
       class="breadcrumb-item">
-      <md-icon color="accent">chevron_right</md-icon>
+      <mat-icon color="accent">chevron_right</mat-icon>
       <div class="breadcrumb-item-text">{{ item.item.name }}</div>
     </div>
   </div> -->
@@ -16,7 +16,7 @@
     [parent-keys]="parentKeys" keys="id" columns="id;name;size;creationDate;directory" visible-columns="directory;name;size;creationDate"
     sort-columns="name" show-table-buttons-text="yes" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no"
     pagination-controls="no" query-on-init="no" detail-mode="none" [select-all-checkbox]="selectAllCheckbox" (onDoubleClick)="onTableDoubleClick($event)"
-    [query-method]="queryMethod" [delete-method]="deleteMethod" [add-folder-method]="addFolderMethod">
+    [query-method]="queryMethod" [delete-method]="deleteMethod" [add-folder-method]="addFolderMethod" pageable="no">
 
     <!-- <o-table-option label="TABLE.BUTTONS.DELETE" *ngIf="oTable.showDeleteButton"></o-table-option> -->
 

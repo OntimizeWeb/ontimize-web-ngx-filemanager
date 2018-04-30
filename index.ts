@@ -6,8 +6,7 @@ import { OFILEMANAGER_PROVIDERS } from './src/services';
  * Exports
  */
 export * from './src/components';
-// export * from './src/core';
-// export * from './src/interfaces';
+export * from './src/core';
 export * from './src/services';
 
 @NgModule({

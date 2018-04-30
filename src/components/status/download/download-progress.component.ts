@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { OFileManagerTranslatePipe } from '../../../core/o-filemanager-translate.pipe';
+import { OFileManagerTranslatePipe } from '../../../core';
 
 export const DEFAULT_INPUTS_DOWNLOAD_PROGRESS = [
   'title',
@@ -43,7 +43,7 @@ export class DownloadProgressComponent implements AfterViewInit {
   isOpened: boolean = false;
   onCloseFunction: Function;
 
-  protected collapsed: boolean = false;
+  collapsed: boolean = false;
   translatePipe: OFileManagerTranslatePipe;
 
   ngAfterViewInit() {

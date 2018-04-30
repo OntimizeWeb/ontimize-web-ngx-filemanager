@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
 
 import { Subscription } from 'rxjs/Subscription';
-import { MdDialog, MdDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 
 import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
 import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-table-column-renderer-filesize.component';
 
 import { FileManagerStateService } from '../../services/filemanager-state.service';
-import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core/o-filemanager-translate.pipe';
+import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
 import { OTableExtendedModule, OTableExtendedComponent } from './table-extended/o-table-extended.component';
 import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
 import { OFileInputExtendedModule, OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
@@ -52,9 +52,9 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
   public static DEFAULT_SERVICE_TYPE = 'FileManagerService';
 
-  protected workspaceKey: string;
-  protected service: string;
-  protected parentKeys: string;
+  workspaceKey: string;
+  service: string;
+  parentKeys: string;
   @InputConverter()
   autoHideUpload: boolean = true;
   @InputConverter()
@@ -84,7 +84,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected translatePipe: OFileManagerTranslatePipe;
   protected onLanguageChangeSubscribe: any;
 
-  protected dialog: MdDialog;
+  protected dialog: MatDialog;
   protected dialogService: DialogService;
   protected doReloadQuery: boolean;
 
@@ -103,7 +103,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.stateService = this.injector.get(FileManagerStateService);
     this.dialogService = this.injector.get(DialogService);
     this.domService = this.injector.get(DomService);
-    this.dialog = this.injector.get(MdDialog);
+    this.dialog = this.injector.get(MatDialog);
 
     const self = this;
     if (this.oForm) {
@@ -270,7 +270,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         fileData: event.data
       };
 
-      let cfg: MdDialogConfig = {
+      let cfg: MatDialogConfig = {
         role: 'dialog',
         disableClose: false,
         data: dialogData

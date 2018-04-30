@@ -1,6 +1,4 @@
-import { OFileUploader } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-uploader.class';
-import { OFileItem } from 'ontimize-web-ngx/ontimize/components/input/file-input/o-file-item.class';
-import { OFormComponent, OntimizeFileService } from 'ontimize-web-ngx';
+import { OFormComponent, OntimizeFileService, OFileItem, OFileUploader } from 'ontimize-web-ngx';
 import { FileManagerService } from '../../services/filemanager.service';
 
 export class OFileUploaderExtended extends OFileUploader {

@@ -1,24 +1,14 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { OFileManagerTranslatePipe } from '../../../../../core/o-filemanager-translate.pipe';
-import { FileClass } from '../../../../../core';
+import { FileClass, OFileManagerTranslatePipe, fileNameValidator } from '../../../../../core';
 
 export class ChangeNameDialogData {
   title: string;
   placeholder: string;
   defaultValue?: string;
   fileData?: FileClass;
-}
-
-export const FILENAME_REGEXP = /^[0-9a-zA-Z\^\&\'\@\{\}\[\]\,\$\=\!\-\#\(\)\.\%\+\~\_ ]*$/;
-
-export function fileNameValidator(control: FormControl) {
-  if ((void 0 !== control.value) && FILENAME_REGEXP.test(control.value)) {
-    return {};
-  }
-  return { 'invalidFileName': true };
 }
 
 @Component({
@@ -43,10 +33,10 @@ export class ChangeNameDialogComponent implements AfterViewInit {
 
   constructor(
     protected injector: Injector,
-    public dialogRef: MdDialogRef<ChangeNameDialogData>
+    public dialogRef: MatDialogRef<ChangeNameDialogData>
   ) {
     this.translatePipe = new OFileManagerTranslatePipe(this.injector);
-    this.data = this.injector.get(MD_DIALOG_DATA);
+    this.data = this.injector.get(MAT_DIALOG_DATA);
     this.filename = this.defaultValue;
   }
 
