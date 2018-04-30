@@ -1,4 +1,4 @@
-## 3.0.0-rc.0
+## 3.0.0-rc.0 (2018-04-30)
 
 ### PEER-DEPENDENCY UPDATES ###
 * **Updated**:  ontimize-web-ngx@3.0.0-rc.0
