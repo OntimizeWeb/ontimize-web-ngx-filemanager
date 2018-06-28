@@ -5,31 +5,105 @@ $mat-checkbox-size-small: 16px !default;
 $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !default;
 
 .o-table {
-  align-items: normal!important;
+  .horizontal-scroll {
+    .mat-cell,
+    .mat-header-cell {
+      min-width: 150px;
+    }
+  }
 
+  .mat-cell,
+  .mat-header-cell {
+    min-width: 90px;
+  }
+}
+
+.o-table {
   .expandable-container {
     overflow-y: auto;
-    height: inherit;
+    height: 100%;
   }
 
   .o-table-container {
-    .fill-remaining {
-      flex: 1 1 auto;
+    .mat-cell.flex-0 {
+      flex: 0 !important;
     }
 
-    //display: block;
+    .o-table-body.horizontal-scroll {
+      overflow-x: auto;
+      padding-bottom: 16px;
+
+      .mat-table {
+        overflow: hidden;
+
+        &:not(.content-table) {
+          min-width: fit-content;
+        }
+      }
+
+      &.scrolled {
+        .mat-table.content-table {
+          min-width: fit-content;
+        }
+
+        .mat-cell,
+        .mat-header-cell {
+          flex: 0!important;
+        }
+      }
+
+      &::-webkit-scrollbar {
+        height: 16px;
+      }
+    }
+
+    .table-title {
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    // display: block;
     max-width: 100%;
     height: 100%;
 
-    //overflow: hidden;
+    overflow: hidden;
     position: relative;
     margin: 0 .5%;
 
-    .mat-column-select {
-      min-height: inherit;
-      max-width: 20px;
-      display: flex;
-      align-items: center;
+    .spinner-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 500;
+
+      visibility: visible;
+      opacity: 1;
+
+      -moz-transition: opacity .25s linear;
+      -webkit-transition: opacity .25s linear;
+      transition: opacity .25s linear;
+
+      .mat-progress-spinner {
+        height: 100%;
+        left: calc(50% - 50px);
+        top: calc(50% - 50px);
+      }
+    }
+
+    .o-table-no-results {
+      &.small {
+        min-height: 32px;
+      }
+
+      &.medium {
+        min-height: 36px;
+      }
+
+      &.large {
+        min-height: 48px;
+      }
     }
 
     .mat-table {
@@ -129,11 +203,11 @@ $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !defaul
             cursor: default;
           }
 
-          &:not(.mat-sort-header-sorted) {
-            .mat-sort-header-button {
-              padding-right: 16px;
-            }
-          }
+          // &:not(.mat-sort-header-sorted) {
+          //   .mat-sort-header-button {
+          //     padding-right: 16px;
+          //   }
+          // }
 
           .mat-sort-header-button {
             margin-left: auto;
@@ -177,6 +251,10 @@ $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !defaul
         }
 
         .mat-cell {
+          &.empty-cell {
+            min-height: 16px;
+          }
+
           .image-avatar {
             width: 34px;
             height: 34px;
@@ -209,15 +287,20 @@ $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !defaul
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        box-sizing: border-box;
+
+        &.mat-column-select {
+          max-width: 18px;
+          min-width: 18px;
+          width: 18px;
+          padding: 0 4px;
+          box-sizing: content-box;
+          overflow: initial;
+        }
       }
     }
 
     &.disabled {
-
-      // .dt-buttons {
-      //   display: none;
-      // }
-
       thead {
         tr {
           &::before {
@@ -260,14 +343,6 @@ $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !defaul
       }
     }
 
-    .quickFilter {
-      padding-right: 75px;
-
-      .mat-form-field-flex {
-        align-items: flex-end;
-      }
-    }
-
     .toolbar {
       margin: 4px 0;
       height: 40px;
@@ -289,9 +364,12 @@ $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !defaul
       height: 100%;
       display: flex;
 
-      #tableContent {
+      .mat-table {
         flex: 1 1 auto;
         position: relative;
+      }
+
+      .mat-table:not(.header-fixed) {
         overflow-y: auto;
       }
 
@@ -299,10 +377,49 @@ $_mat-checkbox-mark-stroke-size-small: 2 / 15 * $mat-checkbox-size-small !defaul
       .mat-paginator,
       .toolbar {
         flex: 0 0 auto;
-
       }
-
     }
 
   }
+  /* Workaround for bug when a table is inside a tab */
+  .o-table-container.tab-container {
+    .active-sort {
+      .mat-sort-header-arrow {
+        opacity: 1 !important;
+        transform: translateY(0px) !important;
+      }
+
+      &.desc {
+        .mat-sort-header-indicator {
+          transform: translateY(10px);
+        }
+
+        .mat-sort-header-pointer-left {
+          transform: rotate(45deg);
+        }
+
+        .mat-sort-header-pointer-right {
+          transform: rotate(-45deg);
+        }
+      }
+    }
+
+    .mat-sort-header-pointer-left {
+      transform: rotate(-45deg);
+    }
+
+    .mat-sort-header-pointer-right {
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.mat-tooltip.o-table-cell-tooltip {
+  position: absolute;
+  top: -12px;
+  word-wrap: break-word;
+  max-height: 64px;
+  overflow: hidden;
+  min-width: 140px;
+  text-align: center;
 }

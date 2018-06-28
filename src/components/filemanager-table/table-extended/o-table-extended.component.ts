@@ -1,10 +1,7 @@
 import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogConfig } from '@angular/material';
-
-import { ServiceUtils } from 'ontimize-web-ngx';
-
-import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper } from 'ontimize-web-ngx';
+import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, ServiceUtils } from 'ontimize-web-ngx';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
@@ -51,6 +48,15 @@ export class OTableExtendedComponent extends OTableComponent {
 
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: Array<any> = [];
+
+  ngOnInit() {
+    super.ngOnInit();
+    this.paginationControls = false;
+  }
+
+  getDataService(): any {
+    return this.dataService;
+  }
 
   setParentItem(val: any) {
     this.parentItem = val;
