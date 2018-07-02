@@ -229,7 +229,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   onContextDownloadFile() {
-    const tableService = this.oTable.dataService;
+    const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
       const workspaceId = this.oTable.getParentItem()[this.workspaceKey];
       const selectedItems = this.oTable.getSelectedItems();
@@ -286,7 +286,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   changeFileName(name: string, file: FileClass): void {
-    let tableService = this.oTable.dataService;
+    let tableService = this.oTable.getDataService();
     if (tableService && (this.changeNameMethod in tableService)) {
       let self = this;
       tableService[this.changeNameMethod](name, file).subscribe(
