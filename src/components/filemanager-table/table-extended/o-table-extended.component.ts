@@ -48,7 +48,7 @@ export class OTableExtendedComponent extends OTableComponent {
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: Array<any> = [];
 
-  protected parentItem = {};
+  public parentItem = {};
 
   ngOnInit() {
     super.ngOnInit();

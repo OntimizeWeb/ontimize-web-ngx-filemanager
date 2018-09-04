@@ -296,7 +296,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
           self.dialogService.alert('ERROR', err);
         }
       }, () => {
-        self.oTable.reloadData();
+        self.oTable.queryData(self.oTable.parentItem);
       });
     }
   }
