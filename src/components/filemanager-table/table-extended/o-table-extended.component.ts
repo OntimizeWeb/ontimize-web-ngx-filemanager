@@ -6,7 +6,7 @@ import { OFileManagerTranslateModule } from '../../../core';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, ObservableWrapper, OntimizeService, OntimizeWebModule, OQueryDataArgs, OTableComponent, ServiceUtils, Util, Codes } from 'ontimize-web-ngx';
+import { Codes, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, ObservableWrapper, OntimizeService, OntimizeWebModule, OQueryDataArgs, OTableComponent, ServiceUtils, Util } from 'ontimize-web-ngx';
 
 @Component({
   selector: 'o-table-extended',
@@ -47,6 +47,8 @@ export class OTableExtendedComponent extends OTableComponent {
 
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: Array<any> = [];
+
+  protected parentItem = {};
 
   ngOnInit() {
     super.ngOnInit();
@@ -170,7 +172,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          let workspaceId = this.parentItem[this.workspaceKey];
+          let workspaceId = this.form.getDataValue(this.workspaceKey).value;
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
@@ -208,7 +210,7 @@ export class OTableExtendedComponent extends OTableComponent {
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    const workspaceId = this.parentItem[this.workspaceKey];
+    const workspaceId = this.form.getDataValue(this.workspaceKey).value;
     let kv = {};
     if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
       kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
@@ -220,7 +222,7 @@ export class OTableExtendedComponent extends OTableComponent {
         this.dialogService.alert('ERROR', err);
       }
     }, () => {
-      this.reloadData();
+      this.queryData(kv);
     });
   }
 
@@ -240,7 +242,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.stateService.restart();
     const filter = this.stateService.getFormParentItem();
     this.setParentItem(filter);
-    this.queryData(filter);
+    this.queryData();
   }
 
   onBreadcrumbItemClick(filter: any, index: number) {
