@@ -1,9 +1,7 @@
 import { Injector, Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
+import { Observable, Subject } from 'rxjs';
 import 'rxjs/add/operator/share';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-// import { FileClass } from '../core/file.class';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class FileManagerStateService {
@@ -13,18 +11,17 @@ export class FileManagerStateService {
 
   private subject = new Subject<any>();
 
-  constructor(protected injector: Injector) {
-  }
+  constructor(protected injector: Injector) { }
 
   setFormParentItem(parentItem: any) {
     this.formParentItem = parentItem;
     this.stateArray = [];
   }
 
-  restart(index?:number) {
+  restart(index?: number) {
     let state = [];
     if (index !== undefined) {
-      state =this._stateArray.slice(0, index + 1);
+      state = this._stateArray.slice(0, index + 1);
     }
     this.stateArray = state;
   }
@@ -34,9 +31,8 @@ export class FileManagerStateService {
   }
 
   getAndStoreQueryFilter(queryFilter: any, item: any) {
-    const filter = Object.assign({}, this.formParentItem, queryFilter);
-    this._stateArray.push({filter : filter, item:item });
-    this.stateArray = this._stateArray;
+    const filter = Object.assign({}, queryFilter);
+    this.stateArray.push({ filter: filter, item: item });
     return filter;
   }
 
@@ -44,8 +40,13 @@ export class FileManagerStateService {
     return this.subject.asObservable();
   }
 
-  set stateArray(array : any[]) {
+  set stateArray(array: any[]) {
     this._stateArray = array;
     this.subject.next(this._stateArray);
   }
+
+  get stateArray(): any[] {
+    return this._stateArray;
+  }
+
 }

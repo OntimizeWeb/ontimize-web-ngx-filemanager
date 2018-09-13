@@ -245,7 +245,6 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         } else if (resp.loaded && resp.total) {
           let progress = Math.round(resp.loaded * 100 / resp.total);
           self.updateDownloaderStatus(downloadId, { progress: progress });
-          console.log(progress);
         } else if (resp.status === 200 && resp.type === HttpEventType.Response) {
           self.updateDownloaderStatus(downloadId, {
             downloaded: true
@@ -289,16 +288,15 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     let tableService = this.oTable.getDataService();
     if (tableService && (this.changeNameMethod in tableService)) {
       let self = this;
-      tableService[this.changeNameMethod](name, file).subscribe(
-        () => {
-          // do nothing
-        }, err => {
-          if (err && typeof err !== 'object') {
-            self.dialogService.alert('ERROR', err);
-          }
-        }, () => {
-          self.oTable.reloadData();
-        });
+      tableService[this.changeNameMethod](name, file).subscribe(() => {
+        // do nothing
+      }, err => {
+        if (err && typeof err !== 'object') {
+          self.dialogService.alert('ERROR', err);
+        }
+      }, () => {
+        self.oTable.reloadData();
+      });
     }
   }
 

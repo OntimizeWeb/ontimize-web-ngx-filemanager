@@ -10,7 +10,6 @@ import { OFileManagerTranslateModule } from '../../../core';
 @Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
-  styleUrls: ['./o-table-extended.component.scss'],
   providers: [
     { provide: OntimizeService, useFactory: dataServiceFactory, deps: [Injector] },
     {

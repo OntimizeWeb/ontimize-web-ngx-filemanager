@@ -1,4 +1,5 @@
-import { OFormComponent, OntimizeFileService, OFileItem, OFileUploader } from 'ontimize-web-ngx';
+import { OFileItem, OFileUploader, OFormComponent, OntimizeFileService } from 'ontimize-web-ngx';
+
 import { FileManagerService } from '../../services/filemanager.service';
 
 export class OFileUploaderExtended extends OFileUploader {
@@ -7,7 +8,6 @@ export class OFileUploaderExtended extends OFileUploader {
   protected workspaceKey: string;
   parentKey: string;
   protected filemanagerService: FileManagerService;
-
   protected parentItem: any;
 
   constructor(
@@ -55,7 +55,7 @@ export class OFileUploaderExtended extends OFileUploader {
       this._uploadSuscription.unsubscribe();
     }
 
-    const workspaceId = this.parentItem[this.workspaceKey];
+    const workspaceId = this.form.getDataValue(this.workspaceKey).value;
     let folderId;
     if (this.parentKey && this.parentItem.hasOwnProperty(this.parentKey)) {
       folderId = this.parentItem[this.parentKey];

@@ -31,7 +31,7 @@
     </div>
 
     <!-- FILEMANAGER BREADCRUMB -->
-    <div *ngIf="breadcrumbs.length > 0" fxLayout="row" fxFill layout-padding class="filemanager-breadcrumb">
+    <div fxLayout="row" class="filemanager-breadcrumb" layout-padding>
       <mat-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</mat-icon>
       <div *ngFor="let item of breadcrumbs; let i = index" (click)="onBreadcrumbItemClick(item.filter, i)" fxLayout="row" fxLayoutAlign="center center"
         class="breadcrumb-item">

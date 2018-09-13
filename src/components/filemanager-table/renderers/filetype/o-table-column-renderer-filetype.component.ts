@@ -15,4 +15,12 @@ export class OTableColumnRendererFileTypeComponent extends OBaseTableCellRendere
     this.initialize();
   }
 
+  ngOnInit() {
+    super.ngOnInit();
+    if (this.table) {
+      const oCol = this.table.getOColumn(this.tableColumn.attr);
+      oCol.title = undefined;
+    }
+  }
+
 }
