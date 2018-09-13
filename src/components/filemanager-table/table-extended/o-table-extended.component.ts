@@ -1,17 +1,15 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, Injector, NgModule, ViewEncapsulation } from '@angular/core';
+import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogConfig } from '@angular/material';
-
-import { OFileManagerTranslateModule } from '../../../core';
+import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, ServiceUtils } from 'ontimize-web-ngx';
+import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
-import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { Codes, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, ObservableWrapper, OntimizeService, OntimizeWebModule, OQueryDataArgs, OTableComponent, ServiceUtils, Util } from 'ontimize-web-ngx';
+import { OFileManagerTranslateModule } from '../../../core';
 
 @Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
-  styleUrls: ['./o-table-extended.component.scss'],
   providers: [
     { provide: OntimizeService, useFactory: dataServiceFactory, deps: [Injector] },
     {
@@ -33,13 +31,15 @@ import { Codes, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TA
     '(document:click)': 'handleDOMClick($event)'
   }
 })
+
 export class OTableExtendedComponent extends OTableComponent {
 
   public static FM_FOLDER_PARENT_KEY: string = 'FM_FOLDER_PARENT_KEY';
 
-  protected workspaceId: any;
   protected workspaceKey: string;
   protected addFolderMethod: string;
+
+  protected workspaceId: any;
 
   protected clickTimer;
   protected clickDelay = 200;
@@ -47,8 +47,6 @@ export class OTableExtendedComponent extends OTableComponent {
 
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: Array<any> = [];
-
-  public parentItem = {};
 
   ngOnInit() {
     super.ngOnInit();
@@ -75,81 +73,74 @@ export class OTableExtendedComponent extends OTableComponent {
   }
 
   /**
-   * This method manages the call to the service
-   * @param filter
-   * @param ovrrArgs
-   */
-  queryData(filter: any = undefined, ovrrArgs?: OQueryDataArgs) {
-    this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
-
-    // If tab exists and is not active then wait for queryData
+     * This method manages the call to the service
+     * @param parentItem it is defined if its called from a form
+     * @param ovrrArgs
+     */
+  queryData(parentItem: any = undefined, ovrrArgs?: any) {
+    // If exit tab and not is active then waiting call queryData
     if (this.tabContainer && !this.tabContainer.isActive) {
       this.pendingQuery = true;
-      this.pendingQueryFilter = filter;
+      this.pendingQueryFilter = parentItem;
       return;
     }
-    this.pendingQuery = false;
-    this.pendingQueryFilter = undefined;
-
     let queryMethodName = this.pageable ? this.paginatedQueryMethod : this.queryMethod;
     if (!this.dataService || !(queryMethodName in this.dataService)) {
       return;
     }
-    let filterParentKeys = ServiceUtils.getParentKeysFromForm(this._pKeysEquiv, this.form);
 
-    if (this.workspaceId === undefined || (!this.filterContainsAllParentKeys(filterParentKeys) && !this.queryWithNullParentKeys)) {
+    this.workspaceId = this.form.getDataValue(this.workspaceKey).value;
+    this.pendingQuery = false;
+    this.pendingQueryFilter = undefined;
+
+    parentItem = ServiceUtils.getParentItemFromForm(parentItem, this._pKeysEquiv, this.form);
+
+    let formData = this.form.formData;
+    this.workspaceId = formData[this.workspaceKey] ? formData[this.workspaceKey].value : undefined;
+
+    if (this.workspaceId === undefined || (Object.keys(this._pKeysEquiv).length > 0) && parentItem === undefined) {
       this.setData([], []);
     } else {
-      let pkFilter = ServiceUtils.getFilterUsingParentKeys(filterParentKeys, this._pKeysEquiv);
-      filter = Object.assign(filter || {}, pkFilter);
+      let filter = ServiceUtils.getFilterUsingParentKeys(parentItem, this._pKeysEquiv);
 
-      if (filter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-        filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      if (parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+        filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
       }
 
       let queryArguments = this.getQueryArguments(filter, ovrrArgs);
       if (this.querySubscription) {
         this.querySubscription.unsubscribe();
-        this.loaderSubscription.unsubscribe();
       }
-      this.loaderSubscription = this.load();
-      const self = this;
-      this.querySubscription = this.dataService[queryMethodName].apply(this.dataService, queryArguments).subscribe(res => {
+      this.querySubscription = this.daoTable.getQuery(queryArguments).subscribe(res => {
         let data = undefined;
         let sqlTypes = undefined;
         if (Util.isArray(res)) {
           data = res;
-          sqlTypes = {};
-        } else if ((res.code === Codes.ONTIMIZE_SUCCESSFUL_CODE)) {
-          const arrData = (res.data !== undefined) ? res.data : [];
-          data = Util.isArray(arrData) ? arrData : [];
+          sqlTypes = [];
+        } else if ((res.code === 0) && Util.isArray(res.data)) {
+          data = (res.data !== undefined) ? res.data : [];
           sqlTypes = res.sqlTypes;
-          if (this.pageable) {
-            this.updatePaginationInfo(res);
-          }
         }
-        self.setData(data, sqlTypes);
-        self.loaderSubscription.unsubscribe();
+        this.setData(data, sqlTypes);
+        if (this.pageable) {
+          ObservableWrapper.callEmit(this.onPaginatedTableDataLoaded, data);
+        }
+        ObservableWrapper.callEmit(this.onTableDataLoaded, this.daoTable.data);
       }, err => {
-        self.setData([], []);
-        self.loaderSubscription.unsubscribe();
-        if (err && typeof err !== 'object') {
-          self.dialogService.alert('ERROR', err);
-        } else {
-          self.dialogService.alert('ERROR', 'MESSAGES.ERROR_QUERY');
-        }
+        this.showDialogError(err, 'MESSAGES.ERROR_QUERY');
+        this.setData([], []);
       });
     }
   }
 
   getQueryArguments(filter: Object, ovrrArgs?: any): Array<any> {
-    const compFilter = this.getComponentFilter(filter);
-    const queryCols = this.getAttributesValuesToQuery();
-    let queryArguments = [this.workspaceId, compFilter, queryCols, this.entity, Util.isDefined(ovrrArgs) ? ovrrArgs.sqltypes : undefined];
+    let queryArguments = [this.workspaceId, filter, this.colArray];
     if (this.pageable) {
-      queryArguments[6] = this.paginator.isShowingAllRows(queryArguments[5]) ? this.state.totalQueryRecordsNumber : queryArguments[5];
-      queryArguments[7] = this.sortColArray;
+      let queryOffset = (ovrrArgs && ovrrArgs.hasOwnProperty('offset')) ? ovrrArgs.offset : this.state.queryRecordOffset;
+      let queryRowsN = (ovrrArgs && ovrrArgs.hasOwnProperty('length')) ? ovrrArgs.length : this.queryRows;
+      queryArguments = queryArguments.concat([undefined, queryOffset, queryRowsN, undefined]);
     }
+    queryArguments[2] = this.getAttributesValuesToQuery();
     return queryArguments;
   }
 
@@ -172,7 +163,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          let workspaceId = this.form.getDataValue(this.workspaceKey).value;
+          let workspaceId = this.parentItem[this.workspaceKey];
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
@@ -210,7 +201,7 @@ export class OTableExtendedComponent extends OTableComponent {
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    const workspaceId = this.form.getDataValue(this.workspaceKey).value;
+    const workspaceId = this.parentItem[this.workspaceKey];
     let kv = {};
     if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
       kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
@@ -222,7 +213,7 @@ export class OTableExtendedComponent extends OTableComponent {
         this.dialogService.alert('ERROR', err);
       }
     }, () => {
-      this.queryData(kv);
+      this.reloadData();
     });
   }
 
@@ -242,7 +233,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.stateService.restart();
     const filter = this.stateService.getFormParentItem();
     this.setParentItem(filter);
-    this.queryData();
+    this.queryData(filter);
   }
 
   onBreadcrumbItemClick(filter: any, index: number) {
@@ -254,10 +245,20 @@ export class OTableExtendedComponent extends OTableComponent {
 }
 
 @NgModule({
-  declarations: [FolderNameDialogComponent, OTableExtendedComponent],
-  entryComponents: [FolderNameDialogComponent],
-  imports: [CommonModule, OFileManagerTranslateModule, OntimizeWebModule],
+  declarations: [
+    OTableExtendedComponent,
+    FolderNameDialogComponent
+  ],
+  entryComponents: [
+    FolderNameDialogComponent
+  ],
+  imports: [
+    CommonModule,
+    OntimizeWebModule,
+    OFileManagerTranslateModule
+  ],
   exports: [OTableExtendedComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class OTableExtendedModule { }
+export class OTableExtendedModule {
+}
