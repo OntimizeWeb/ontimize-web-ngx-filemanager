@@ -1,21 +1,23 @@
 import { AfterViewInit, Component, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-import { Subscription } from 'rxjs';
-import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
 
-import { FileClass } from '../../core/file.class';
-import { DomService } from '../../services/dom.service';
-import { FileManagerStateService } from '../../services/filemanager-state.service';
-import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
-import { UploadProgressComponent } from '../status/upload/upload-progress.component';
-import { DownloadProgressComponent } from '../status/download/download-progress.component';
-import { OTableExtendedComponent, OTableExtendedModule } from './table-extended/o-table-extended.component';
-import { OFileInputExtendedComponent, OFileInputExtendedModule } from '../file-input/o-file-input-extended.component';
+import { Subscription } from 'rxjs/Subscription';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+
+import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
 import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-table-column-renderer-filesize.component';
+
+import { FileManagerStateService } from '../../services/filemanager-state.service';
+import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
+import { OTableExtendedModule, OTableExtendedComponent } from './table-extended/o-table-extended.component';
 import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
+import { OFileInputExtendedModule, OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
+import { FileClass } from '../../core/file.class';
+import { DomService } from '../../services/dom.service';
+import { UploadProgressComponent } from '../status/upload/upload-progress.component';
+import { DownloadProgressComponent } from '../status/download/download-progress.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'workspaceKey: workspace-key',
@@ -28,7 +30,8 @@ export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'selectAllCheckbox: select-all-checkbox'
 ];
 
-export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [];
+export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
+];
 
 @Component({
   selector: 'o-filemanager-table',
@@ -295,8 +298,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         if (err && typeof err !== 'object') {
           self.dialogService.alert('ERROR', err);
         }
-      }, () => {
-        self.oTable.queryData(self.oTable.parentItem);
+        }, () => {
+        self.oTable.reloadData();
       });
     }
   }
@@ -460,10 +463,29 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 }
 
 @NgModule({
-  declarations: [ChangeNameDialogComponent, DownloadProgressComponent, OFileManagerTableComponent, OTableColumnRendererFileSizeComponent, OTableColumnRendererFileTypeComponent, UploadProgressComponent],
-  imports: [CommonModule, OFileInputExtendedModule, OFileManagerTranslateModule, OntimizeWebModule, OSharedModule, OTableExtendedModule],
-  entryComponents: [ChangeNameDialogComponent, DownloadProgressComponent, UploadProgressComponent],
+  declarations: [
+    OFileManagerTableComponent,
+    OTableColumnRendererFileTypeComponent,
+    OTableColumnRendererFileSizeComponent,
+    ChangeNameDialogComponent,
+    UploadProgressComponent,
+    DownloadProgressComponent
+  ],
+  imports: [
+    CommonModule,
+    OntimizeWebModule,
+    OSharedModule,
+    OTableExtendedModule,
+    OFileInputExtendedModule,
+    OFileManagerTranslateModule
+  ],
+  entryComponents: [
+    ChangeNameDialogComponent,
+    UploadProgressComponent,
+    DownloadProgressComponent
+  ],
   exports: [OFileManagerTableComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class OFileManagerTableModule { }
+export class OFileManagerTableModule {
+}

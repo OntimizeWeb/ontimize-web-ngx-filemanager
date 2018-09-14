@@ -1,17 +1,15 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, Injector, NgModule, ViewEncapsulation } from '@angular/core';
+import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogConfig } from '@angular/material';
-
-import { OFileManagerTranslateModule } from '../../../core';
+import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, ServiceUtils, OQueryDataArgs, Codes } from 'ontimize-web-ngx';
+import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
-import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { Codes, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, ObservableWrapper, OntimizeService, OntimizeWebModule, OQueryDataArgs, OTableComponent, ServiceUtils, Util } from 'ontimize-web-ngx';
+import { OFileManagerTranslateModule } from '../../../core';
 
 @Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
-  styleUrls: ['./o-table-extended.component.scss'],
   providers: [
     { provide: OntimizeService, useFactory: dataServiceFactory, deps: [Injector] },
     {
@@ -33,6 +31,7 @@ import { Codes, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TA
     '(document:click)': 'handleDOMClick($event)'
   }
 })
+
 export class OTableExtendedComponent extends OTableComponent {
 
   public static FM_FOLDER_PARENT_KEY: string = 'FM_FOLDER_PARENT_KEY';
@@ -75,10 +74,10 @@ export class OTableExtendedComponent extends OTableComponent {
   }
 
   /**
-   * This method manages the call to the service
-   * @param filter
-   * @param ovrrArgs
-   */
+ * This method manages the call to the service
+ * @param filter
+ * @param ovrrArgs
+ */
   queryData(filter: any = undefined, ovrrArgs?: OQueryDataArgs) {
     this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
 
@@ -251,13 +250,37 @@ export class OTableExtendedComponent extends OTableComponent {
     this.queryData(filter);
   }
 
+  reloadData() {
+    this.clearSelection();
+    this.finishQuerySubscription = false;
+    this.pendingQuery = true;
+    // let queryArgs: OQueryDataArgs;
+    // if (this.pageable) {
+    //   queryArgs = {
+    //     offset: this.currentPage * this.queryRows,
+    //     length: this.queryRows
+    //   };
+    // }
+    this.queryData(this.parentItem);
+  }
+
 }
 
 @NgModule({
-  declarations: [FolderNameDialogComponent, OTableExtendedComponent],
-  entryComponents: [FolderNameDialogComponent],
-  imports: [CommonModule, OFileManagerTranslateModule, OntimizeWebModule],
+  declarations: [
+    OTableExtendedComponent,
+    FolderNameDialogComponent
+  ],
+  entryComponents: [
+    FolderNameDialogComponent
+  ],
+  imports: [
+    CommonModule,
+    OntimizeWebModule,
+    OFileManagerTranslateModule
+  ],
   exports: [OTableExtendedComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class OTableExtendedModule { }
+export class OTableExtendedModule {
+}
