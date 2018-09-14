@@ -14,7 +14,6 @@ export class OTableColumnRendererFileSizeComponent extends OBaseTableCellRendere
 
   constructor(protected injector: Injector) {
     super(injector);
-    this.initialize();
   }
 
   transformSize(value: any, precision: number = 2) {

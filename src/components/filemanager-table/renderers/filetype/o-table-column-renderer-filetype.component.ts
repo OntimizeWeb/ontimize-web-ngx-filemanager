@@ -12,7 +12,12 @@ export class OTableColumnRendererFileTypeComponent extends OBaseTableCellRendere
 
   constructor(protected injector: Injector) {
     super(injector);
-    this.initialize();
   }
 
+  ngOnInit() {
+    if (this.table) {
+      const oCol = this.table.getOColumn(this.tableColumn.attr);
+      oCol.title = undefined;
+    }
+  }
 }
