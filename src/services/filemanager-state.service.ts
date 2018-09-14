@@ -36,6 +36,14 @@ export class FileManagerStateService {
     return filter;
   }
 
+  getCurrentQueryFilter(): any {
+    let result = {};
+    if (this.stateArray.length > 0) {
+      result = this.stateArray[this.stateArray.length - 1].filter;
+    }
+    return result;
+  }
+
   getStateObservable(): Observable<any> {
     return this.subject.asObservable();
   }

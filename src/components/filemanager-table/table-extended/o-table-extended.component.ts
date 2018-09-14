@@ -47,8 +47,6 @@ export class OTableExtendedComponent extends OTableComponent {
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: Array<any> = [];
 
-  public parentItem = {};
-
   ngOnInit() {
     super.ngOnInit();
     this.paginationControls = false;
@@ -56,14 +54,6 @@ export class OTableExtendedComponent extends OTableComponent {
 
   getDataService(): any {
     return this.dataService;
-  }
-
-  setParentItem(val: any) {
-    this.parentItem = val;
-  }
-
-  getParentItem(): any {
-    return this.parentItem;
   }
 
   setDatasource() {
@@ -178,7 +168,7 @@ export class OTableExtendedComponent extends OTableComponent {
           }, error => {
             this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
           }, () => {
-            this.reloadData();
+            this.reloadCurrentFolder();
           });
         } else {
           // remove local
@@ -211,8 +201,9 @@ export class OTableExtendedComponent extends OTableComponent {
     }
     const workspaceId = this.form.getDataValue(this.workspaceKey).value;
     let kv = {};
-    if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+    let currentFilter = this.stateService.getCurrentQueryFilter();
+    if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
     }
     tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(() => {
       // do nothing
@@ -240,28 +231,21 @@ export class OTableExtendedComponent extends OTableComponent {
   onGoToRootFolderClick() {
     this.stateService.restart();
     const filter = this.stateService.getFormParentItem();
-    this.setParentItem(filter);
-    this.queryData();
+    this.queryData(filter);
   }
 
   onBreadcrumbItemClick(filter: any, index: number) {
     this.stateService.restart(index);
-    this.setParentItem(filter);
     this.queryData(filter);
   }
 
-  reloadData() {
-    this.clearSelection();
-    this.finishQuerySubscription = false;
-    this.pendingQuery = true;
-    // let queryArgs: OQueryDataArgs;
-    // if (this.pageable) {
-    //   queryArgs = {
-    //     offset: this.currentPage * this.queryRows,
-    //     length: this.queryRows
-    //   };
-    // }
-    this.queryData(this.parentItem);
+  reloadCurrentFolder() {
+    let kv = {};
+    let currentFilter = this.stateService.getCurrentQueryFilter();
+    if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+    }
+    this.queryData(kv);
   }
 
 }
