@@ -1,7 +1,7 @@
 import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogConfig } from '@angular/material';
-import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, ServiceUtils } from 'ontimize-web-ngx';
+import { OntimizeService, dataServiceFactory, DEFAULT_INPUTS_O_TABLE, DEFAULT_OUTPUTS_O_TABLE, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, ServiceUtils, OQueryDataArgs, Codes } from 'ontimize-web-ngx';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
@@ -57,14 +57,6 @@ export class OTableExtendedComponent extends OTableComponent {
     return this.dataService;
   }
 
-  setParentItem(val: any) {
-    this.parentItem = val;
-  }
-
-  getParentItem(): any {
-    return this.parentItem;
-  }
-
   setDatasource() {
     this.dataSource = new OTableExtendedDataSource(this);
     if (this.daoTable) {
@@ -73,12 +65,14 @@ export class OTableExtendedComponent extends OTableComponent {
   }
 
   /**
-     * This method manages the call to the service
-     * @param parentItem it is defined if its called from a form
-     * @param ovrrArgs
-     */
-  queryData(parentItem: any = undefined, ovrrArgs?: any) {
-    // If exit tab and not is active then waiting call queryData
+ * This method manages the call to the service
+ * @param filter
+ * @param ovrrArgs
+ */
+  queryData(filter: any = undefined, ovrrArgs?: OQueryDataArgs) {
+    this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
+
+    // If tab exists and is not active then wait for queryData
     if (this.tabContainer && !this.tabContainer.isActive) {
       this.pendingQuery = true;
       this.pendingQueryFilter = parentItem;
@@ -170,7 +164,7 @@ export class OTableExtendedComponent extends OTableComponent {
           }, error => {
             this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
           }, () => {
-            this.reloadData();
+            this.reloadCurrentFolder();
           });
         } else {
           // remove local
@@ -203,8 +197,9 @@ export class OTableExtendedComponent extends OTableComponent {
     }
     const workspaceId = this.parentItem[this.workspaceKey];
     let kv = {};
-    if (this.parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = this.parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+    let currentFilter = this.stateService.getCurrentQueryFilter();
+    if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
     }
     tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(() => {
       // do nothing
@@ -232,14 +227,21 @@ export class OTableExtendedComponent extends OTableComponent {
   onGoToRootFolderClick() {
     this.stateService.restart();
     const filter = this.stateService.getFormParentItem();
-    this.setParentItem(filter);
     this.queryData(filter);
   }
 
   onBreadcrumbItemClick(filter: any, index: number) {
     this.stateService.restart(index);
-    this.setParentItem(filter);
     this.queryData(filter);
+  }
+
+  reloadCurrentFolder() {
+    let kv = {};
+    let currentFilter = this.stateService.getCurrentQueryFilter();
+    if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+      kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+    }
+    this.queryData(kv);
   }
 
 }

@@ -136,7 +136,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       this.fileChangeSubscription = this.oFileInput.onChange.subscribe(() => {
         this.showUploaderStatus = true;
         this.doReloadQuery = true;
-        this.oFileInput.uploader.setParentItem(this.oTable.getParentItem());
+        let filter = this.stateService.getCurrentQueryFilter();
+        this.oFileInput.uploader.setParentItem(filter);
         this.oFileInput.upload();
       });
     }
@@ -195,7 +196,6 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.oTable.clearSelection();
     this.doReloadQuery = false;
     const filter = this.stateService.getAndStoreQueryFilter({ 'FM_FOLDER_PARENT_KEY': item.id }, item);
-    this.oTable.setParentItem(filter);
     this.oTable.queryData(filter);
   }
 
@@ -295,7 +295,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
           self.dialogService.alert('ERROR', err);
         }
       }, () => {
-        self.oTable.reloadData();
+        self.oTable.reloadCurrentFolder();
       });
     }
   }

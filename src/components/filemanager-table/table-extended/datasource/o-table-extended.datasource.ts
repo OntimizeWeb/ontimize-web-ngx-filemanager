@@ -1,5 +1,5 @@
 
-import { OTableDataSource } from 'ontimize-web-ngx';
+import { OTableDataSource, Util } from 'ontimize-web-ngx';
 import { OTableExtendedComponent } from '../o-table-extended.component';
 
 export class OTableExtendedDataSource extends OTableDataSource {
@@ -9,7 +9,10 @@ export class OTableExtendedDataSource extends OTableDataSource {
 
   }
   protected getSortedData(data: any[]): any[] {
-    if (!this._sort.active || this._sort.direction === '') { return data; }
+    if (!this._sort.active || this._sort.direction === '' || !Util.isDefined(this._sort)) {
+      return data;
+    }
+
     this._sort.sortables.forEach((value, _key) => {
       this._sort.deregister(value);
     });
