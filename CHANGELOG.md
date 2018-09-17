@@ -1,3 +1,10 @@
+## 3.1.0 (2018-09-17)
+### PEER-DEPENDENCY UPDATES ###
+* **Updated**:  ontimize-web-ngx@3.1.0
+
+### Bug Fixes
+* **ontimize-web-ngx**: fixing bugs for updating to '*ontimize-web-ngx@3.1.0*'
+
 ## 3.0.0-rc.1 (2018-07-02)
 ### Bug Fixes
 * **ontimize-web-ngx**: fixing bugs for updating to '*ontimize-web-ngx@3.0.0-rc.1*'
