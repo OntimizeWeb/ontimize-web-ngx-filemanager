@@ -107,7 +107,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
     const self = this;
     if (this.oForm) {
-      this.onFormDataSubscribe = this.oForm.onFormDataLoaded.subscribe(function (data) {
+      this.onFormDataSubscribe = this.oForm.onDataLoaded.subscribe(function (data) {
         self.stateService.setFormParentItem(data);
       });
     }
@@ -218,7 +218,11 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.removeUploadProggressComponent();
     this.oFileInput.uploader.removeFile(arg.item);
     if (this.doReloadQuery) {
-      this.oTable.reloadData();
+      let kv;
+      if (this.stateService.stateArray && this.stateService.stateArray.length) {
+        kv = this.stateService.stateArray[this.stateService.stateArray.length - 1].filter;
+      }
+      this.oTable.queryData(kv);
     }
   }
 
@@ -231,7 +235,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   onContextDownloadFile() {
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      const workspaceId = this.oTable.getParentItem()[this.workspaceKey];
+      const workspaceId = this.oForm.getDataValue(this.workspaceKey);
       const selectedItems = this.oTable.getSelectedItems();
       let downloadId = undefined;
       if (selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0].directory)) {

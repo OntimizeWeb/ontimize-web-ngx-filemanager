@@ -36,10 +36,9 @@ export class OTableExtendedComponent extends OTableComponent {
 
   public static FM_FOLDER_PARENT_KEY: string = 'FM_FOLDER_PARENT_KEY';
 
+  protected workspaceId: any;
   protected workspaceKey: string;
   protected addFolderMethod: string;
-
-  protected workspaceId: any;
 
   protected clickTimer;
   protected clickDelay = 200;
@@ -75,66 +74,71 @@ export class OTableExtendedComponent extends OTableComponent {
     // If tab exists and is not active then wait for queryData
     if (this.tabContainer && !this.tabContainer.isActive) {
       this.pendingQuery = true;
-      this.pendingQueryFilter = parentItem;
+      this.pendingQueryFilter = filter;
       return;
     }
+    this.pendingQuery = false;
+    this.pendingQueryFilter = undefined;
+
     let queryMethodName = this.pageable ? this.paginatedQueryMethod : this.queryMethod;
     if (!this.dataService || !(queryMethodName in this.dataService)) {
       return;
     }
+    let filterParentKeys = ServiceUtils.getParentKeysFromForm(this._pKeysEquiv, this.form);
 
-    this.workspaceId = this.form.getDataValue(this.workspaceKey).value;
-    this.pendingQuery = false;
-    this.pendingQueryFilter = undefined;
-
-    parentItem = ServiceUtils.getParentItemFromForm(parentItem, this._pKeysEquiv, this.form);
-
-    let formData = this.form.formData;
-    this.workspaceId = formData[this.workspaceKey] ? formData[this.workspaceKey].value : undefined;
-
-    if (this.workspaceId === undefined || (Object.keys(this._pKeysEquiv).length > 0) && parentItem === undefined) {
+    if (this.workspaceId === undefined || (!this.filterContainsAllParentKeys(filterParentKeys) && !this.queryWithNullParentKeys)) {
       this.setData([], []);
     } else {
-      let filter = ServiceUtils.getFilterUsingParentKeys(parentItem, this._pKeysEquiv);
+      let pkFilter = ServiceUtils.getFilterUsingParentKeys(filterParentKeys, this._pKeysEquiv);
+      filter = Object.assign(filter || {}, pkFilter);
 
-      if (parentItem.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-        filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = parentItem[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      if (filter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+        filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
       }
 
       let queryArguments = this.getQueryArguments(filter, ovrrArgs);
       if (this.querySubscription) {
         this.querySubscription.unsubscribe();
+        this.loaderSubscription.unsubscribe();
       }
-      this.querySubscription = this.daoTable.getQuery(queryArguments).subscribe(res => {
+      this.loaderSubscription = this.load();
+      const self = this;
+      this.querySubscription = this.dataService[queryMethodName].apply(this.dataService, queryArguments).subscribe(res => {
         let data = undefined;
         let sqlTypes = undefined;
         if (Util.isArray(res)) {
           data = res;
-          sqlTypes = [];
-        } else if ((res.code === 0) && Util.isArray(res.data)) {
-          data = (res.data !== undefined) ? res.data : [];
+          sqlTypes = {};
+        } else if ((res.code === Codes.ONTIMIZE_SUCCESSFUL_CODE)) {
+          const arrData = (res.data !== undefined) ? res.data : [];
+          data = Util.isArray(arrData) ? arrData : [];
           sqlTypes = res.sqlTypes;
+          if (this.pageable) {
+            this.updatePaginationInfo(res);
+          }
         }
-        this.setData(data, sqlTypes);
-        if (this.pageable) {
-          ObservableWrapper.callEmit(this.onPaginatedTableDataLoaded, data);
-        }
-        ObservableWrapper.callEmit(this.onTableDataLoaded, this.daoTable.data);
+        self.setData(data, sqlTypes);
+        self.loaderSubscription.unsubscribe();
       }, err => {
-        this.showDialogError(err, 'MESSAGES.ERROR_QUERY');
-        this.setData([], []);
+        self.setData([], []);
+        self.loaderSubscription.unsubscribe();
+        if (err && typeof err !== 'object') {
+          self.dialogService.alert('ERROR', err);
+        } else {
+          self.dialogService.alert('ERROR', 'MESSAGES.ERROR_QUERY');
+        }
       });
     }
   }
 
   getQueryArguments(filter: Object, ovrrArgs?: any): Array<any> {
-    let queryArguments = [this.workspaceId, filter, this.colArray];
+    const compFilter = this.getComponentFilter(filter);
+    const queryCols = this.getAttributesValuesToQuery();
+    let queryArguments = [this.workspaceId, compFilter, queryCols, this.entity, Util.isDefined(ovrrArgs) ? ovrrArgs.sqltypes : undefined];
     if (this.pageable) {
-      let queryOffset = (ovrrArgs && ovrrArgs.hasOwnProperty('offset')) ? ovrrArgs.offset : this.state.queryRecordOffset;
-      let queryRowsN = (ovrrArgs && ovrrArgs.hasOwnProperty('length')) ? ovrrArgs.length : this.queryRows;
-      queryArguments = queryArguments.concat([undefined, queryOffset, queryRowsN, undefined]);
+      queryArguments[6] = this.paginator.isShowingAllRows(queryArguments[5]) ? this.state.totalQueryRecordsNumber : queryArguments[5];
+      queryArguments[7] = this.sortColArray;
     }
-    queryArguments[2] = this.getAttributesValuesToQuery();
     return queryArguments;
   }
 
@@ -157,7 +161,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          let workspaceId = this.parentItem[this.workspaceKey];
+          let workspaceId = this.form.getDataValue(this.workspaceKey).value;
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
@@ -195,7 +199,7 @@ export class OTableExtendedComponent extends OTableComponent {
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    const workspaceId = this.parentItem[this.workspaceKey];
+    const workspaceId = this.form.getDataValue(this.workspaceKey).value;
     let kv = {};
     let currentFilter = this.stateService.getCurrentQueryFilter();
     if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
@@ -208,7 +212,7 @@ export class OTableExtendedComponent extends OTableComponent {
         this.dialogService.alert('ERROR', err);
       }
     }, () => {
-      this.reloadData();
+      this.queryData(kv);
     });
   }
 
