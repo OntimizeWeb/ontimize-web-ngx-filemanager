@@ -6,6 +6,7 @@ import { MatDialogRef } from '@angular/material';
 import { OFileManagerTranslatePipe, fileNameValidator } from '../../../../../core';
 
 @Component({
+  moduleId: module.id,
   selector: 'folder-name-dialog',
   templateUrl: 'folder-name-dialog.component.html',
   styleUrls: ['folder-name-dialog.component.scss'],

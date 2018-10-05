@@ -9,7 +9,7 @@ export class OTableExtendedDataSource extends OTableDataSource {
 
   }
   protected getSortedData(data: any[]): any[] {
-    if (!this._sort.active || this._sort.direction === '' || !Util.isDefined(this._sort)) {
+    if (!Util.isDefined(this._sort) || !this._sort.active || this._sort.direction === '') {
       return data;
     }
 

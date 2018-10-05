@@ -12,6 +12,7 @@ export class ChangeNameDialogData {
 }
 
 @Component({
+  moduleId: module.id,
   selector: 'change-name-dialog',
   templateUrl: 'change-name-dialog.component.html',
   styleUrls: ['change-name-dialog.component.scss'],

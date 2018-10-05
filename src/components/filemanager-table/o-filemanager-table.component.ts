@@ -34,6 +34,7 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
 ];
 
 @Component({
+  moduleId: module.id,
   selector: 'o-filemanager-table',
   templateUrl: './o-filemanager-table.component.html',
   styleUrls: ['./o-filemanager-table.component.scss'],
@@ -235,7 +236,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   onContextDownloadFile() {
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      const workspaceId = this.oForm.getDataValue(this.workspaceKey);
+      const workspaceId = (this.oForm as any).getDataValue(this.workspaceKey).value;
       const selectedItems = this.oTable.getSelectedItems();
       let downloadId = undefined;
       if (selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0].directory)) {

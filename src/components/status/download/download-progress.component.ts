@@ -13,6 +13,7 @@ export const DEFAULT_OUTPUTS_DOWNLOAD_PROGRESS = [
 export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,1)';
 
 @Component({
+  moduleId: module.id,
   selector: 'download-progress',
   templateUrl: './download-progress.component.html',
   styleUrls: ['./download-progress.component.scss'],

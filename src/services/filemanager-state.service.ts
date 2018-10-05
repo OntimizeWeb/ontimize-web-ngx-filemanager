@@ -32,7 +32,9 @@ export class FileManagerStateService {
 
   getAndStoreQueryFilter(queryFilter: any, item: any) {
     const filter = Object.assign({}, queryFilter);
-    this.stateArray.push({ filter: filter, item: item });
+    let state = this.stateArray;
+    state.push({ filter: filter, item: item });
+    this.stateArray = state;
     return filter;
   }
 
