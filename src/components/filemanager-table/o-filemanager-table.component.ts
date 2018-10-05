@@ -235,7 +235,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   onContextDownloadFile() {
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      const workspaceId = this.oForm.getDataValue(this.workspaceKey);
+      const workspaceId = this.oForm.getFieldValue(this.workspaceKey);
       const selectedItems = this.oTable.getSelectedItems();
       let downloadId = undefined;
       if (selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0].directory)) {
