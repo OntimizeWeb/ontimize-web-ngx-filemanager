@@ -55,7 +55,7 @@ export class OFileUploaderExtended extends OFileUploader {
       this._uploadSuscription.unsubscribe();
     }
 
-    const workspaceId = this.form.getFieldValue(this.workspaceKey).value;
+    const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
     let folderId;
     if (this.parentKey && this.parentItem.hasOwnProperty(this.parentKey)) {
       folderId = this.parentItem[this.parentKey];

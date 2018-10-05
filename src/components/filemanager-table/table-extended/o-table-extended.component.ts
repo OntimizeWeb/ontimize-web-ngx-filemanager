@@ -162,7 +162,7 @@ export class OTableExtendedComponent extends OTableComponent {
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          let workspaceId = this.form.getFieldValue(this.workspaceKey).value;
+          let workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
@@ -200,7 +200,7 @@ export class OTableExtendedComponent extends OTableComponent {
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    const workspaceId = this.form.getFieldValue(this.workspaceKey).value;
+    const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
     let kv = {};
     let currentFilter = this.stateService.getCurrentQueryFilter();
     if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
