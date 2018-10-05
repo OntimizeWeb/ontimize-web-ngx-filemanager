@@ -8,6 +8,6 @@
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions fxLayoutAlign="end center">
-  <button mat-button [mat-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
-  <button mat-button [disabled]="inputRef.value.length === 0" (click)="submit()">{{ 'ACCEPT' | oTranslate }}</button>
+  <button type="button" mat-button [mat-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
+  <button type="button" mat-button [disabled]="inputRef.value.length === 0" (click)="submit()">{{ 'ACCEPT' | oTranslate }}</button>
 </mat-dialog-actions>
