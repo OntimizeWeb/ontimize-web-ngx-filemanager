@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "ontimize-web-ngx": "3.1.1",
-    "ontimize-web-ngx-library-tools": "1.0.0",
+    "ontimize-web-ngx-library-tools": "1.1.0",
     "@angular/animations": "5.2.10",
     "@angular/common": "5.2.10",
     "@angular/compiler": "5.2.10",
