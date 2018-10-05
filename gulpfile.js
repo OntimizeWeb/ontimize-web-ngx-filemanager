@@ -43,7 +43,7 @@ gulp.task('copy-theme', (callback) => {
  * @see  https://github.com/ludohenin/gulp-inline-ng2-template
  */
 const INLINE_TEMPLATES_CONF = {
-  SRC: ['./**/*.ts', '!./tmp/**/*', '!./node_modules/**/*'],
+  SRC: ['./**/*.ts', '!./tmp/**/*', '!./node_modules/**/*', '!./custom-typings.d.ts'],
   DIST: './tmp',
   CONFIG: {
     base: '.',

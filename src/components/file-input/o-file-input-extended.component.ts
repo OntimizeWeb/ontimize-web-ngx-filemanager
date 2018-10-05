@@ -5,6 +5,7 @@ import { OFileInputComponent, OSharedModule, DEFAULT_INPUTS_O_FILE_INPUT, DEFAUL
 import { OFileUploaderExtended } from './o-file-uploader-extended';
 
 @Component({
+  moduleId: module.id,
   selector: 'o-file-input-extended',
   templateUrl: './o-file-input-extended.component.html',
   styleUrls: ['./o-file-input-extended.component.scss'],

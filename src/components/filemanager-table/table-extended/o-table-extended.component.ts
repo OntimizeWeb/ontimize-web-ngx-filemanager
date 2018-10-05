@@ -8,6 +8,7 @@ import { FileManagerStateService } from '../../../services/filemanager-state.ser
 import { OFileManagerTranslateModule } from '../../../core';
 
 @Component({
+  moduleId: module.id,
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
   providers: [

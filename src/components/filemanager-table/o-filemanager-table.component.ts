@@ -34,6 +34,7 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
 ];
 
 @Component({
+  moduleId: module.id,
   selector: 'o-filemanager-table',
   templateUrl: './o-filemanager-table.component.html',
   styleUrls: ['./o-filemanager-table.component.scss'],

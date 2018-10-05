@@ -14,6 +14,7 @@ export const DEFAULT_OUTPUTS_UPLOAD_PROGRESS = [
 export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,1)';
 
 @Component({
+  moduleId: module.id,
   selector: 'upload-progress',
   templateUrl: './upload-progress.component.html',
   styleUrls: ['./upload-progress.component.scss'],

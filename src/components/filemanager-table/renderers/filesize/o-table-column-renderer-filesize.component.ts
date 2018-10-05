@@ -2,6 +2,7 @@ import { Component, Injector, ViewChild, TemplateRef } from '@angular/core';
 import { OBaseTableCellRenderer } from 'ontimize-web-ngx';
 
 @Component({
+  moduleId: module.id,
   selector: 'o-table-column-renderer-filesize',
   templateUrl: './o-table-column-renderer-filesize.component.html'
 })
