@@ -1,9 +1,8 @@
 import { AfterViewInit, Component, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-
-import { Subscription } from 'rxjs/Subscription';
 import { MatDialog, MatDialogConfig } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
 import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
