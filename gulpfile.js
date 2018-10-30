@@ -13,8 +13,7 @@ const SCSS_CONF = {
 
 gulp.task('styles', (callback) => {
   return gulp.src(SCSS_CONF.SRC)
-  .pipe(cssimport({}))
-    .pipe(gulp.dest(SCSS_CONF.DIST));
+  .pipe(cssimport({})).pipe(gulp.dest(SCSS_CONF.DIST));
 });
 
 
@@ -28,15 +27,29 @@ const FILES = [
   'dist'
 ];
 
-gulp.task('copy-files', ['copy-theme'], (callback) => {
+gulp.task('copy.files', (callback) => {
   copyfiles(FILES, true, callback);
 });
-
 
 gulp.task('copy-theme', (callback) => {
   copyfiles(['src/components/filemanager-table/o-filemanager-table-theme.scss', 'dist'], true, callback);
 });
 
+gulp.task('copy-files', gulp.series('copy-theme', 'copy.files'));
+
+
+/**
+ * Compile SASS to CSS.
+ * @see https://github.com/ludohenin/gulp-inline-ng2-template
+ * @see https://github.com/sass/node-sass
+ */
+function compileSass(path, ext, file, callback) {
+  let compiledCss = sass.renderSync({
+    file: path,
+    outputStyle: 'compressed',
+  });
+  callback(null, compiledCss.css);
+}
 
 /**
  * Inline templates configuration.
@@ -62,16 +75,3 @@ gulp.task('inline-templates', () => {
     .pipe(inlineTemplates(INLINE_TEMPLATES_CONF.CONFIG))
     .pipe(gulp.dest(INLINE_TEMPLATES_CONF.DIST));
 });
-
-/**
- * Compile SASS to CSS.
- * @see https://github.com/ludohenin/gulp-inline-ng2-template
- * @see https://github.com/sass/node-sass
- */
-function compileSass(path, ext, file, callback) {
-  let compiledCss = sass.renderSync({
-    file: path,
-    outputStyle: 'compressed',
-  });
-  callback(null, compiledCss.css);
-}
