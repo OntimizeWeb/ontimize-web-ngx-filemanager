@@ -133,7 +133,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.translateTable();
 
     if (this.oFileInput) {
-      this.fileChangeSubscription = this.oFileInput.onChange.subscribe(() => {
+      this.fileChangeSubscription = this.oFileInput.onValueChange.subscribe(() => {
         this.showUploaderStatus = true;
         this.doReloadQuery = true;
         let filter = this.stateService.getCurrentQueryFilter();
@@ -335,7 +335,10 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     if (val && this.uploadProgressComponentRef) {
       const instance: UploadProgressComponent = this.uploadProgressComponentRef.instance;
       let files = this.oFileInput.uploader.files.filter(item => !item.isUploaded && !item.isCancel);
+
+
       instance.uploaderFiles = createComp ? files : instance.uploaderFiles.concat(files);
+
       let title = this.translatePipe.transform('MESSAGES.UPLOADING_SINGLE_FILE');
       if (instance.uploaderFiles.length > 1) {
         title = this.translatePipe.transform('MESSAGES.UPLOADING_MULTIPLE_FILE');
