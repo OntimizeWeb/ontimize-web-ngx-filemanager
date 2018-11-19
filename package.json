@@ -31,8 +31,8 @@
     "ontimize-web-ngx": "^4.0.0"
   },
   "devDependencies": {
-    "ontimize-web-ngx": "file:C:\\workspace\\github\\ontimize-web-ng2-VERSIONS\\4.0.0-rc.0\\ontimize-web-ngx\\dist\\ontimize-web-ngx-4.0.0-rc.0.tgz",
-    "ontimize-web-ngx-library-tools": "C:\\workspace\\github\\TOOLS\\ontimize-web-ngx-library-tools\\ontimize-web-ngx-library-tools-4.0.0-rc.0.tgz",
+    "ontimize-web-ngx": "4.0.0-rc.0",
+    "ontimize-web-ngx-library-tools": "4.0.0-rc.0",
     "@angular/flex-layout": "6.0.0-beta.18",
     "@angular/material": "6.4.7",
     "@angular/material-moment-adapter": "6.4.7",
