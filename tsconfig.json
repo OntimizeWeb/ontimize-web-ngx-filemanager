@@ -12,11 +12,10 @@
     "noImplicitReturns": true,
     "listFiles": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "pretty": true,
     "stripInternal": true,
     "outDir": "dist",
-    "noUnusedParameters": false,
-    "allowSyntheticDefaultImports": true,
     "types": [
       "node"
     ],
