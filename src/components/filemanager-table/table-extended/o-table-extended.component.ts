@@ -87,15 +87,12 @@ export class OTableExtendedComponent extends OTableComponent {
     }
     let filterParentKeys = ServiceUtils.getParentKeysFromForm(this._pKeysEquiv, this.form);
 
-    if (this.workspaceId === undefined || (!this.filterContainsAllParentKeys(filterParentKeys) && !this.queryWithNullParentKeys)) {
+    if (this.workspaceId === undefined || (!ServiceUtils.filterContainsAllParentKeys(filterParentKeys, this._pKeysEquiv) && !this.queryWithNullParentKeys)) {
       this.setData([], []);
     } else {
       let pkFilter = ServiceUtils.getFilterUsingParentKeys(filterParentKeys, this._pKeysEquiv);
       filter = Object.assign(filter || {}, pkFilter);
 
-      if (filter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-        filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = filter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
-      }
 
       let queryArguments = this.getQueryArguments(filter, ovrrArgs);
       if (this.querySubscription) {

@@ -28,7 +28,7 @@
     <!-- format="LLL" -->
     <o-table-column attr="creationDate" title="creationDate" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
 
-    <o-table-context-menu [context-menu]="itemsContextMenu"></o-table-context-menu>
+    <o-table-context-menu [context-menu]="itemsContextMenu" insert="no" copy="no" select-all="no" edit="no"></o-table-context-menu>
   </o-table-extended>
 
   <o-context-menu #itemsContextMenu>
