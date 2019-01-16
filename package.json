@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "An implementation of file management system for Ontimize Web",
   "scripts": {
     "preinstall": "npm config set package-lock false",
@@ -32,8 +32,8 @@
     "ontimize-web-ngx": "^3.1.1"
   },
   "devDependencies": {
-    "ontimize-web-ngx": "3.1.1",
-    "ontimize-web-ngx-library-tools": "1.1.0",
+    "ontimize-web-ngx": "3.2.1",
+    "ontimize-web-ngx-library-tools": "1.1.1",
     "@angular/animations": "5.2.10",
     "@angular/common": "5.2.10",
     "@angular/compiler": "5.2.10",
