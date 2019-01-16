@@ -1,4 +1,4 @@
-## 3.2.0 
+## 3.2.0 (2019-01-16)
 ### BREAKING CHANGES
 * **ontimize-web-ngx**: fixing compatibility bugs for updating to '*ontimize-web-ngx@3.2.0*'
 
