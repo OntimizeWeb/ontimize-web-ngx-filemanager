@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "An implementation of file management system for Ontimize Web",
   "scripts": {
     "preinstall": "npm config set package-lock false",
