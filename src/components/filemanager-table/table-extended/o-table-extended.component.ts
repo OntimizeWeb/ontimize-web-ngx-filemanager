@@ -1,7 +1,7 @@
-import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogConfig } from '@angular/material';
-import { OntimizeService, dataServiceFactory, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, OQueryDataArgs } from 'ontimize-web-ngx';
+import { OntimizeService, dataServiceFactory, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, OQueryDataArgs, OColumn } from 'ontimize-web-ngx';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
@@ -25,6 +25,7 @@ import { OFileManagerTranslateModule } from '../../../core';
   ],
   outputs: OTableComponent.DEFAULT_OUTPUTS_O_TABLE,
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.o-table]': 'true',
     '[class.ontimize-table]': 'true',
@@ -48,12 +49,26 @@ export class OTableExtendedComponent extends OTableComponent {
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: Array<any> = [];
 
+  protected mutationObserver: MutationObserver;
+
   ngOnInit() {
     // setting fake value for avoid entity is undefined checking
     this.entity = 'fakeEntity';
     super.ngOnInit();
     this.paginationControls = false;
   }
+
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
+    this.registerHeaderMutationObserver();
+  }
+
+  ngOnDestroy() {
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+  }
+
 
   getDataService(): any {
     return this.dataService;
@@ -197,6 +212,36 @@ export class OTableExtendedComponent extends OTableComponent {
     this.queryData(kv);
   }
 
+  protected registerHeaderMutationObserver() {
+    const self = this;
+    this.mutationObserver = new MutationObserver(() => {
+      if (self.tableHeaderEl.nativeElement.children.length > 0) {
+        self.initializeColumnsDOMWidth();
+        self.mutationObserver.disconnect();
+      }
+    });
+
+    this.mutationObserver.observe(this.tableHeaderEl.nativeElement, {
+      attributes: true
+    });
+  }
+
+  protected initializeColumnsDOMWidth() {
+    const self = this;
+    if (Util.isDefined(this.tableHeaderEl)) {
+      [].slice.call(this.tableHeaderEl.nativeElement.children).forEach(thEl => {
+        const oCol: OColumn = self.getOColumnFromTh(thEl);
+        if (Util.isDefined(oCol)) {
+          if (!Util.isDefined(oCol.padding)) {
+            oCol.padding = (!thEl.previousElementSibling || !thEl.nextElementSibling) ? OTableComponent.FIRST_LAST_CELL_PADDING : 0;
+          }
+          if (!Util.isDefined(oCol.DOMWidth) && thEl.clientWidth > 0) {
+            oCol.DOMWidth = thEl.clientWidth;
+          }
+        }
+      });
+    }
+  }
 }
 
 @NgModule({
