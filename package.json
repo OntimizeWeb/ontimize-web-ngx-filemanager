@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "4.0.0-rc.0",
+  "version": "4.0.0-rc.1",
   "description": "An implementation of file management system for Ontimize Web",
   "scripts": {
     "clean": "o-ngx-lib-builder clean",
@@ -30,7 +30,7 @@
     "zone.js": "0.8.26"
   },
   "devDependencies": {
-    "ontimize-web-ngx": "4.0.0-rc.0",
+    "ontimize-web-ngx": "4.0.0-rc.1",
     "ontimize-web-ngx-library-tools": "4.0.0-rc.0",
     "@angular/flex-layout": "6.0.0-beta.18",
     "@angular/material": "6.4.7",
@@ -55,20 +55,19 @@
     "zone.js": "0.8.26",
     "reflect-metadata": "0.1.12",
     "typescript": "2.9.2",
-    "node-sass": "4.9.4",
-    "webpack": "4.21.0",
     "@types/hammerjs": "2.0.34",
     "@types/jasmine": "2.5.46",
     "@types/node": "7.0.10",
-    "@types/source-map": "0.5.7",
     "@types/uglify-js": "2.6.30",
     "@types/webpack": "4.1.1",
     "ajv": "6.5.4",
+    "node-sass": "4.9.4",
     "rimraf": "2.6.2",
     "gulp": "4.0.0",
     "gulp-cssimport": "6.0.0",
     "gulp-inline-ng2-template": "5.0.1",
     "gulp-replace": "0.6.1",
-    "copyfiles": "1.2.0"
+    "copyfiles": "1.2.0",
+    "webpack": "4.21.0"
   }
 }
