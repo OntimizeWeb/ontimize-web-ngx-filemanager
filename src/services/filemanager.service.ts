@@ -1,9 +1,10 @@
-import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { Injectable, Injector } from '@angular/core';
+import { OntimizeEEService } from 'ontimize-web-ngx';
 import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
-import { OntimizeEEService } from 'ontimize-web-ngx';
-import { FileClass } from '../core/file.class';
+
+import { FileClass } from '../util';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService {

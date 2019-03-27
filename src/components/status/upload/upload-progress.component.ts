@@ -1,7 +1,7 @@
-import { Component, ViewEncapsulation, AfterViewInit } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AfterViewInit, Component, ViewEncapsulation } from '@angular/core';
 
-import { OFileManagerTranslatePipe } from '../../../core';
+import { OFileManagerTranslatePipe } from '../../../util';
 
 export const DEFAULT_INPUTS_UPLOAD_PROGRESS = [
   'title',

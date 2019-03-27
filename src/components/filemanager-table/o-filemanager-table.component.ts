@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 
 import { DomService } from '../../services/dom.service';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
-import { FileClass, OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
+import { FileClass, OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../util';
 import { OFileInputExtendedComponent, OFileInputExtendedModule } from '../file-input/o-file-input-extended.component';
 import { DownloadProgressComponent } from '../status/download/download-progress.component';
 import { UploadProgressComponent } from '../status/upload/upload-progress.component';

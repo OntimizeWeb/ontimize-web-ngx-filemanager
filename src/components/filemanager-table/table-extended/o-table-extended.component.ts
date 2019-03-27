@@ -1,11 +1,12 @@
-import { Component, forwardRef, Injector, NgModule, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, Injector, NgModule, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
-import { OntimizeService, dataServiceFactory, OTableComponent, OntimizeWebModule, Util, ObservableWrapper, OQueryDataArgs, OColumn } from 'ontimize-web-ngx';
-import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
+import { dataServiceFactory, ObservableWrapper, OColumn, OntimizeService, OntimizeWebModule, OQueryDataArgs, OTableComponent, Util } from 'ontimize-web-ngx';
+
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
-import { OFileManagerTranslateModule } from '../../../core';
+import { OFileManagerTranslateModule } from '../../../util';
+import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
+import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 
 @Component({
   moduleId: module.id,
