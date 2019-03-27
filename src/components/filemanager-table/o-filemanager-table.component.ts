@@ -1,22 +1,20 @@
-import { AfterViewInit, Component, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, Inject, Injector, NgModule, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
+import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
 import { Subscription } from 'rxjs';
 
-import { DialogService, InputConverter, OFormComponent, OntimizeWebModule, OSharedModule, OTranslateService } from 'ontimize-web-ngx';
-import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
-import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-table-column-renderer-filesize.component';
-
-import { FileManagerStateService } from '../../services/filemanager-state.service';
-import { OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
-import { OTableExtendedModule, OTableExtendedComponent } from './table-extended/o-table-extended.component';
-import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
-import { OFileInputExtendedModule, OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
-import { FileClass } from '../../core/file.class';
 import { DomService } from '../../services/dom.service';
-import { UploadProgressComponent } from '../status/upload/upload-progress.component';
+import { FileManagerStateService } from '../../services/filemanager-state.service';
+import { FileClass, OFileManagerTranslateModule, OFileManagerTranslatePipe } from '../../core';
+import { OFileInputExtendedComponent, OFileInputExtendedModule } from '../file-input/o-file-input-extended.component';
 import { DownloadProgressComponent } from '../status/download/download-progress.component';
+import { UploadProgressComponent } from '../status/upload/upload-progress.component';
+import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-table-column-renderer-filesize.component';
+import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
+import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
+import { OTableExtendedComponent, OTableExtendedModule } from './table-extended/o-table-extended.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'workspaceKey: workspace-key',
@@ -26,7 +24,8 @@ export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'autoHideTimeout : auto-hide-timeout',
   'serviceType : service-type',
   'newFolderButton: new-folder-button',
-  'selectAllCheckbox: select-all-checkbox'
+  'selectAllCheckbox: select-all-checkbox',
+  'enabled'
 ];
 
 export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
@@ -41,7 +40,8 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   outputs: DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE,
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.o-filemanager-table]': 'true'
+    '[class.o-filemanager-table]': 'true',
+    '[class.o-filemanager-table-disabled]': '!enabled'
   },
   providers: [{
     provide: FileManagerStateService,
@@ -63,6 +63,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   @InputConverter()
   newFolderButton: boolean = false;
   selectAllCheckbox: string;
+  @InputConverter()
+  public enabled: boolean = true;
 
   queryMethod: string = 'queryFiles';
   deleteMethod: string = 'deleteFiles';

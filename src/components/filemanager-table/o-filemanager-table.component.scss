@@ -1,4 +1,8 @@
 .o-filemanager-table {
+  &.o-filemanager-table-disabled {
+    opacity: .4;
+  }
+
   o-file-input-extended {
     display: none;
   }
@@ -18,5 +22,14 @@
 
   .ontimize-table.o-table .o-table-container {
     padding-bottom: 8px;
+  }
+
+  .o-filemanager-table-disabled-blocker {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
   }
 }
