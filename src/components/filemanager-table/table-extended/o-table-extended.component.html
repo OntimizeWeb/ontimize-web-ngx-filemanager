@@ -113,7 +113,7 @@
 
         <tr mat-row oTableRow *matRowDef="let row; columns: oTableOptions.visibleColumns;" (click)="handleClick(row, $event)"
           (dblclick)="handleDoubleClick(row, $event)" [oContextMenu]="tableContextMenu" [oContextMenuData]="row"
-          [class.selected]="!isSelectionModeNone() && isSelected(row)">
+          [class.selected]="!isSelectionModeNone() && selection.isSelected(row)">
         </tr>
 
         <ng-container *ngIf="showTotals">
