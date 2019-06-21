@@ -1,4 +1,4 @@
-## 4.0.0
+## 4.0.0 (2019-06-21)
 * **Updated**:  ontimize-web-ngx@latest
 
 ## 4.0.0-rc.2
@@ -15,6 +15,10 @@
 ## 4.0.0-rc.0 (2018-11-19)
 ### Bug Fixes
 * **ontimize-web-ngx**: fixing compatibility bugs for updating to '*ontimize-web-ngx@4.0.0-rc.0*'
+
+## 3.2.0 (2019-01-16)
+### BREAKING CHANGES
+* **ontimize-web-ngx**: fixing compatibility bugs for updating to '*ontimize-web-ngx@3.2.0*'
 
 ## 3.1.1 (2018-10-05)
 ### Bug Fixes
