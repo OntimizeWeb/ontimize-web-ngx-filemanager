@@ -12,12 +12,14 @@
       <button type="button" *ngIf="showTableMenuButton" mat-icon-button class="o-table-menu-button" [matMenuTriggerFor]="tableMenu.matMenu">
         <mat-icon svgIcon="ontimize:more_vert"></mat-icon>
       </button>
+
       <o-table-menu #tableMenu [select-all-checkbox]="selectAllCheckbox" [export-button]="exportButton"
         [columns-visibility-button]="columnsVisibilityButton">
         <ng-content select="o-table-option"></ng-content>
       </o-table-menu>
     </div>
   </div>
+
 
   <!-- FILEMANAGER BREADCRUMB -->
   <div fxLayout="row" class="filemanager-breadcrumb" layout-padding>
@@ -110,12 +112,12 @@
         </ng-container>
 
         <tr #tableHeader mat-header-row *matHeaderRowDef="oTableOptions.visibleColumns; sticky: fixedHeader"></tr>
-
+        
         <tr mat-row oTableRow *matRowDef="let row; columns: oTableOptions.visibleColumns;" (click)="handleClick(row, $event)"
           (dblclick)="handleDoubleClick(row, $event)" [oContextMenu]="tableContextMenu" [oContextMenuData]="row"
           [class.selected]="!isSelectionModeNone() && selection.isSelected(row)">
         </tr>
-
+        
         <ng-container *ngIf="showTotals | async">
           <tr mat-footer-row *matFooterRowDef="oTableOptions.visibleColumns; sticky: true"></tr>
         </ng-container>
@@ -133,4 +135,5 @@
     class="spinner-container" [class.spinner-container-scrollable]="loadingScroll">
     <mat-progress-spinner mode="indeterminate" strokeWidth="3" [diameter]="diameterSpinner"></mat-progress-spinner>
   </div>
+
 </div>

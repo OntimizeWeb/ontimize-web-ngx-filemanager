@@ -88,6 +88,7 @@ export class OTableExtendedComponent extends OTableComponent {
    */
   public queryData(filter?: any, ovrrArgs?: OQueryDataArgs): void {
     this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
+
     if (!Util.isDefined(this.workspaceId)) {
       this.setData([], []);
       return;
