@@ -1,7 +1,5 @@
 import { Injector, Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import 'rxjs/add/operator/share';
-import 'rxjs/add/operator/map';
 
 @Injectable()
 export class FileManagerStateService {

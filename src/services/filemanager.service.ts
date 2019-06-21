@@ -1,10 +1,10 @@
-import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/share';
+import { Injectable, Injector } from '@angular/core';
 import { OntimizeEEService } from 'ontimize-web-ngx';
-import { FileClass } from '../core/file.class';
+import { Observable } from 'rxjs';
+import { filter, share } from 'rxjs/operators';
+
+import { FileClass } from '../util';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService {
@@ -47,7 +47,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     const request = new HttpRequest('POST', url, body, {
       headers: headers
@@ -56,7 +56,7 @@ export class FileManagerService extends OntimizeEEService {
     const self = this;
     this.httpClient
       .request(request)
-      .filter(resp => HttpEventType.Response === resp.type)
+      .pipe(filter(resp => HttpEventType.Response === resp.type))
       .subscribe((resp: HttpResponse<FileClass>) => {
         if (resp.body) {
           _innerObserver.next(resp.body);
@@ -85,7 +85,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     const request = new HttpRequest('GET', url, null, {
       headers: headers,
@@ -130,7 +130,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     const request = new HttpRequest('POST', url, files, {
       headers: headers,
@@ -140,7 +140,7 @@ export class FileManagerService extends OntimizeEEService {
     const self = this;
     const getZipDataSubscription = this.httpClient
       .request(request)
-      .filter(resp => HttpEventType.Response === resp.type)
+      .pipe(filter(resp => HttpEventType.Response === resp.type))
       .subscribe((resp: HttpResponse<any>) => {
         const body = JSON.parse(resp.body);
         const zipFileName = body.file;
@@ -208,7 +208,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     let toUpload: any = new FormData();
     files.forEach(item => {
@@ -275,12 +275,12 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     const self = this;
     this.httpClient
       .request(request)
-      .filter(resp => HttpEventType.Response === resp.type)
+      .pipe(filter(resp => HttpEventType.Response === resp.type))
       .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {
@@ -307,12 +307,12 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     const self = this;
     this.httpClient
       .request(request)
-      .filter(resp => HttpEventType.Response === resp.type)
+      .pipe(filter(resp => HttpEventType.Response === resp.type))
       .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {
@@ -340,12 +340,12 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).share();
+    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
     const self = this;
     this.httpClient
       .request(request)
-      .filter(resp => HttpEventType.Response === resp.type)
+      .pipe(filter(resp => HttpEventType.Response === resp.type))
       .subscribe((resp: HttpResponse<any>) => {
         _innerObserver.next(resp);
       }, error => {

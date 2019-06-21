@@ -1,9 +1,8 @@
 import { Component, ElementRef, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-
 import { MatDialogRef } from '@angular/material';
 
-import { OFileManagerTranslatePipe, fileNameValidator } from '../../../../../core';
+import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../util';
 
 @Component({
   moduleId: module.id,

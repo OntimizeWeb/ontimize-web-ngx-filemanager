@@ -15,9 +15,6 @@
     "noUnusedParameters": true,
     "pretty": true,
     "stripInternal": true,
-    // "sourceMap": false,
-    // "inlineSourceMap": false,
-    // "inlineSources": false,
     "outDir": "dist",
     "types": [
       "node"
