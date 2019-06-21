@@ -1,3 +1,6 @@
+## 4.0.0
+* **Updated**:  ontimize-web-ngx@latest
+
 ## 4.0.0-rc.2
 ### PEER-DEPENDENCY UPDATES ###
 * **Updated**:  ontimize-web-ngx@latest
