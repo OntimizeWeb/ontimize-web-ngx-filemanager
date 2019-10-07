@@ -1,3 +1,10 @@
+## 4.0.1 (2019-10-07)
+### Bug Fixes
+* **ontimize-web-ngx**: fixing compatibility bugs for updating to '*ontimize-web-ngx@latest*'
+
+### DEV DEPENDENCY UPDATES ###
+* **Updated**:  ontimize-web-ngx@latest and ontimize-web-ngx-library-tools@latest
+
 ## 4.0.0 (2019-06-21)
 * **Updated**:  ontimize-web-ngx@latest
 
