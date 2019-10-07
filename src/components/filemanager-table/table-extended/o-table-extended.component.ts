@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef, Injector, NgModule, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import { dataServiceFactory, ObservableWrapper, OColumn, OntimizeService, OntimizeWebModule, OQueryDataArgs, OTableComponent, Util } from 'ontimize-web-ngx';
-
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { OFileManagerTranslateModule } from '../../../util';
 import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
@@ -221,9 +220,6 @@ export class OTableExtendedComponent extends OTableComponent {
       [].slice.call(this.tableHeaderEl.nativeElement.children).forEach(thEl => {
         const oCol: OColumn = self.getOColumnFromTh(thEl);
         if (Util.isDefined(oCol)) {
-          if (!Util.isDefined(oCol.padding)) {
-            oCol.padding = (!thEl.previousElementSibling || !thEl.nextElementSibling) ? OTableComponent.FIRST_LAST_CELL_PADDING : 0;
-          }
           if (!Util.isDefined(oCol.DOMWidth) && thEl.clientWidth > 0) {
             oCol.DOMWidth = thEl.clientWidth;
           }
