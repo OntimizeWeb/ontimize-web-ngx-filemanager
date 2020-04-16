@@ -1,0 +1,80 @@
+.upload-progress {
+  z-index: 10;
+  position: absolute;
+
+  .upload-progress-container {
+    &:not(.opened) {
+      .upload-progress-content {
+        overflow: hidden;
+      }
+    }
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 362px;
+    max-width: 30%;
+
+    .mat-toolbar {
+      font-size: 14px;
+      min-height: 52px;
+      cursor: default;
+
+      .mat-toolbar-row {
+        height: 52px;
+
+        .mat-icon-button:not(:hover) {
+          opacity: .7;
+        }
+      }
+    }
+
+    .fill-remaining {
+      flex: 1 1 auto;
+    }
+
+    .upload-progress-content {
+      max-height: 240px;
+      overflow: auto;
+      padding: 0 2px;
+      box-sizing: border-box;
+      width: 100%;
+
+      .mat-list {
+        padding: 0;
+        .mat-list-item {
+          border-bottom: solid 1px #eee;
+          padding: 0 14px;
+        }
+        .mat-list-item-content {
+          padding: 0;
+          font-size: 13px;
+
+          .file-data {
+            width: 100%;
+            cursor: default;
+            .mat-icon {
+              width: 40px;
+              text-align: center;
+            }
+          }
+        }
+        .file-name.uploading {
+          opacity: 0.35;
+        }
+        .file-cancelled-text {
+          opacity: 0.35;
+          margin-left: 24px;
+        }
+        .cancelled {
+          opacity: 0.5;
+        }
+        .uploaded {
+          color: #0f9d58;
+        }
+        .error {
+          color: #db4437;
+        }
+      }
+    }
+  }
+}

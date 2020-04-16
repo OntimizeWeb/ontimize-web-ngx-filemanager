@@ -1,6 +1,7 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "0.0.0",
+  "version": "8.0.0",
+  "description": "An implementation of file management system for Ontimize Web",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -12,8 +13,6 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "~8.2.8",
-    "@angular/common": "~8.2.8",
-    "@angular/compiler": "~8.2.8",
     "@angular/core": "~8.2.8",
     "@angular/forms": "~8.2.8",
     "@angular/platform-browser": "~8.2.8",
@@ -24,12 +23,24 @@
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~0.803.25",
+    "@angular-devkit/build-ng-packagr": "~0.803.25",
+    "@angular/animations": "^8.2.14",
+    "@angular/cdk": "^8.2.3",
     "@angular/cli": "~8.3.6",
+    "@angular/common": "~8.2.8",
+    "@angular/compiler": "~8.2.8",
     "@angular/compiler-cli": "~8.2.8",
+    "@angular/flex-layout": "^8.0.0-beta.27",
+    "@angular/http": "6.1.10",
     "@angular/language-service": "~8.2.8",
-    "@types/node": "~8.9.4",
+    "@angular/material": "^8.2.3",
+    "@angular/material-moment-adapter": "^8.2.3",
+    "@ngx-translate/core": "10.0.2",
+    "@ngx-translate/http-loader": "3.0.1",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^13.11.1",
     "codelyzer": "^5.0.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
@@ -38,9 +49,18 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "ng-packagr": "4.7.1",
+    "ontimize-web-ngx": "file:ontimize-web-ngx-8.0.0.tgz",
+    "ontimize-web-ngx-library-tools": "4.0.2",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
+    "tsickle": "^0.37.0",
     "tslint": "~5.15.0",
     "typescript": "~3.5.3"
+  },
+  "peerDependencies": {
+    "core-js": "2.5.7",
+    "rxjs": "6.3.3",
+    "zone.js": "0.8.26"
   }
 }
