@@ -80,18 +80,18 @@
             matTooltipClass="o-table-cell-tooltip" [class.o-mat-cell-multiline]="column.multiline"
             [oContextMenu]="tableContextMenu" [oContextMenuData]="{ cellName:column.name, rowValue:row}">
 
-            <!-- <ng-container *ngIf="usePlainRender(column, row); else cellRender">
+            <ng-container *ngIf="usePlainRender(column, row)">
               {{ row[column.name] }}
             </ng-container>
 
-            <ng-template #cellRender *ngIf="useCellRenderer(column, row); else cellEditor"
+            <ng-template *ngIf="useCellRenderer(column, row) && !usePlainRender(column, row)"
               [ngTemplateOutlet]="column.renderer.templateref"
               [ngTemplateOutletContext]="{ cellvalue: row[column.name], rowvalue:row }">
             </ng-template>
 
-            <ng-template #cellEditor *ngIf="useCellEditor(column, row)" [ngTemplateOutlet]="column.editor.templateref"
+            <ng-template *ngIf="useCellEditor(column, row) && !useCellRenderer(column, row) && !usePlainRender(column, row)" [ngTemplateOutlet]="column.editor.templateref"
               [ngTemplateOutletContext]="{ cellvalue: row[column.name], rowvalue:row }">
-            </ng-template> -->
+            </ng-template>
 
             <ng-container *ngIf="useDetailButton(column)">
               <div fxLayoutAlign="center center" class="o-action-cell-renderer"
