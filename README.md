@@ -1,18 +1,15 @@
-# OntimizeWebNgxFilemanager
+# OntimizeWebNgx Filemanager Beta
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.6.
 
-## Development server
+## Install
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `npm install` to install al required dependencies.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to execute the build process that will generate the dist folder and a .tgz file.
+You can use this .tgz file to install the library in your project through the package.json file.
 
 ## Running unit tests
 
