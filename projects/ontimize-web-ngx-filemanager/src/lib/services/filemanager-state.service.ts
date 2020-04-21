@@ -1,4 +1,4 @@
-import { Injector, Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable()

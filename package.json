@@ -5,7 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && copyfiles -u 6 ./projects/ontimize-web-ngx-filemanager/src/lib/components/filemanager-table/o-filemanager-table-theme.scss ./dist/ontimize-web-ngx-filemanager",
+    "postbuild": "cd dist/ontimize-web-ngx-filemanager && npm pack",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -42,6 +43,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^13.11.1",
     "codelyzer": "^5.0.0",
+    "copyfiles": "^2.2.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",

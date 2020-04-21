@@ -4,7 +4,7 @@ import { OntimizeEEService } from 'ontimize-web-ngx';
 import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
-import { FileClass } from '../util/file.class';
+import { FileClass } from '../util';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService {
@@ -228,7 +228,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     const self = this;
-    let httpSubscription =
+    const httpSubscription =
       this.httpClient
         .request(request)
         .subscribe(resp => {
