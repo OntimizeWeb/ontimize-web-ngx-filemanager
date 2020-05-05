@@ -5,8 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build && npm run copy-files",
-    "copy-files": "copyfiles -u 6 ./projects/ontimize-web-ngx-filemanager/src/lib/components/filemanager-table/o-filemanager-table-theme.scss ./dist/ontimize-web-ngx-filemanager",
-    "postbuild": "cd dist/ontimize-web-ngx-filemanager && npm pack",
+    "copy-files": "copyfiles -u 6 ./projects/ontimize-web-ngx-filemanager/src/lib/components/filemanager-table/o-filemanager-table-theme.scss ./dist",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -28,7 +27,7 @@
     "@ngx-translate/core": "~11.0.1",
     "@ngx-translate/http-loader": "~4.0.0",
     "hammerjs": "~2.0.8",
-    "ontimize-web-ngx": "file:C:/workspaces/ontimizeWeb/v8/ontimize-web-ngx/dist/ontimize-web-ngx/ontimize-web-ngx-8.0.0.tgz",
+    "ontimize-web-ngx": "8.0.0-SNAPSHOT-0",
     "rxjs": "~6.4.0",
     "tslib": "~1.10.0",
     "zone.js": "0.9.1"
