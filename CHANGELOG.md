@@ -1,10 +1,9 @@
-## 8.0.0 (2020-05-18)
+## 8.0.0-rc.0 (2020-05-29)
 ### Features
 * **angular8:** adapt code to Angular 8.
 
 ### DEPENDENCY UPDATES
-* **Updated**: ontimize-web-ngx@8.0.0
-
+* **Updated**: ontimize-web-ngx@8.0.0-rc.0
 
 ## 4.0.1 (2019-10-07)
 ### Bug Fixes
