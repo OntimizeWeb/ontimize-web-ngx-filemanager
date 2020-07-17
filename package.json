@@ -61,7 +61,7 @@
     "gulp-cssimport": "6.0.0",
     "gulp-inline-ng2-template": "5.0.1",
     "gulp-replace": "0.6.1",
-    "lodash": "4.17.13",
+    "lodash": "4.17.19",
     "lodash.mergewith": "4.6.2",
     "lodash.template": "4.5.0",
     "mixin-deep": "1.3.2",
