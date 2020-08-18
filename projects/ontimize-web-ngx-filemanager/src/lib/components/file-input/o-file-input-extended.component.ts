@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, NgModule } from '@angular/core';
-import {
-  DEFAULT_INPUTS_O_FILE_INPUT,
-  DEFAULT_OUTPUTS_O_FILE_INPUT,
-  OFileInputComponent,
-  OFileItem,
-  OSharedModule,
-} from 'ontimize-web-ngx';
+import { DEFAULT_INPUTS_O_FILE_INPUT, DEFAULT_OUTPUTS_O_FILE_INPUT, OFileInputComponent, OFileItem, OSharedModule } from 'ontimize-web-ngx';
 
 import { OFileUploaderExtended } from './o-file-uploader-extended';
 
@@ -41,12 +35,12 @@ export class OFileInputExtendedComponent extends OFileInputComponent {
   fileSelected(event: Event): void {
     let value: string = '';
     if (event) {
-      let files: FileList = event.target['files'];
+      const files: FileList = event.target['files'];
       // if (!this.multiple) {
       //   this.uploader.clear();
       // }
-      for (var i = 0, f: File; f = files[i]; i++) {
-        let fileItem: OFileItem = new OFileItem(f, this.uploader);
+      for (let i = 0, f: File; f = files[i]; i++) {
+        const fileItem: OFileItem = new OFileItem(f, this.uploader);
         this.uploader.addFile(fileItem);
       }
       value = this.uploader.files.map(file => file.name).join(', ');
@@ -67,5 +61,4 @@ export class OFileInputExtendedComponent extends OFileInputComponent {
   imports: [OSharedModule, CommonModule],
   exports: [OFileInputExtendedComponent]
 })
-export class OFileInputExtendedModule {
-}
+export class OFileInputExtendedModule { }

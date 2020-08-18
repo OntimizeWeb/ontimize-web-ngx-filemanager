@@ -1,4 +1,4 @@
-import { OFileItem, OFileUploader, OFormComponent, OntimizeFileService } from 'ontimize-web-ngx';
+import { IFileService, OFileItem, OFileUploader, OFormComponent } from 'ontimize-web-ngx';
 
 import { FileManagerService } from '../../services/filemanager.service';
 
@@ -11,7 +11,7 @@ export class OFileUploaderExtended extends OFileUploader {
   protected parentItem: any;
 
   constructor(
-    service: OntimizeFileService,
+    service: IFileService,
     entity: string,
     form: OFormComponent,
     workspaceKey: string,
@@ -65,7 +65,7 @@ export class OFileUploaderExtended extends OFileUploader {
     this._uploadSuscription =
       this.filemanagerService.upload(workspaceId, folderId, [item]).subscribe(resp => {
         if (resp.loaded && resp.total) {
-          let progress = Math.round(resp.loaded * 100 / resp.total);
+          const progress = Math.round(resp.loaded * 100 / resp.total);
           self._onProgressItem(item, progress);
         } else if (resp.documentId && resp.fileId && resp.versionId) {
           self._onSuccessItem(item, resp);

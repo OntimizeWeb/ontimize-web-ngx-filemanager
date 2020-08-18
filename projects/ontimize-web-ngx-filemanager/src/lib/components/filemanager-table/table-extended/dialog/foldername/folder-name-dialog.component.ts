@@ -21,7 +21,7 @@ export class FolderNameDialogComponent {
     fileNameValidator
   ]);
 
-  @ViewChild('folderNameRef', {static: false}) inputRef: ElementRef;
+  @ViewChild('folderNameRef', { static: false }) inputRef: ElementRef;
 
   protected translatePipe: OFileManagerTranslatePipe;
 
