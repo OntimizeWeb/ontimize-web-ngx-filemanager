@@ -21,6 +21,6 @@
   "es2015": "./esm2015/ontimize-web-ngx-filemanager.js",
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "ontimize-web-ngx": "8.0.0-rc.0"
+    "ontimize-web-ngx": "8.0.0-rc.1"
   }
 }
