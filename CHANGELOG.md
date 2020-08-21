@@ -1,3 +1,14 @@
+## 4.0.3 (2020-08-21)
+### PEER-DEPENDENCY UPDATES ###
+* **Updated**:  ontimize-web-ngx@4.1.3
+
+### Bug Fixes
+* **ontimize-web-ngx**: fixing compatibility bugs for updating to '*ontimize-web-ngx@4.1.3*'
+
+## 4.0.2 (2019-10-17)
+### Feature
+Added context menu in the table ([6547bbe](https://github.com/OntimizeWeb/ontimize-web-ngx/commit/6547bbe))
+
 ## 4.0.1 (2019-10-07)
 ### Bug Fixes
 * **ontimize-web-ngx**: fixing compatibility bugs for updating to '*ontimize-web-ngx@latest*'
