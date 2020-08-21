@@ -1,4 +1,4 @@
-import { OFileItem, OFileUploader, OFormComponent, OntimizeFileService } from 'ontimize-web-ngx';
+import { OFileItem, OFileUploader, OFormComponent, IFileService } from 'ontimize-web-ngx';
 
 import { FileManagerService } from '../../services/filemanager.service';
 
@@ -11,7 +11,7 @@ export class OFileUploaderExtended extends OFileUploader {
   protected parentItem: any;
 
   constructor(
-    service: OntimizeFileService,
+    service: IFileService,
     entity: string,
     form: OFormComponent,
     workspaceKey: string,
