@@ -93,7 +93,7 @@ export class OTableExtendedComponent extends OTableComponent {
   }
 
   public setDatasource(): void {
-    this.dataSource = new OTableExtendedDataSource(this);
+    this.dataSource = new DefaultOTableDataSource(this);
     if (this.daoTable) {
       this.dataSource.resultsLength = this.daoTable.data.length;
     }
