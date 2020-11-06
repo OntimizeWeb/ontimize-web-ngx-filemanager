@@ -1,41 +1,30 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  forwardRef,
-  Injector,
-  NgModule,
-  ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
-  dataServiceFactory,
   DEFAULT_INPUTS_O_TABLE,
   DEFAULT_OUTPUTS_O_TABLE,
   ObservableWrapper,
   OColumn,
-  OntimizeService,
+  OntimizeServiceProvider,
   OntimizeWebModule,
   OQueryDataArgs,
   OTableComponent,
-  Util,
+  OTableDataSourceService,
+  Util
 } from 'ontimize-web-ngx';
 
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { OFileManagerTranslateModule } from '../../../util';
-import { OTableExtendedDataSource } from './datasource/o-table-extended.datasource';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 
 @Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
   providers: [
-    { provide: OntimizeService, useFactory: dataServiceFactory, deps: [Injector] },
-    {
-      provide: OTableComponent,
-      useExisting: forwardRef(() => OTableExtendedComponent)
-    }
+    OntimizeServiceProvider,
+    OTableDataSourceService,
+    { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) }
   ],
   inputs: [
     ...DEFAULT_INPUTS_O_TABLE,
@@ -52,18 +41,13 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     '(document:click)': 'handleDOMClick($event)'
   }
 })
+export class OTableExtendedComponent extends OTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
-export class OTableExtendedComponent extends OTableComponent {
-
-  public static FM_FOLDER_PARENT_KEY: string = 'FM_FOLDER_PARENT_KEY';
+  public static FM_FOLDER_PARENT_KEY = 'FM_FOLDER_PARENT_KEY';
 
   protected workspaceId: any;
   protected workspaceKey: string;
   protected addFolderMethod: string;
-
-  protected clickTimer;
-  protected clickDelay = 200;
-  protected clickPrevent = false;
 
   protected stateService: FileManagerStateService;
   protected _breadcrumbs: any[] = [];
@@ -92,17 +76,10 @@ export class OTableExtendedComponent extends OTableComponent {
     return this.dataService;
   }
 
-  public setDatasource(): void {
-    this.dataSource = new DefaultOTableDataSource(this);
-    if (this.daoTable) {
-      this.dataSource.resultsLength = this.daoTable.data.length;
-    }
-  }
-
   /**
    * This method manages the call to the service
-   * @param filter
-   * @param ovrrArgs
+   * @param filter the query filter
+   * @param ovrrArgs override arguments
    */
   public queryData(filter?: any, ovrrArgs?: OQueryDataArgs): void {
     this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
@@ -114,14 +91,9 @@ export class OTableExtendedComponent extends OTableComponent {
     super.queryData(filter, ovrrArgs);
   }
 
-  public getQueryArguments(filter: Object, ovrrArgs?: any): any[] {
-    const compFilter = this.getComponentFilter(filter);
-    const queryCols = this.getAttributesValuesToQuery();
-    const queryArguments = [this.workspaceId, compFilter, queryCols, /*this.entity*/ undefined, Util.isDefined(ovrrArgs) ? ovrrArgs.sqltypes : undefined];
-    if (this.pageable) {
-      queryArguments[6] = this.paginator.isShowingAllRows(queryArguments[5]) ? this.state.totalQueryRecordsNumber : queryArguments[5];
-      queryArguments[7] = this.sortColArray;
-    }
+  public getQueryArguments(filter: object, ovrrArgs?: any): any[] {
+    const queryArguments = super.getQueryArguments(filter, ovrrArgs);
+    queryArguments.unshift(this.workspaceId);
     return queryArguments;
   }
 
@@ -246,13 +218,13 @@ export class OTableExtendedComponent extends OTableComponent {
       });
     }
   }
+
 }
 
 @NgModule({
   declarations: [OTableExtendedComponent, FolderNameDialogComponent],
   entryComponents: [FolderNameDialogComponent],
   imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule],
-  exports: [OTableExtendedComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  exports: [OTableExtendedComponent]
 })
 export class OTableExtendedModule { }
