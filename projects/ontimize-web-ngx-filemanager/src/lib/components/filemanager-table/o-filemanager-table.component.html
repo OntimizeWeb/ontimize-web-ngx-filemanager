@@ -10,8 +10,6 @@
     (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod" [delete-method]="deleteMethod" [add-folder-method]="addFolderMethod"
     pageable="no" store-state="no">
 
-    <!-- <o-table-option label="TABLE.BUTTONS.DELETE" *ngIf="oTable.showDeleteButton"></o-table-option> -->
-
     <o-table-button [label]="uploadLabel" icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
     <o-table-button *ngIf="newFolderButton" [label]="newFolderLabel" icon="add" (onClick)="oTable.onAddFolder()"></o-table-button>
 
@@ -21,11 +19,10 @@
       <o-table-column-renderer-filetype></o-table-column-renderer-filetype>
     </o-table-column>
     <o-table-column attr="name" title="name"></o-table-column>
-    <o-table-column attr="size" title="size">
+    <o-table-column attr="size" title="size" orderable="no">
       <o-table-column-renderer-filesize></o-table-column-renderer-filesize>
     </o-table-column>
-    <!-- format="LLL" -->
-    <o-table-column attr="creationDate" title="creationDate" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
+    <o-table-column attr="creationDate" title="creationDate" orderable="no" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
 
     <o-table-context-menu [context-menu]="itemsContextMenu" copy="no" delete="no" edit="no" filter="no" insert="no" view-detail="no">
     </o-table-context-menu>
