@@ -2,7 +2,7 @@
 ### Bug Fixes
 * **o-filemanager-table**
   * Modify folder and file names ([d5ac2d7](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/d5ac2d7)).
-  *Sort table columns ([3504ac9](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/3504ac9)).
+  * Sort table columns ([3504ac9](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/3504ac9)).
 
 ## 8.0.0 (2020-08-21)
 ### DEPENDENCY UPDATES
