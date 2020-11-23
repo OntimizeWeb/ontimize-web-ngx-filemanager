@@ -1,3 +1,7 @@
+## 4.0.4(2020-11-23)
+### Bug Fixes
+* **o-filemanager-table**: modify folder and file names ([51cfcc5](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/51cfcc5)).
+
 ## 4.0.3 (2020-08-21)
 ### PEER-DEPENDENCY UPDATES ###
 * **Updated**:  ontimize-web-ngx@4.1.3
