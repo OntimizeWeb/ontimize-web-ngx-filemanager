@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "4.0.3",
+  "version": "4.0.5",
   "description": "An implementation of file management system for Ontimize Web",
   "scripts": {
     "clean": "o-ngx-lib-builder clean",
