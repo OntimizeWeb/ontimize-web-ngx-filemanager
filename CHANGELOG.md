@@ -1,4 +1,6 @@
-## 8.0.1
+## 8.1.0 (2020-11-23)
+### DEPENDENCY UPDATES
+* **Updated**: ontimize-web-ngx@8.1.0
 ### Bug Fixes
 * **o-filemanager-table**
   * Modify folder and file names ([d5ac2d7](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/d5ac2d7)).
