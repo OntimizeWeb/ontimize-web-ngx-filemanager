@@ -282,8 +282,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       let dialogData: ChangeNameDialogData = {
         title: 'CHANGE_NAME_TITLE',
         placeholder: 'newName',
-        defaultValue: event.data.name,
-        fileData: event.data
+        defaultValue: event.data.rowValue.name,
+        fileData: event.data.rowValue
       };
 
       let cfg: MatDialogConfig = {
@@ -295,7 +295,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       const self = this;
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          self.changeFileName(result, event.data);
+          self.changeFileName(result, event.data.rowValue);
         }
       });
     }
