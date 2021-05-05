@@ -1,18 +1,7 @@
 import { HttpEventType } from '@angular/common/http';
-import {
-  AfterViewInit,
-  Component,
-  forwardRef,
-  Inject,
-  Injector,
-  OnDestroy,
-  OnInit,
-  Optional,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, Component, forwardRef, Inject, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { DialogService, InputConverter, OFormComponent, OTranslateService } from 'ontimize-web-ngx';
+import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
 import { Subscription } from 'rxjs';
 
 import { DomService } from '../../services/dom.service';
@@ -22,10 +11,7 @@ import { OFileManagerTranslatePipe } from '../../util/o-filemanager-translate.pi
 import { OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
 import { DownloadProgressComponent } from '../status/download/download-progress.component';
 import { UploadProgressComponent } from '../status/upload/upload-progress.component';
-import {
-  ChangeNameDialogComponent,
-  ChangeNameDialogData,
-} from './table-extended/dialog/changename/change-name-dialog.component';
+import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
 import { OTableExtendedComponent } from './table-extended/o-table-extended.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
@@ -89,8 +75,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected stateService: FileManagerStateService;
   protected stateSubscription: Subscription;
 
-  @ViewChild('oTable', {static: true}) oTable: OTableExtendedComponent;
-  @ViewChild('oFileInput', {static: false}) oFileInput: OFileInputExtendedComponent;
+  @ViewChild('oTable', { static: true }) oTable: OTableExtendedComponent;
+  @ViewChild('oFileInput', { static: false }) oFileInput: OFileInputExtendedComponent;
   protected _showUploaderStatus = false;
 
   protected translateService: OTranslateService;
@@ -202,13 +188,14 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return this.translatePipe.transform('CONTEXT_MENU.OPEN_FOLDER');
   }
 
-  onTableDoubleClick(item: FileClass) {
-    if (item === undefined || !item['directory'] || !this.oTable) {
+  onTableDoubleClick(e: OnClickTableEvent) {
+    const item = e.row;
+    if (item === undefined || !item.directory || !this.oTable) {
       return;
     }
     this.oTable.clearSelection();
     this.doReloadQuery = false;
-    const filter = this.stateService.getAndStoreQueryFilter({ 'FM_FOLDER_PARENT_KEY': item.id }, item);
+    const filter = this.stateService.getAndStoreQueryFilter({ FM_FOLDER_PARENT_KEY: item.id }, item);
     this.oTable.queryData(filter);
   }
 
