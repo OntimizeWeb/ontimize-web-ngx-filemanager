@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
   DEFAULT_INPUTS_O_TABLE,
@@ -11,6 +11,8 @@ import {
   OQueryDataArgs,
   OTableComponent,
   OTableDataSourceService,
+  AbstractComponentStateService,
+  OTableComponentStateService,
   Util
 } from 'ontimize-web-ngx';
 
@@ -24,7 +26,8 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
   providers: [
     OntimizeServiceProvider,
     OTableDataSourceService,
-    { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) }
+    { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
+    { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] }
   ],
   inputs: [
     ...DEFAULT_INPUTS_O_TABLE,
