@@ -1,7 +1,19 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  Injector,
+  NgModule,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation
+} from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
+  AbstractComponentStateService,
   DEFAULT_INPUTS_O_TABLE,
   DEFAULT_OUTPUTS_O_TABLE,
   ObservableWrapper,
@@ -10,9 +22,8 @@ import {
   OntimizeWebModule,
   OQueryDataArgs,
   OTableComponent,
-  OTableDataSourceService,
-  AbstractComponentStateService,
   OTableComponentStateService,
+  OTableDataSourceService,
   Util
 } from 'ontimize-web-ngx';
 
@@ -29,6 +40,13 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
     { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] }
   ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
+  ],
   inputs: [
     ...DEFAULT_INPUTS_O_TABLE,
     'workspaceKey: workspace-key',
@@ -41,6 +59,7 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     '[class.o-table]': 'true',
     '[class.ontimize-table]': 'true',
     '[class.o-table-fixed]': 'fixedHeader',
+    '[class.o-table-disabled]': '!enabled',
     '(document:click)': 'handleDOMClick($event)'
   }
 })
