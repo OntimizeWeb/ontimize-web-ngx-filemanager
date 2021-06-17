@@ -70,6 +70,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   }
 
   public ngOnDestroy(): void {
+    super.ngOnDestroy();
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
     }
@@ -132,10 +133,9 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
       disableClose: false
     };
     const dialogRef = this.dialog.open(FolderNameDialogComponent, cfg);
-    const self = this;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        self.insertFolder(result);
+        this.insertFolder(result);
       }
     });
   }
@@ -195,11 +195,10 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   }
 
   protected registerHeaderMutationObserver(): void {
-    const self = this;
     this.mutationObserver = new MutationObserver(() => {
-      if (self.tableHeaderEl.nativeElement.children.length > 0) {
-        self.initializeColumnsDOMWidth();
-        self.mutationObserver.disconnect();
+      if (this.tableHeaderEl.nativeElement.children.length > 0) {
+        this.initializeColumnsDOMWidth();
+        this.mutationObserver.disconnect();
       }
     });
 
@@ -209,10 +208,9 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   }
 
   protected initializeColumnsDOMWidth(): void {
-    const self = this;
     if (Util.isDefined(this.tableHeaderEl)) {
       [].slice.call(this.tableHeaderEl.nativeElement.children).forEach(thEl => {
-        const oCol: OColumn = self.getOColumnFromTh(thEl);
+        const oCol: OColumn = this.getOColumnFromTh(thEl);
         if (Util.isDefined(oCol)) {
           if (!Util.isDefined(oCol.DOMWidth) && thEl.clientWidth > 0) {
             oCol.DOMWidth = thEl.clientWidth;
