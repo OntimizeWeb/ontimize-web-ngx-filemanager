@@ -1,3 +1,7 @@
+## 8.3.0 (2021-06-17)
+### DEPENDENCY UPDATES
+* **ontimize-web-ngx**: fixing compatibility with '*ontimize-web-ngx@8.3.0*'
+
 ## 8.2.1 (2021-05-05)
 ### DEPENDENCY UPDATES
 * **ontimize-web-ngx**: fixing compatibility with '*ontimize-web-ngx@8.2.4*'
