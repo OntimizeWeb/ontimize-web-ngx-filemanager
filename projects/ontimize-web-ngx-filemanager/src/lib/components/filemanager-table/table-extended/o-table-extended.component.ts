@@ -1,7 +1,19 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  Injector,
+  NgModule,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation
+} from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
+  AbstractComponentStateService,
   DEFAULT_INPUTS_O_TABLE,
   DEFAULT_OUTPUTS_O_TABLE,
   ObservableWrapper,
@@ -10,6 +22,7 @@ import {
   OntimizeWebModule,
   OQueryDataArgs,
   OTableComponent,
+  OTableComponentStateService,
   OTableDataSourceService,
   Util
 } from 'ontimize-web-ngx';
@@ -24,7 +37,15 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
   providers: [
     OntimizeServiceProvider,
     OTableDataSourceService,
-    { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) }
+    { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
+    { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] }
+  ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ])
   ],
   inputs: [
     ...DEFAULT_INPUTS_O_TABLE,
@@ -38,6 +59,7 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     '[class.o-table]': 'true',
     '[class.ontimize-table]': 'true',
     '[class.o-table-fixed]': 'fixedHeader',
+    '[class.o-table-disabled]': '!enabled',
     '(document:click)': 'handleDOMClick($event)'
   }
 })
@@ -67,6 +89,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   }
 
   public ngOnDestroy(): void {
+    super.ngOnDestroy();
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
     }
@@ -129,10 +152,9 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
       disableClose: false
     };
     const dialogRef = this.dialog.open(FolderNameDialogComponent, cfg);
-    const self = this;
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        self.insertFolder(result);
+        this.insertFolder(result);
       }
     });
   }
@@ -192,11 +214,10 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   }
 
   protected registerHeaderMutationObserver(): void {
-    const self = this;
     this.mutationObserver = new MutationObserver(() => {
-      if (self.tableHeaderEl.nativeElement.children.length > 0) {
-        self.initializeColumnsDOMWidth();
-        self.mutationObserver.disconnect();
+      if (this.tableHeaderEl.nativeElement.children.length > 0) {
+        this.initializeColumnsDOMWidth();
+        this.mutationObserver.disconnect();
       }
     });
 
@@ -206,10 +227,9 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   }
 
   protected initializeColumnsDOMWidth(): void {
-    const self = this;
     if (Util.isDefined(this.tableHeaderEl)) {
       [].slice.call(this.tableHeaderEl.nativeElement.children).forEach(thEl => {
-        const oCol: OColumn = self.getOColumnFromTh(thEl);
+        const oCol: OColumn = this.getOColumnFromTh(thEl);
         if (Util.isDefined(oCol)) {
           if (!Util.isDefined(oCol.DOMWidth) && thEl.clientWidth > 0) {
             oCol.DOMWidth = thEl.clientWidth;
