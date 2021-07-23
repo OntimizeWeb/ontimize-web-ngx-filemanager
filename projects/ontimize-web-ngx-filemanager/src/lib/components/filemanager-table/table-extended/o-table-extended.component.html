@@ -38,6 +38,15 @@
     </div>
   </div>
 
+ <!-- FILEMANAGER BREADCRUMB -->
+ <div fxLayout="row" class="filemanager-breadcrumb" layout-padding>
+  <mat-icon (click)="onGoToRootFolderClick()" class="breadcrumb-root">home</mat-icon>
+  <div *ngFor="let item of breadcrumbs; let i = index" (click)="onBreadcrumbItemClick(item.filter, i)" fxLayout="row" fxLayoutAlign="center center"
+    class="breadcrumb-item">
+    <mat-icon color="accent">chevron_right</mat-icon>
+    <div class="breadcrumb-item-text">{{ item.item.name }}</div>
+  </div>
+</div>
 
   <div #tableBody class="o-table-body o-scroll" [class.horizontal-scroll]="horizontalScroll" [class.scrolled]="horizontalScrolled">
     <ng-container *ngIf="!enabledVirtualScroll; else tableWithVirtualScroll">
