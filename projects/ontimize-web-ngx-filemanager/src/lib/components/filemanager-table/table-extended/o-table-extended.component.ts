@@ -1,4 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -24,21 +25,24 @@ import {
   OTableComponent,
   OTableComponentStateService,
   OTableDataSourceService,
+  OTableVirtualScrollStrategy,
   Util
 } from 'ontimize-web-ngx';
+
 
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 
-@Component({
+@Component({ 
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
   providers: [
     OntimizeServiceProvider,
     OTableDataSourceService,
     { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
-    { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] }
+    { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] },
+    { provide: VIRTUAL_SCROLL_STRATEGY, useClass: OTableVirtualScrollStrategy }
   ],
   animations: [
     trigger('detailExpand', [
