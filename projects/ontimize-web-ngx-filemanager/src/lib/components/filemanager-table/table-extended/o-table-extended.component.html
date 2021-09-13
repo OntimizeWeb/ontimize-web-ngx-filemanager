@@ -116,17 +116,7 @@
         [style.max-width]="column.maxWidth">
 
         <div class="content">
-          <o-table-header-column-filter-icon *ngIf="isModeColumnFilterable(column)" [column]="column">
-          </o-table-header-column-filter-icon>
-
-          <ng-container *ngIf="column.orderable">
-            <span o-mat-sort-header>{{ column.title | oTranslate }}</span>
-          </ng-container>
-          <ng-container *ngIf="!column.orderable">
-            <span class="header-title-container">{{ column.title | oTranslate }}</span>
-          </ng-container>
-
-          <o-table-column-resizer *ngIf="resizable" [column]="column"></o-table-column-resizer>
+          <o-table-header [column]="column"></o-table-header>
         </div>
       </th>
 
