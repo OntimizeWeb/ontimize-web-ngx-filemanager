@@ -189,7 +189,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   onTableDoubleClick(e: OnClickTableEvent) {
-    const item = e.row;
+    const item = e.row || (e as any).rowValue;
     if (item === undefined || !item.directory || !this.oTable) {
       return;
     }
@@ -314,8 +314,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return event && !event.directory;
   }
 
-  cmShowOpenOpt(item: FileClass) {
-    return this.oTable.getSelectedItems().length === 1 && item && item.directory;
+  cmShowOpenOpt(item: any) {
+    return this.oTable.getSelectedItems().length === 1 && item && item.rowValue && item.rowValue.directory;
   }
 
   get showUploaderStatus(): boolean {

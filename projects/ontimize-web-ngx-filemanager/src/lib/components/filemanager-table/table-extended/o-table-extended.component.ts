@@ -34,7 +34,7 @@ import { FileManagerStateService } from '../../../services/filemanager-state.ser
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 
-@Component({ 
+@Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
   providers: [
@@ -206,6 +206,10 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   public onBreadcrumbItemClick(filter: any, index: number): void {
     this.stateService.restart(index);
     this.queryData(filter);
+  }
+
+  refresh() {
+    this.reloadCurrentFolder();
   }
 
   public reloadCurrentFolder(): void {

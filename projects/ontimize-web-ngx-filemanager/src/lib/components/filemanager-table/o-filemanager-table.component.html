@@ -24,12 +24,13 @@
     </o-table-column>
     <o-table-column attr="creationDate" title="creationDate" orderable="no" type="date" format="D/M/YYYY HH:mm:ss"></o-table-column>
 
-    <o-table-context-menu [context-menu]="itemsContextMenu" copy="no" delete="no" edit="no" filter="no" insert="no" view-detail="no">
-    </o-table-context-menu>
+    <o-table-context-menu [context-menu]="itemsContextMenu" copy="no" delete="no" edit="no" filter="no" insert="no" view-detail="no"
+      group-by-row="no"></o-table-context-menu>
 
   </o-table-extended>
 
   <o-context-menu #itemsContextMenu>
+    <o-context-menu-separator></o-context-menu-separator>
     <o-context-menu-item icon="folder_open" [label]="openFolderLabel" [visible]="cmShowOpenOpt.bind(this)" (execute)="onContextOpenFolder($event)">
     </o-context-menu-item>
     <o-context-menu-item icon="file_download" [label]="downloadLabel" (execute)="onContextDownloadFile()"></o-context-menu-item>
