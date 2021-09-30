@@ -1,17 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  forwardRef,
-  Injector,
-  NgModule,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
   AbstractComponentStateService,
@@ -28,7 +18,6 @@ import {
   OTableVirtualScrollStrategy,
   Util
 } from 'ontimize-web-ngx';
-
 
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { OFileManagerTranslateModule } from '../../../util';
@@ -208,7 +197,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     this.queryData(filter);
   }
 
-  refresh() {
+  reloadData() {
     this.reloadCurrentFolder();
   }
 
