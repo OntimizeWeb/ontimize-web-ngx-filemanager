@@ -8,7 +8,7 @@
     sort-columns="name" show-table-buttons-text="yes" insert-button="no" refresh-button="no" export-button="no" columns-visibility-button="no"
     pagination-controls="no" query-on-init="no" detail-mode="none" [select-all-checkbox]="selectAllCheckbox"
     (onDoubleClick)="onTableDoubleClick($event)" [query-method]="queryMethod" [delete-method]="deleteMethod" [add-folder-method]="addFolderMethod"
-    pageable="no" store-state="no">
+    pageable="no" store-state="no" groupable="no">
 
     <o-table-button [label]="uploadLabel" icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
     <o-table-button *ngIf="newFolderButton" [label]="newFolderLabel" icon="add" (onClick)="oTable.onAddFolder()"></o-table-button>
