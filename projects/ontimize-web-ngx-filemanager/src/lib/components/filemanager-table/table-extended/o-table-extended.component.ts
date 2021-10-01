@@ -1,17 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  forwardRef,
-  Injector,
-  NgModule,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
   AbstractComponentStateService,
@@ -29,12 +19,11 @@ import {
   Util
 } from 'ontimize-web-ngx';
 
-
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 
-@Component({ 
+@Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
   providers: [
@@ -206,6 +195,10 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   public onBreadcrumbItemClick(filter: any, index: number): void {
     this.stateService.restart(index);
     this.queryData(filter);
+  }
+
+  reloadData() {
+    this.reloadCurrentFolder();
   }
 
   public reloadCurrentFolder(): void {

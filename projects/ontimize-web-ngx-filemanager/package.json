@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "8.5.0",
+  "version": "8.5.1",
   "description": "An implementation of file management system for Ontimize Web",
   "keywords": [
     "angular",
@@ -11,7 +11,7 @@
   "author": "IMATIA S.L.",
   "repository": {
     "type": "git",
-    "url": "git@github.com:OntimizeWebf/ontimize-web-ngx-filemanager.git"
+    "url": "git@github.com:OntimizeWeb/ontimize-web-ngx-filemanager.git"
   },
   "license": "Apache-2.0",
   "readmeFilename": "README.md",
