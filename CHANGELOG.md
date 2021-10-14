@@ -1,3 +1,7 @@
+## 8.5.2
+### DEPENDENCY UPDATES
+* **ontimize-web-ngx**: fixing compatibility with '*ontimize-web-ngx@8.5.2*'
+
 ## 8.5.1 (2021-09-30)
 ### Bug Fixes
 * **o-filemanager-table**: reload current folder when the table is reloaded ([79e95aa](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/79e95aa)) Closes [#36](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/issues/36)
