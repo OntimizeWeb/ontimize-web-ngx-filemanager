@@ -79,7 +79,7 @@
 <ng-template #table>
 
   <table mat-table #table [class.autoadjusted]="autoAdjust" [trackBy]="getTrackByFunction()" [dataSource]="dataSource" oMatSort
-    [ngClass]="rowHeightObservable | async" (cdkObserveContent)="projectContentChanged()" oTableExpandedFooter
+    [ngClass]="rowHeightObservable | async" (cdkObserveContent)="projectContentChanged()" [oTableExpandedFooter]="!(loading | async)"
     [oTableExpandedFooterColspan]="visibleColArray.length" [multiTemplateDataRows]="showExpandableRow()">
 
     <!--Checkbox Column -->
@@ -111,9 +111,8 @@
     <ng-container *ngFor="let column of oTableOptions.columns" [matColumnDef]="column.name">
       <!--Define header-cell-->
 
-      <th mat-header-cell *matHeaderCellDef [ngClass]="getTitleAlignClass(column)" [class.resizable]="resizable"
-        [style.width]="column.width" [style.min-width]="getMinWidthColumn(column)"
-        [style.max-width]="column.maxWidth">
+      <th mat-header-cell *matHeaderCellDef [ngClass]="getTitleAlignClass(column)" [class.resizable]="resizable" [style.width]="column.width"
+        [style.min-width]="getMinWidthColumn(column)" [style.max-width]="column.maxWidth">
 
         <div class="content">
           <o-table-header [column]="column"></o-table-header>
@@ -127,9 +126,8 @@
           (click)="handleClick(row, column, rowIndex, cell, $event)" (dblclick)="handleDoubleClick(row, column, rowIndex, cell, $event)"
           [class.empty-cell]="isEmpty(row[column.name])" [matTooltipDisabled]="!column.hasTooltip()" [matTooltip]="column.getTooltip(row)"
           matTooltipShowDelay="750" [class.o-mat-cell-multiline]="(column.isMultiline | async)" [oContextMenu]="tableContextMenu"
-          [oContextMenuData]="{ cellName:column.name, rowValue:row, rowIndex:rowIndex}"
-          [style.width]="column.width" [style.min-width]="getMinWidthColumn(column)"
-          [style.max-width]="column.maxWidth">
+          [oContextMenuData]="{ cellName:column.name, rowValue:row, rowIndex:rowIndex}" [style.width]="column.width"
+          [style.min-width]="getMinWidthColumn(column)" [style.max-width]="column.maxWidth">
           <div class="content">
 
             <ng-container [ngSwitch]="true">
@@ -159,9 +157,8 @@
           [class.empty-cell]="isEmpty(row[column.name])" [matTooltipDisabled]="!column.hasTooltip()" [matTooltip]="column.getTooltip(row)"
           matTooltipPosition="below" matTooltipShowDelay="750" matTooltipClass="o-table-cell-tooltip"
           [class.o-mat-cell-multiline]="(column.isMultiline | async)" [oContextMenu]="tableContextMenu"
-          [oContextMenuData]="{ cellName:column.name, rowValue:row, rowIndex:rowIndex}"
-          [style.width]="column.width" [style.min-width]="getMinWidthColumn(column)"
-          [style.max-width]="column.maxWidth">
+          [oContextMenuData]="{ cellName:column.name, rowValue:row, rowIndex:rowIndex}" [style.width]="column.width"
+          [style.min-width]="getMinWidthColumn(column)" [style.max-width]="column.maxWidth">
           <div class="content">
 
             <ng-container [ngSwitch]="true">
