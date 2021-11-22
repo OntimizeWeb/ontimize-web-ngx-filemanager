@@ -146,30 +146,30 @@ export class FileManagerService extends OntimizeEEService {
         const zipFileName = body.file;
 
         // Download zip file
-        const url = this._urlBase + this.path + '/getZipFile/' + zipFileName.substring(0, zipFileName.lastIndexOf('.'));
+        const url_zip = this._urlBase + this.path + '/getZipFile/' + zipFileName.substring(0, zipFileName.lastIndexOf('.'));
 
-        const request = new HttpRequest('GET', url, null, {
+        const request_zip = new HttpRequest('GET', url_zip, null, {
           headers: headers,
           reportProgress: true,
           responseType: 'blob'
         });
 
         const downloadDataSubscription = this.httpClient
-          .request(request)
-          .subscribe(resp => {
-            if (HttpEventType.DownloadProgress === resp.type) {
+          .request(request_zip)
+          .subscribe(resp_zip => {
+            if (HttpEventType.DownloadProgress === resp_zip.type) {
               // Download progress event received
               const progressData = {
-                loaded: resp.loaded
+                loaded: resp_zip.loaded
               };
               _innerObserver.next(progressData);
-            } else if (HttpEventType.Response === resp.type) {
+            } else if (HttpEventType.Response === resp_zip.type) {
               // Full response received
-              if (resp.body) {
-                this.createDownloadLink(resp['body'], zipFileName);
-                _innerObserver.next(resp);
+              if (resp_zip.body) {
+                this.createDownloadLink(resp_zip['body'], zipFileName);
+                _innerObserver.next(resp_zip);
               } else {
-                _innerObserver.error(resp);
+                _innerObserver.error(resp_zip);
               }
             }
 
@@ -359,7 +359,6 @@ export class FileManagerService extends OntimizeEEService {
   }
 
   get sessionId() {
-    const sessionId = this.authService.getSessionInfo().id;
-    return sessionId;
+    return this.authService.getSessionInfo().id;
   }
 }
