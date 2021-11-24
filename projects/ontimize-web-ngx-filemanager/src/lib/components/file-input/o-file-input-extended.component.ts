@@ -36,9 +36,7 @@ export class OFileInputExtendedComponent extends OFileInputComponent {
     let value: string = '';
     if (event) {
       const files: FileList = event.target['files'];
-      // if (!this.multiple) {
-      //   this.uploader.clear();
-      // }
+
       for (let i = 0, f: File; f = files[i]; i++) {
         const fileItem: OFileItem = new OFileItem(f, this.uploader);
         this.uploader.addFile(fileItem);

@@ -20,14 +20,6 @@ export class FileClass {
     this.size = obj && obj.size ? obj.size : null;
     this.creationDate = obj && obj.creationDate ? obj.creationDate : null;
     this.directory = obj && obj.directory ? obj.directory : null;
-
-    // this.path = obj && obj.path ? obj.path : null;
-    // this.type = obj && obj.type ? obj.type : null;
-    // this.modified = obj && obj.modified ? obj.modified : null;
-    // this.stats = obj && obj.stats ? obj.stats : {};
-    // this.isFile = obj && obj.isFile ? obj.isFile : null;
-    // this.isLink = obj && obj.isLink ? obj.isLink : null;
-    // this.mime = obj && obj.mime ? obj.mime : null;
   }
 
 }
