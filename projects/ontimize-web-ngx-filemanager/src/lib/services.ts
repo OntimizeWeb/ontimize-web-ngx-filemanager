@@ -7,10 +7,6 @@ export * from './services/filemanager.service';
 export * from './services/filemanager-state.service';
 export * from './services/dom.service';
 
-export function getFileManagerServiceProvider(injector: Injector) {
-  return new FileManagerService(injector);
-}
-
 export function getFileManagerStateServiceProvider(injector) {
   return new FileManagerStateService(injector);
 }
@@ -21,8 +17,7 @@ export function getDomServiceProvider(componentFactoryResolver: ComponentFactory
 
 export const OFILEMANAGER_PROVIDERS: any = [{
   provide: 'FileManagerService',
-  useFactory: getFileManagerServiceProvider,
-  deps: [Injector]
+  useValue: FileManagerService
 }, {
   provide: FileManagerStateService,
   useFactory: getFileManagerStateServiceProvider,
