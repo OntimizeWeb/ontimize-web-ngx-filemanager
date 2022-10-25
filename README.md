@@ -1,24 +1,56 @@
-# OntimizeWebNgx Filemanager Beta
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.6.
+<h1 align="center">
+  <div style="display:inline-block;vertical-align: middle;">
+    <a name="logo" href="https://ontimizeweb.github.io/docs/v8/filemanager/">
+      Ontimize Web File Manager
+    </a>
+  </div>
+</h1>
 
-## Install
+<p align="center">
+  <a href="#-introduction">Introduction</a> •
+  <a href="#-ideas">Ideas</a> •
+  <a href="#gear-development">Development</a>
+</p>
 
-Run `npm install` to install al required dependencies.
+## 📜 Introduction
 
-## Build
+The Ontimize Web File Manager is a web file manager for web applications based in [OntimizeWeb](https://github.com/OntimizeWeb/ontimize-web-ngx), allowing to you following features:
+
+- Ability to upload, delete and download files.
+- Multiple download support.
+- Ability to create folders.
+- Ability to rename files and folders.
+- Browsing between folders.
+- Textbox Search filter.
+
+### 📖 Documentation
+
+Check out our [documentation site](https://ontimizeweb.github.io/docs/v8/filemanager/) to know more details.
+
+## 💡 Ideas
+
+We would love any feedback you have or to know when you encounter issues, by filing an issue report on this repo.
+
+
+## :gear: Development
+
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
+
+### Installation
+
+Follow the next steps:
+
+  - cd repository root
+```bash
+npm install
+```
+  - cd projects/ontimize-web-ngx-report
+```bash
+npm install
+```
+
+### Build
 
 Run `npm run build` to execute the build process that will generate the dist folder and a .tgz file.
 You can use this .tgz file to install the library in your project through the package.json file.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
