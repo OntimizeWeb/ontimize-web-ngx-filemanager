@@ -142,7 +142,8 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   public onAddFolder(): void {
     const cfg: MatDialogConfig = {
       role: 'dialog',
-      disableClose: false
+      disableClose: false,
+      panelClass: ['o-dialog-class']
     };
     const dialogRef = this.dialog.open(FolderNameDialogComponent, cfg);
     dialogRef.afterClosed().subscribe(result => {

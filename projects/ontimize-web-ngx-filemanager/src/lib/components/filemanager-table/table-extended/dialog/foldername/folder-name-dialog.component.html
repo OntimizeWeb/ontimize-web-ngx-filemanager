@@ -8,6 +8,6 @@
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions fxLayoutAlign="end center">
-  <button type="button" mat-button [mat-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
-  <button type="button" mat-button [disabled]="folderNameRef.value.length === 0" (click)="submit()">{{ 'ACCEPT' | oTranslate }}</button>
+  <button type="button" mat-stroked-button [mat-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
+  <button type="button" mat-stroked-button [disabled]="folderNameRef.value.length === 0" (click)="submit()" class="o-button-primary">{{ 'ACCEPT' | oTranslate }}</button>
 </mat-dialog-actions>
