@@ -20,6 +20,7 @@ env:
   DEVELOP_BRANCH: 8.x.x
   LIBRARY_PATH: projects/ontimize-web-ngx-filemanager
 
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -115,3 +116,4 @@ jobs:
           ### 💡 Merge Strategy: Create a merge commit
           "
           gh pr create -B ${{ env.DEVELOP_BRANCH }} -H sync/release-$version-to-develop --title "Sync release $version to develop" --body "$(echo -e "$MESSAGE")"
+
