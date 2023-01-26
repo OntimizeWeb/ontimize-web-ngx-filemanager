@@ -276,7 +276,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       let cfg: MatDialogConfig = {
         role: 'dialog',
         disableClose: false,
-        data: dialogData
+        data: dialogData,
+        panelClass: ['o-dialog-class']
       };
       let dialogRef = this.dialog.open(ChangeNameDialogComponent, cfg);
       const self = this;
