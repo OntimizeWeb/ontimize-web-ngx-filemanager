@@ -1,0 +1,26 @@
+{
+  "name": "ontimize-web-ngx-filemanager",
+  "version": "8.5.6",
+  "description": "An implementation of file management system for Ontimize Web",
+  "keywords": [
+    "angular",
+    "ontimize-web-ngx",
+    "ontimize-web-ngx-filemanager",
+    "filemanager"
+  ],
+  "author": "IMATIA S.L.",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:OntimizeWeb/ontimize-web-ngx-filemanager.git"
+  },
+  "license": "Apache-2.0",
+  "readmeFilename": "README.md",
+  "main": "./bundles/ontimize-web-ngx-filemanager.umd.js",
+  "metadata": "./index.metadata.json",
+  "module": "./index.js",
+  "es2015": "./esm2015/ontimize-web-ngx-filemanager.js",
+  "typings": "./index.d.ts",
+  "peerDependencies": {
+    "ontimize-web-ngx": "~8.10.0"
+  }
+}
