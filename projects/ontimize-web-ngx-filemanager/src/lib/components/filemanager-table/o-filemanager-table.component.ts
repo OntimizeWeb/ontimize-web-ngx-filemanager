@@ -1,6 +1,6 @@
 import { HttpEventType } from '@angular/common/http';
 import { AfterViewInit, Component, forwardRef, Inject, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
 import { Subscription } from 'rxjs';
 
