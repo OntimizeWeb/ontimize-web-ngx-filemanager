@@ -76,7 +76,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected stateSubscription: Subscription;
 
   @ViewChild('oTable', { static: true }) oTable: OTableExtendedComponent;
-  @ViewChild('oFileInput', { static: false }) oFileInput: OFileInputExtendedComponent;
+  @ViewChild('oFileInput') oFileInput: OFileInputExtendedComponent;
   protected _showUploaderStatus = false;
 
   protected translateService: OTranslateService;

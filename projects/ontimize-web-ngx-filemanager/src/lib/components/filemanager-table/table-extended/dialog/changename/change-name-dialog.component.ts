@@ -29,7 +29,7 @@ export class ChangeNameDialogComponent implements AfterViewInit {
     fileNameValidator
   ]);
 
-  @ViewChild('inputRef', { static: false }) inputRef: ElementRef;
+  @ViewChild('inputRef') inputRef: ElementRef;
   protected data: ChangeNameDialogData;
   protected translatePipe: OFileManagerTranslatePipe;
 
