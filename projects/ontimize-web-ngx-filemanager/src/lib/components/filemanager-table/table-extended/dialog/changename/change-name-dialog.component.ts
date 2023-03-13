@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FileClass } from '../../../../../util/file.class';
 import { fileNameValidator } from '../../../../../util/filename.validator';
@@ -29,7 +29,7 @@ export class ChangeNameDialogComponent implements AfterViewInit {
     fileNameValidator
   ]);
 
-  @ViewChild('inputRef', { static: false }) inputRef: ElementRef;
+  @ViewChild('inputRef') inputRef: ElementRef;
   protected data: ChangeNameDialogData;
   protected translatePipe: OFileManagerTranslatePipe;
 

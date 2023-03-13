@@ -2,11 +2,9 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatDialogConfig } from '@angular/material';
+import { MatDialogConfig } from '@angular/material/dialog';
 import {
   AbstractComponentStateService,
-  DEFAULT_INPUTS_O_TABLE,
-  DEFAULT_OUTPUTS_O_TABLE,
   ObservableWrapper,
   OColumn,
   OntimizeServiceProvider,
@@ -41,11 +39,9 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     ])
   ],
   inputs: [
-    ...DEFAULT_INPUTS_O_TABLE,
     'workspaceKey: workspace-key',
     'addFolderMethod : add-folder-method'
   ],
-  outputs: DEFAULT_OUTPUTS_O_TABLE,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

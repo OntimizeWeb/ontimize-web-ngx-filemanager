@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, NgModule } from '@angular/core';
-import { DEFAULT_INPUTS_O_FILE_INPUT, DEFAULT_OUTPUTS_O_FILE_INPUT, OFileInputComponent, OFileItem, OSharedModule } from 'ontimize-web-ngx';
+import { OFileInputComponent, OFileItem, OSharedModule } from 'ontimize-web-ngx';
 
 import { OFileUploaderExtended } from './o-file-uploader-extended';
 
@@ -9,11 +9,9 @@ import { OFileUploaderExtended } from './o-file-uploader-extended';
   templateUrl: './o-file-input-extended.component.html',
   styleUrls: ['./o-file-input-extended.component.scss'],
   inputs: [
-    ...DEFAULT_INPUTS_O_FILE_INPUT,
     'workspaceKey: workspace-key',
     'parentKey: parent-key'
   ],
-  outputs: DEFAULT_OUTPUTS_O_FILE_INPUT,
   providers: [
     {
       provide: OFileInputComponent,

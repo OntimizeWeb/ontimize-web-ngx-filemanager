@@ -33,7 +33,7 @@ export class OFileManagerTranslatePipe implements PipeTransform {
   exports: [OFileManagerTranslatePipe]
 })
 export class OFileManagerTranslateModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<OFileManagerTranslateModule> {
     return {
       ngModule: OFileManagerTranslateModule,
       providers: []

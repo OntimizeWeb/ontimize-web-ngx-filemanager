@@ -9,6 +9,7 @@ import { OFILEMANAGER_PROVIDERS } from './services';
 export * from './components';
 export * from './util';
 export * from './services';
+export * from './components/filemanager-table/o-filemanager-table.module'
 
 @NgModule({
   imports: OFILEMANAGER_MODULES,

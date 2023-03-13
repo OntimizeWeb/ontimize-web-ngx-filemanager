@@ -8,7 +8,7 @@ import { OBaseTableCellRenderer } from 'ontimize-web-ngx';
 
 export class OTableColumnRendererFileTypeComponent extends OBaseTableCellRenderer {
 
-  @ViewChild('templateref', { read: TemplateRef, static: false }) public templateref: TemplateRef<any>;
+  @ViewChild('templateref', { read: TemplateRef }) public templateref: TemplateRef<any>;
 
   constructor(protected injector: Injector) {
     super(injector);

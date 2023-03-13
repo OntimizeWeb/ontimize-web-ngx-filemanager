@@ -1,6 +1,6 @@
 import { Component, ElementRef, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../util';
 
@@ -21,7 +21,7 @@ export class FolderNameDialogComponent {
     fileNameValidator
   ]);
 
-  @ViewChild('folderNameRef', { static: false }) inputRef: ElementRef;
+  @ViewChild('folderNameRef') inputRef: ElementRef;
 
   protected translatePipe: OFileManagerTranslatePipe;
 
