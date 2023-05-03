@@ -1,8 +1,8 @@
 import { HttpEventType } from '@angular/common/http';
-import { AfterViewInit, Component, forwardRef, Inject, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, Inject, InjectionToken, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
-import { Subscription } from 'rxjs';
+import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { DomService } from '../../services/dom.service';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
@@ -13,14 +13,18 @@ import { DownloadProgressComponent } from '../status/download/download-progress.
 import { UploadProgressComponent } from '../status/upload/upload-progress.component';
 import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
 import { OTableExtendedComponent } from './table-extended/o-table-extended.component';
+import { WorkspaceService } from '../../services/workspace.service';
+import { CopyDialogComponent, CopyDialogData } from './table-extended/dialog/copy/copy-dialog.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'workspaceKey: workspace-key',
+  'workspaceS3: workspace-s3',
   'service',
   'parentKeys: parent-keys',
   'autoHideUpload : auto-hide-upload',
   'autoHideTimeout : auto-hide-timeout',
   'serviceType : service-type',
+  'type',
   'newFolderButton: new-folder-button',
   'selectAllCheckbox: select-all-checkbox',
   'enabled'
@@ -47,8 +51,14 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
 })
 export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  public static DEFAULT_SERVICE_TYPE = 'FileManagerService';
+  public static DEFAULT_SERVICE_TYPE = 'FileManagerOntimizeService';
+  public static DEFAULT_TYPE = 'Ontimize';
 
+  public static S3_SERVICE_TYPE = 'FileManagerS3Service';
+  public static S3_TYPE = 'S3';
+
+  type: string = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
+  workspaceS3: any;
   workspaceKey: string;
   service: string;
   parentKeys: string;
@@ -70,6 +80,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
   protected uploadMethod: string = 'upload';
   protected downloadMethod: string = 'download';
+  protected copyMethod: string = 'copy';
+  protected moveMethod: string = 'move';
 
   protected onFormDataSubscribe: Subscription;
   protected stateService: FileManagerStateService;
@@ -91,6 +103,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   protected uploadProgressComponentRef: any;
   protected fileChangeSubscription: Subscription;
 
+  protected workspaceService: WorkspaceService;
+
   protected downloadProgressComponentRef: any;
 
   constructor(
@@ -103,6 +117,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     this.dialogService = this.injector.get(DialogService);
     this.domService = this.injector.get(DomService);
     this.dialog = this.injector.get(MatDialog);
+    this.workspaceService = this.injector.get(WorkspaceService);
 
     const self = this;
     if (this.oForm) {
@@ -119,8 +134,16 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngOnInit() {
-    if (!this.serviceType) {
+    if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE ) {
       this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
+      this.workspaceService.initializeOntimizeProvider( this.workspaceKey, this.oForm );
+      this.oForm.onDataLoaded.subscribe( data => {
+        let x:any = this.oForm.formData;
+      })
+    }
+    else if (!this.serviceType && this.type === OFileManagerTableComponent.S3_TYPE ) {
+      this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
+      this.workspaceService.initializeS3Provider( this.workspaceS3 );
     }
     this.oTable.setStateService(this.stateService);
   }
@@ -180,6 +203,14 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     return this.translatePipe.transform('CONTEXT_MENU.DOWNLOAD_FILE');
   }
 
+  get copyLabel(): string {
+    return this.translatePipe.transform('CONTEXT_MENU.COPY');
+  }
+
+  get moveLabel(): string {
+    return this.translatePipe.transform('CONTEXT_MENU.MOVE');
+  }
+
   get changeNameLabel(): string {
     return this.translatePipe.transform('CONTEXT_MENU.CHANGE_NAME');
   }
@@ -235,7 +266,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   onContextDownloadFile() {
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      const workspaceId = (this.oForm as any).getDataValue(this.workspaceKey).value;
+      const workspaceId = this.workspaceService.getWorkspace();
       const selectedItems = this.oTable.getSelectedItems();
       let downloadId = undefined;
       if (selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0].directory)) {
@@ -259,6 +290,106 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
           this.dialogService.alert('ERROR', err);
         } else {
           this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
+        }
+      });
+    }
+  }
+
+  onContextCopy( event ): void{
+    if (event && event.data) {
+      let folder: string = event.data.rowValue.directoryPath;
+      if (this.oTable.getSelectedItems().length > 0) folder = this.oTable.getSelectedItems()[0].directoryPath;
+
+      let dialogData: CopyDialogData = {
+        title: 'COPY_TITLE',
+        placeholder: 'targetFolder',
+        defaultValue: folder,
+        fileData: event.data.rowValue
+      };
+
+      let cfg: MatDialogConfig = {
+        role: 'dialog',
+        disableClose: false,
+        data: dialogData,
+        panelClass: ['o-dialog-class']
+      };
+      let dialogRef = this.dialog.open(CopyDialogComponent, cfg);
+      const self = this;
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          self.copy(result);
+        }
+      });
+    }
+  }
+
+  copy( target: string ): void{
+    const tableService = this.oTable.getDataService();
+    if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
+      const workspaceId = this.workspaceService.getWorkspace();
+      const selectedItems = this.oTable.getSelectedItems();
+      const currentFilter = this.stateService.getCurrentQueryFilter();
+      let currentFolder: string = '/';
+      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) currentFolder = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      const self = this;
+      tableService[this.copyMethod](workspaceId, currentFolder, target, selectedItems)
+      .subscribe( result => {
+        self.oTable.reloadCurrentFolder();
+      }, err => {
+        if (err && typeof err !== 'object') {
+          this.dialogService.alert('ERROR', err);
+        } else {
+          this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_COPY'));
+        }
+      });
+    }
+  }
+
+  onContextMove( event ): void{
+    if (event && event.data) {
+      let folder: string = event.data.rowValue.directoryPath;
+      if (this.oTable.getSelectedItems().length > 0) folder = this.oTable.getSelectedItems()[0].directoryPath;
+
+      let dialogData: CopyDialogData = {
+        title: 'MOVE_TITLE',
+        placeholder: 'targetFolder',
+        defaultValue: folder,
+        fileData: event.data.rowValue
+      };
+
+      let cfg: MatDialogConfig = {
+        role: 'dialog',
+        disableClose: false,
+        data: dialogData,
+        panelClass: ['o-dialog-class']
+      };
+      let dialogRef = this.dialog.open(CopyDialogComponent, cfg);
+      const self = this;
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          self.move(result);
+        }
+      });
+    }
+  }
+
+  move( target: string ): void{
+    const tableService = this.oTable.getDataService();
+    if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
+      const workspaceId = this.workspaceService.getWorkspace();
+      const selectedItems = this.oTable.getSelectedItems();
+      const currentFilter = this.stateService.getCurrentQueryFilter();
+      let currentFolder: string = '/';
+      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) currentFolder = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      const self = this;
+      tableService[this.moveMethod](workspaceId, currentFolder, target, selectedItems)
+      .subscribe( result => {
+        self.oTable.reloadCurrentFolder();
+      }, err => {
+        if (err && typeof err !== 'object') {
+          this.dialogService.alert('ERROR', err);
+        } else {
+          this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_MOVE'));
         }
       });
     }
@@ -293,7 +424,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     let tableService = this.oTable.getDataService();
     if (tableService && (this.changeNameMethod in tableService)) {
       let self = this;
-      tableService[this.changeNameMethod](name, file).subscribe(() => {
+      const workspaceId = this.workspaceService.getWorkspace();
+      tableService[this.changeNameMethod](workspaceId, name, file).subscribe(() => {
         // do nothing
       }, err => {
         if (err && typeof err !== 'object') {
@@ -335,8 +467,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
     if (val && this.uploadProgressComponentRef) {
       const instance: UploadProgressComponent = this.uploadProgressComponentRef.instance;
-      let files = this.oFileInput.uploader.files.filter(item => !item.isUploaded && !item.isCancel);
-
+      let files = this.oFileInput.uploader.files.filter(item => !item.isUploaded && !item.isCancel)
 
       instance.uploaderFiles = createComp ? files : instance.uploaderFiles.concat(files);
 

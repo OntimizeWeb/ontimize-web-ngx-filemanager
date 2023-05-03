@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, InjectionToken, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
   AbstractComponentStateService,
@@ -22,6 +22,7 @@ import {
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
+import { WorkspaceService } from '../../../services/workspace.service';
 
 @Component({
   selector: 'o-table-extended',
@@ -42,7 +43,6 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
   ],
   inputs: [
     ...DEFAULT_INPUTS_O_TABLE,
-    'workspaceKey: workspace-key',
     'addFolderMethod : add-folder-method'
   ],
   outputs: DEFAULT_OUTPUTS_O_TABLE,
@@ -61,7 +61,6 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   public static FM_FOLDER_PARENT_KEY = 'FM_FOLDER_PARENT_KEY';
 
   protected workspaceId: any;
-  protected workspaceKey: string;
   protected addFolderMethod: string;
 
   protected stateService: FileManagerStateService;
@@ -69,7 +68,12 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 
   protected mutationObserver: MutationObserver;
 
+  protected workspaceService: WorkspaceService;
+
   public ngOnInit(): void {
+    //Initialize Provider
+    this.workspaceService = this.injector.get(WorkspaceService);
+
     // setting fake value for avoid entity is undefined checking
     this.entity = 'fakeEntity';
     super.ngOnInit();
@@ -98,7 +102,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
    * @param ovrrArgs override arguments
    */
   public queryData(filter?: any, ovrrArgs?: OQueryDataArgs): void {
-    this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
+    this.workspaceId = this.workspaceService.getWorkspace();
 
     if (!Util.isDefined(this.workspaceId)) {
       this.setData([], []);
@@ -120,7 +124,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
+          const workspaceId = this.workspaceService.getWorkspace();
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
@@ -158,7 +162,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
+    const workspaceId = this.workspaceService.getWorkspace();
     const kv = {};
     const currentFilter = this.stateService.getCurrentQueryFilter();
     if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {

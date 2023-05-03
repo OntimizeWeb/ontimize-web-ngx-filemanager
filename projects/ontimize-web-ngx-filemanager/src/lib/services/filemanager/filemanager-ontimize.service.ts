@@ -4,10 +4,11 @@ import { OntimizeEEService } from 'ontimize-web-ngx';
 import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
-import { FileClass } from '../util';
+import { FileClass } from '../../util';
+import { FileManagerService } from './filemanager.service';
 
 @Injectable()
-export class FileManagerService extends OntimizeEEService {
+export class FileManagerOntimizeService extends OntimizeEEService implements FileManagerService{
 
   protected httpClient: HttpClient;
 
@@ -320,7 +321,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  changeFileName(name: string, file: FileClass): Observable<any> {
+  changeFileName(workspaceId: any, name: string, file: FileClass): Observable<any> {
     const url = this._urlBase + this.path + '/fileUpdate';
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({
@@ -360,5 +361,12 @@ export class FileManagerService extends OntimizeEEService {
 
   get sessionId() {
     return this.authService.getSessionInfo().id;
+  }
+
+  copy( workspaceId: any, currentFolder: string, targetFolder: string, items: FileClass[] ): Observable<any> {
+    throw new Error('Method not implemented.');
+  }
+  move( workspaceId: any, currentFolder: string, targetFolder: string, items: FileClass[] ): Observable<any> {
+    throw new Error('Method not implemented.');
   }
 }

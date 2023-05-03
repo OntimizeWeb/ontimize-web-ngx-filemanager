@@ -1,28 +1,29 @@
 import { IFileService, OFileItem, OFileUploader, OFormComponent } from 'ontimize-web-ngx';
 
-import { FileManagerService } from '../../services/filemanager.service';
+import { FileManagerService } from '../../services/filemanager/filemanager.service';
+import { WorkspaceService } from '../../services/workspace.service';
 
 export class OFileUploaderExtended extends OFileUploader {
 
   protected form: OFormComponent;
-  protected workspaceKey: string;
   parentKey: string;
   protected filemanagerService: FileManagerService;
   protected parentItem: any;
+  protected workspaceService: WorkspaceService;
 
   constructor(
     service: IFileService,
     entity: string,
     form: OFormComponent,
-    workspaceKey: string,
     parentKey: string,
-    filemanagerService: any
+    filemanagerService: any,
+    workspaceService: WorkspaceService
   ) {
     super(service, entity);
     this.form = form;
-    this.workspaceKey = workspaceKey;
     this.parentKey = parentKey;
     this.filemanagerService = filemanagerService;
+    this.workspaceService = workspaceService;
   }
 
   setParentItem(val: any) {
@@ -55,7 +56,7 @@ export class OFileUploaderExtended extends OFileUploader {
       this._uploadSuscription.unsubscribe();
     }
 
-    const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
+    const workspaceId = this.workspaceService.getWorkspace();
     let folderId;
     if (this.parentKey && this.parentItem.hasOwnProperty(this.parentKey)) {
       folderId = this.parentItem[this.parentKey];
@@ -67,7 +68,7 @@ export class OFileUploaderExtended extends OFileUploader {
         if (resp.loaded && resp.total) {
           const progress = Math.round(resp.loaded * 100 / resp.total);
           self._onProgressItem(item, progress);
-        } else if (resp.documentId && resp.fileId && resp.versionId) {
+        } else if ( (resp.documentId && resp.fileId && resp.versionId) || (resp.data != null && resp.data.length > 0)) {
           self._onSuccessItem(item, resp);
         } else {
           console.log('error');
