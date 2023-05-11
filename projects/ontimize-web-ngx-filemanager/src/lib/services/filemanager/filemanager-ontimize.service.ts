@@ -32,7 +32,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     }
   }
 
-  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+  queryItems(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
     const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -257,7 +257,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     return dataObservable;
   }
 
-  deleteFiles(workspaceId: any, files: FileClass[] = []): Observable<any> {
+  deleteItems(workspaceId: any, files: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -321,7 +321,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     return dataObservable;
   }
 
-  changeFileName(workspaceId: any, name: string, file: FileClass): Observable<any> {
+  changeItemName(workspaceId: any, name: string, file: FileClass): Observable<any> {
     const url = this._urlBase + this.path + '/fileUpdate';
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({
@@ -363,10 +363,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     return this.authService.getSessionInfo().id;
   }
 
-  copy( workspaceId: any, currentFolder: string, targetFolder: string, items: FileClass[] ): Observable<any> {
+  copyItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
-  move( workspaceId: any, currentFolder: string, targetFolder: string, items: FileClass[] ): Observable<any> {
+
+  moveItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 }

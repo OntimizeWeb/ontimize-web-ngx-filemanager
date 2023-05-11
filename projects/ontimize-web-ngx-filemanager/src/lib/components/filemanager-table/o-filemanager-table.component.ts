@@ -73,15 +73,15 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   @InputConverter()
   public enabled: boolean = true;
 
-  queryMethod: string = 'queryFiles';
-  deleteMethod: string = 'deleteFiles';
+  queryMethod: string = 'queryItems';
+  deleteMethod: string = 'deleteItems';
   addFolderMethod: string = 'insertFolder';
-  changeNameMethod: string = 'changeFileName';
+  changeNameMethod: string = 'changeItemName';
 
   protected uploadMethod: string = 'upload';
   protected downloadMethod: string = 'download';
-  protected copyMethod: string = 'copy';
-  protected moveMethod: string = 'move';
+  protected copyMethod: string = 'copyItems';
+  protected moveMethod: string = 'moveItems';
 
   protected onFormDataSubscribe: Subscription;
   protected stateService: FileManagerStateService;
@@ -291,6 +291,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         } else {
           this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_DOWNLOAD'));
         }
+        self.updateDownloaderStatus(downloadId, { cancelled: true });
       });
     }
   }
@@ -323,16 +324,18 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  copy( target: string ): void{
+  copy( folder: string ): void{
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
       const workspaceId = this.workspaceService.getWorkspace();
       const selectedItems = this.oTable.getSelectedItems();
+      const kv = {};
       const currentFilter = this.stateService.getCurrentQueryFilter();
-      let currentFolder: string = '/';
-      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) currentFolder = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+        kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      }
       const self = this;
-      tableService[this.copyMethod](workspaceId, currentFolder, target, selectedItems)
+      tableService[this.copyMethod](workspaceId, selectedItems, folder, kv )
       .subscribe( result => {
         self.oTable.reloadCurrentFolder();
       }, err => {
@@ -373,16 +376,18 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  move( target: string ): void{
+  move( folder: string ): void{
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
       const workspaceId = this.workspaceService.getWorkspace();
       const selectedItems = this.oTable.getSelectedItems();
+      const kv = {};
       const currentFilter = this.stateService.getCurrentQueryFilter();
-      let currentFolder: string = '/';
-      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) currentFolder = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+        kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      }
       const self = this;
-      tableService[this.moveMethod](workspaceId, currentFolder, target, selectedItems)
+      tableService[this.moveMethod](workspaceId, selectedItems, folder, kv )
       .subscribe( result => {
         self.oTable.reloadCurrentFolder();
       }, err => {
