@@ -34,7 +34,10 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   private static FILTER_PREFIX: string = 'prefix';
   private static FILTER_DELIMITER: string = 'delimiter';
 
+  private static DATA_KEY: string = 'key';
   private static DATA_PREFIX: string = 'prefix';
+  private static DATA_NAME: string = 'fileName';
+  private static DATA_CURRENT_PREFIX: string = 'currentPrefix';
 
   private static RESPONSE_KEY_CODE: string = 'code';
   private static RESPONSE_KEY_MESSAGE: string = 'message';
@@ -491,13 +494,131 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 
 
   public copyItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
-    throw new Error('Method not implemented.');
+    //Initialize result
+    let _innerObserver: any;
+    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
+
+    //Build request data
+    let keys: string[] = [];
+    items.forEach( target => keys.push( target.id ))
+
+    if( !folder.endsWith( FileManagerS3Service.SYMBOL_SLASH )) folder = `${folder}${FileManagerS3Service.SYMBOL_SLASH}`;
+
+    const data: any = {
+      filter:{
+        workspace: workspace.name,
+        data: workspace.data,
+        key: keys
+      },
+      data: {}
+    };
+
+    if( keys.length === 1 && !items[0].directory ){
+      let file: FileClass = items[ 0 ];
+      data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
+      data.data[ FileManagerS3Service.DATA_NAME ] = file.name;
+    }
+    else if( keys.length > 0 ){
+      let currentFolder: string = FileManagerS3Service.ROOT;
+      if( kv[ FileManagerS3Service.KV_FOLDER_KEY ] ) currentFolder = kv[ FileManagerS3Service.KV_FOLDER_KEY ];
+      data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
+      data.data[ FileManagerS3Service.DATA_CURRENT_PREFIX ] = currentFolder;
+    }
+
+
+    //Build request
+    const url: string = `${this.host}/copy`;
+    const body: string = JSON.stringify( data );
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
+      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
+    });
+    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
+
+
+    //Request
+    this.httpClient
+      .request( request )
+      .pipe( filter( response => HttpEventType.Response === response.type ))
+      .subscribe( ( response: HttpResponse<any> ) => {
+        const body: any = response.body;
+        if ( body ) {
+          this.mapDataBodyToFileClass( body );
+          _innerObserver.next( body );
+        }
+        else {
+          this.errorHandler( response, _innerObserver );
+        }
+      }, error => {
+        this.errorHandler( error, _innerObserver );
+      }, () => _innerObserver.complete());
+
+    return result;
   }
 
 
 
   public moveItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
-    throw new Error('Method not implemented.');
+    //Initialize result
+    let _innerObserver: any;
+    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
+
+    //Build request data
+    let keys: string[] = [];
+    items.forEach( target => keys.push( target.id ))
+
+    if( !folder.endsWith( FileManagerS3Service.SYMBOL_SLASH )) folder = `${folder}${FileManagerS3Service.SYMBOL_SLASH}`;
+
+    const data: any = {
+      filter:{
+        workspace: workspace.name,
+        data: workspace.data,
+        key: keys
+      },
+      data: {}
+    };
+
+    if( keys.length === 1 && !items[0].directory ){
+      let file: FileClass = items[ 0 ];
+      data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
+      data.data[ FileManagerS3Service.DATA_NAME ] = file.name;
+    }
+    else if( keys.length > 0 ){
+      let currentFolder: string = FileManagerS3Service.ROOT;
+      if( kv[ FileManagerS3Service.KV_FOLDER_KEY ] ) currentFolder = kv[ FileManagerS3Service.KV_FOLDER_KEY ];
+      data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
+      data.data[ FileManagerS3Service.DATA_CURRENT_PREFIX ] = currentFolder;
+    }
+
+
+    //Build request
+    const url: string = `${this.host}/move`;
+    const body: string = JSON.stringify( data );
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
+      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
+    });
+    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
+
+
+    //Request
+    this.httpClient
+      .request( request )
+      .pipe( filter( response => HttpEventType.Response === response.type ))
+      .subscribe( ( response: HttpResponse<any> ) => {
+        const body: any = response.body;
+        if ( body ) {
+          this.mapDataBodyToFileClass( body );
+          _innerObserver.next( body );
+        }
+        else {
+          this.errorHandler( response, _innerObserver );
+        }
+      }, error => {
+        this.errorHandler( error, _innerObserver );
+      }, () => _innerObserver.complete());
+
+    return result;
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
