@@ -79,7 +79,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     }
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public queryItems( workspace: any, kv?: Object, av?: Array<string> ): Observable<any> {
     //Initialize result
@@ -132,7 +132,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public download( workspace: any, files: FileClass[] ): Observable<any> {
     //Initialize result
@@ -196,7 +196,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public downloadMultiple( workspace: any, files: FileClass[] ): Observable<any> {
     //Initialize result
@@ -257,7 +257,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public upload( workspace: any, folderId: any, files: any[] ): Observable<any> {
     //Initialize result
@@ -332,7 +332,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public deleteItems( workspace: any, files: FileClass[] ): Observable<any> {
     //Initialize result
@@ -380,7 +380,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public insertFolder( workspace: any, name: any, kv?: Object ): Observable<any> {
     //Initialize result
@@ -429,7 +429,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public changeItemName( workspace: any, name: string, file: FileClass ): Observable<any> {
     //Initialize result
@@ -437,7 +437,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
 
     //Check if it's a directory
-    if( file.directory ) return result;
+    if( file.directory ) return this.changeFolderNameHelper( workspace, name, file );
 
     //Build request data
     const keyParts: string[] = file.id.split( FileManagerS3Service.SYMBOL_SLASH );
@@ -492,6 +492,43 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   }
 
 
+  private changeFolderNameHelper( workspace: any, name: string, folder: FileClass ): Observable<any> {
+    //Initialize result
+    let _innerObserver: any;
+    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
+
+    //Build new Prefix
+    let newPrefix: string = `${folder.directoryPath}${name}`;
+    const kv: any = { FM_FOLDER_PARENT_KEY: folder.id };
+
+    if( folder.path === newPrefix ) return result;
+
+    //Move items
+    this.moveItems( workspace, [ folder ], newPrefix, kv ).subscribe( moveResponse => {
+      if( moveResponse ){
+        //Delete old items
+        this.deleteItems( workspace, [ folder ] ).subscribe( deleteResponse => {
+          if( deleteResponse ){
+            _innerObserver.next( this.createServiceResponseFromBody( deleteResponse ));
+          }
+          else {
+            this.errorHandler( deleteResponse, _innerObserver );
+          }
+        }, error => {
+          this.errorHandler( error, _innerObserver );
+        }, () => _innerObserver.complete());
+      }
+      else {
+        this.errorHandler( moveResponse, _innerObserver );
+      }
+    }, error => {
+      this.errorHandler( error, _innerObserver );
+    }, () => _innerObserver.complete());
+
+    return result;
+  }
+
+// ------------------------------------------------------------------------------------------------------ \\
 
   public copyItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
     //Initialize result
@@ -556,7 +593,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     return result;
   }
 
-
+// ------------------------------------------------------------------------------------------------------ \\
 
   public moveItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
     //Initialize result
