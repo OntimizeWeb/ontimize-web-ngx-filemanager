@@ -275,9 +275,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
         workspace: workspace.name,
         data: workspace.data
       },
-      data:{
-        prefix: folder,
-      }
+      data:{}
     };
 
     //Build request
@@ -289,8 +287,13 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     files.forEach(item => {
       item.prepareToUpload();
       item.isUploading = true;
-      if( folder === '/' ) data.data[ FileManagerS3Service.DATA_PREFIX ] = `${folder}${item.file.name}`;
+
+      if( folder === '/' ){
+        data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
+        data.data[ FileManagerS3Service.DATA_NAME ] = item.file.name;
+      }
       else data.data = { key: `${folder}${item.file.name}` };
+
       formData.append( FileManagerS3Service.FORMDATA_DATA, JSON.stringify( data ) );
       formData.append( FileManagerS3Service.FORMDATA_FILE, item.file );
     });

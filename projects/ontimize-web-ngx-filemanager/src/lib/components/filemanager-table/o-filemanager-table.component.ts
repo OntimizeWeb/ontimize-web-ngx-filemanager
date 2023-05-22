@@ -2,7 +2,7 @@ import { HttpEventType } from '@angular/common/http';
 import { AfterViewInit, Component, forwardRef, Inject, InjectionToken, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Subscription } from 'rxjs';
 
 import { DomService } from '../../services/dom.service';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
@@ -327,6 +327,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   copy( folder: string ): void{
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
+      const loadingCopySubject: BehaviorSubject<boolean> = this.oTable.loadingCopySubject;
+      loadingCopySubject.next( true );
       const workspaceId = this.workspaceService.getWorkspace();
       const selectedItems = this.oTable.getSelectedItems();
       const kv = {};
@@ -344,6 +346,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         } else {
           this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_COPY'));
         }
+      }, () => {
+        loadingCopySubject.next( false );
       });
     }
   }
@@ -379,6 +383,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   move( folder: string ): void{
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
+      const loadingMoveSubject: BehaviorSubject<boolean> = this.oTable.loadingMoveSubject;
+      loadingMoveSubject.next( true );
       const workspaceId = this.workspaceService.getWorkspace();
       const selectedItems = this.oTable.getSelectedItems();
       const kv = {};
@@ -396,6 +402,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         } else {
           this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_MOVE'));
         }
+      }, () => {
+        loadingMoveSubject.next( false );
       });
     }
   }
@@ -428,15 +436,17 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   changeFileName(name: string, file: FileClass): void {
     let tableService = this.oTable.getDataService();
     if (tableService && (this.changeNameMethod in tableService)) {
+      const loadingRenameSubject: BehaviorSubject<boolean> = this.oTable.loadingRenameSubject;
+      loadingRenameSubject.next( true );
       let self = this;
       const workspaceId = this.workspaceService.getWorkspace();
       tableService[this.changeNameMethod](workspaceId, name, file).subscribe(() => {
-        // do nothing
       }, err => {
         if (err && typeof err !== 'object') {
           self.dialogService.alert('ERROR', err);
         }
       }, () => {
+        loadingRenameSubject.next( false );
         self.oTable.reloadCurrentFolder();
       });
     }
