@@ -75,7 +75,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     if ( config && config.path && component ) {
       this.entity = component.oForm.entity;
       this.path = `${config.path}/${this.entity}`;
-      this.host = `${this._urlBase}${this.path}/odms`;
+      this.host = `${this._urlBase}${this.path}/sdms`;
     }
   }
 
