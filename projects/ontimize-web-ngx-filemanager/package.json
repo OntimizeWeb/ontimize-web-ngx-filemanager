@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "11.0.0",
+  "version": "12.0.0",
   "description": "An implementation of file management system for Ontimize Web",
   "keywords": [
     "angular",
@@ -24,6 +24,6 @@
   },
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "ontimize-web-ngx": "C:/work/ontimize web/15.x.x/ontimize-web-ngx/dist/ontimize-web-ngx-11.0.0.tgz"
+    "ontimize-web-ngx": "C:/work/ontimize web/15.x.x/ontimize-web-ngx/dist/ontimize-web-ngx-12.0.0.tgz"
   }
 }
