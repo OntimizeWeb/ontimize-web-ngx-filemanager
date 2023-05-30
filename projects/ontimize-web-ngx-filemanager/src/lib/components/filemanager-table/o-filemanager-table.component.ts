@@ -315,7 +315,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       const self = this;
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          action(result);
+          action( result ).bind( this );
         }
       });
     }
@@ -349,7 +349,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   onContextCopy( event: any ): void{
-    this.onContextCopyAndMoveHelper( event, 'COPY_TITLE', this.copy );
+    this.onContextCopyAndMoveHelper( event, 'COPY_TITLE', this.copy.bind( this ) );
   }
 
   copy( folder: string ): void{
@@ -358,7 +358,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   onContextMove( event ): void{
-    this.onContextCopyAndMoveHelper( event, 'MOVE_TITLE', this.move );
+    this.onContextCopyAndMoveHelper( event, 'MOVE_TITLE', this.move.bind( this ) );
   }
 
   move( folder: string ): void{

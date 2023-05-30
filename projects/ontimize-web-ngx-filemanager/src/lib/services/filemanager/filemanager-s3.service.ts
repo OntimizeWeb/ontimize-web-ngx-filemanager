@@ -22,7 +22,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   //Constants
   private static SYMBOL_SLASH : string = '/';
   private static SYMBOL_ALL : string = '*';
-  private static CONTENT_TYPE_JSON : string = 'application/json;charset=UTF-8';
+  private static HTTP_HEADER_CONTENT_TYPE_JSON_VALUE : string = 'application/json;charset=UTF-8';
   private static FORMDATA_DATA : string = 'data';
   private static FORMDATA_FILE : string = 'file';
 
@@ -34,7 +34,6 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   private static FILTER_PREFIX: string = 'prefix';
   private static FILTER_DELIMITER: string = 'delimiter';
 
-  private static DATA_KEY: string = 'key';
   private static DATA_PREFIX: string = 'prefix';
   private static DATA_NAME: string = 'fileName';
   private static DATA_CURRENT_PREFIX: string = 'currentPrefix';
@@ -102,10 +101,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     //Build request
     const url: string = `${this.host}/find`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
@@ -133,10 +129,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     const id: string = btoa( file.id );
     const dataEncoded: string = encodeURIComponent( JSON.stringify( data ) );
     const url: string = `${this.host}/download/id/${id}?data=${dataEncoded}`;
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_GET, url, null, {
       headers: headers,
       reportProgress: true,
@@ -165,10 +158,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     //Build request
     const url: string = `${this.host}/download`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, {
       headers: headers,
       reportProgress: true,
@@ -202,9 +192,6 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 
     //Build request
     const url: string = `${this.host}/upload`;
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL
-    });
     const formData: any = new FormData();
     files.forEach(item => {
       item.prepareToUpload();
@@ -219,6 +206,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
       formData.append( FileManagerS3Service.FORMDATA_DATA, JSON.stringify( data ) );
       formData.append( FileManagerS3Service.FORMDATA_FILE, item.file );
     });
+    const headers: HttpHeaders = this.getHeaders();
     const request = new HttpRequest( FileManagerS3Service.HTTP_POST, url, formData, {
       headers: headers,
       reportProgress: true
@@ -275,10 +263,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     //Build request
     const url: string = `${this.host}/delete`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_DELETE, url, body, { headers } );
 
     //Request
@@ -304,10 +289,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     //Build request
     const url: string = `${this.host}/create`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
@@ -345,10 +327,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     //Build request
     const url: string = `${this.host}/update`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -356,6 +335,16 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   }
 
 
+
+  /**
+   * Helper method to change the name of a folder in a workspace.
+   *
+   * @param workspace - The workspace where the folder belongs.
+   * @param name - The new name for the folder.
+   * @param folder - The folder to be renamed.
+   *
+   * @returns An Observable that emits the result of the folder name change operation.
+   */
   private changeFolderNameHelper( workspace: any, name: string, folder: FileClass ): Observable<any> {
     //Initialize result
     let _innerObserver: any;
@@ -424,12 +413,10 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 
 
     //Build request
+    const httpMethod: string = FileManagerS3Service.HTTP_PUT;
     const url: string = `${this.host}/copy`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -470,10 +457,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     //Build request
     const url: string = `${this.host}/move`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.CONTENT_TYPE_JSON
-    });
+    const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -589,6 +573,13 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   }
 
 
+  /**
+   * Performs a simple request and returns an Observable that emits the response.
+   *
+   * @param request - HttpRequest object representing the request.
+   *
+   * @returns An Observable that emits the response of the request.
+   */
   private simpleRequest( request: HttpRequest<string> ): Observable<any>{
     let _innerObserver: any;
     const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
@@ -614,6 +605,14 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
   }
 
 
+  /**
+   * Performs a download request and returns an Observable that emits the response.
+   *
+   * @param request - HttpRequest object representing the request.
+   * @param fileNameDefault - Default file name to be used for the downloaded file.
+   *
+   * @returns An Observable that emits the response of the request.
+   */
   private downloadRequest( request: HttpRequest<string>, fileNameDefault: string ): Observable<any>{
     let _innerObserver: any;
     const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
@@ -645,6 +644,14 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
       }, () => _innerObserver.complete());
 
     return result;
+  }
+
+
+  private getHeaders(): HttpHeaders{
+    return new HttpHeaders({
+      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
+      'Content-Type': FileManagerS3Service.HTTP_HEADER_CONTENT_TYPE_JSON_VALUE
+    });
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
