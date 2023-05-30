@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { VIRTUAL_SCROLL_STRATEGY } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, InjectionToken, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Injector, NgModule, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogConfig } from '@angular/material';
 import {
   AbstractComponentStateService,

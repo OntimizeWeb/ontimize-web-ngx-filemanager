@@ -1,8 +1,8 @@
 import { HttpEventType } from '@angular/common/http';
-import { AfterViewInit, Component, forwardRef, Inject, InjectionToken, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, Inject, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
-import { BehaviorSubject, forkJoin, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { DomService } from '../../services/dom.service';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
@@ -137,9 +137,6 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE ) {
       this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
       this.workspaceService.initializeOntimizeProvider( this.workspaceKey, this.oForm );
-      this.oForm.onDataLoaded.subscribe( data => {
-        let x:any = this.oForm.formData;
-      })
     }
     else if (!this.serviceType && this.type === OFileManagerTableComponent.S3_TYPE ) {
       this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
@@ -296,13 +293,13 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  onContextCopy( event ): void{
-    if (event && event.data) {
+  private onContextCopyAndMoveHelper( event: any, keyDialogTitle: string, action: any ): void{
+    if ( event && event.data ) {
       let folder: string = event.data.rowValue.directoryPath;
       if (this.oTable.getSelectedItems().length > 0) folder = this.oTable.getSelectedItems()[0].directoryPath;
 
       let dialogData: CopyDialogData = {
-        title: 'COPY_TITLE',
+        title: keyDialogTitle,
         placeholder: 'targetFolder',
         defaultValue: folder,
         fileData: event.data.rowValue
@@ -318,94 +315,55 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       const self = this;
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          self.copy(result);
+          action(result);
         }
       });
     }
+  }
+
+  private copyAndMoveHelper( folder: string, method: any, loading: BehaviorSubject<boolean>, keyMsgError: string ): void{
+    const tableService = this.oTable.getDataService();
+    if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
+      loading.next( true );
+      const workspaceId = this.workspaceService.getWorkspace();
+      const selectedItems = this.oTable.getSelectedItems();
+      const kv = {};
+      const currentFilter = this.stateService.getCurrentQueryFilter();
+      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
+        kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
+      }
+      const self = this;
+      tableService[method](workspaceId, selectedItems, folder, kv )
+      .subscribe( result => {
+        self.oTable.reloadCurrentFolder();
+      }, err => {
+        if (err && typeof err !== 'object') {
+          this.dialogService.alert('ERROR', err);
+        } else {
+          this.dialogService.alert('ERROR', this.translatePipe.transform( keyMsgError ));
+        }
+      }, () => {
+        loading.next( false );
+      });
+    }
+  }
+
+  onContextCopy( event: any ): void{
+    this.onContextCopyAndMoveHelper( event, 'COPY_TITLE', this.copy );
   }
 
   copy( folder: string ): void{
-    const tableService = this.oTable.getDataService();
-    if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      const loadingCopySubject: BehaviorSubject<boolean> = this.oTable.loadingCopySubject;
-      loadingCopySubject.next( true );
-      const workspaceId = this.workspaceService.getWorkspace();
-      const selectedItems = this.oTable.getSelectedItems();
-      const kv = {};
-      const currentFilter = this.stateService.getCurrentQueryFilter();
-      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-        kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
-      }
-      const self = this;
-      tableService[this.copyMethod](workspaceId, selectedItems, folder, kv )
-      .subscribe( result => {
-        self.oTable.reloadCurrentFolder();
-      }, err => {
-        if (err && typeof err !== 'object') {
-          this.dialogService.alert('ERROR', err);
-        } else {
-          this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_COPY'));
-        }
-      }, () => {
-        loadingCopySubject.next( false );
-      });
-    }
+    const loadingCopySubject: BehaviorSubject<boolean> = this.oTable.loadingCopySubject;
+    this.copyAndMoveHelper( folder, this.copyMethod, loadingCopySubject, 'MESSAGES.ERROR_COPY' );
   }
 
   onContextMove( event ): void{
-    if (event && event.data) {
-      let folder: string = event.data.rowValue.directoryPath;
-      if (this.oTable.getSelectedItems().length > 0) folder = this.oTable.getSelectedItems()[0].directoryPath;
-
-      let dialogData: CopyDialogData = {
-        title: 'MOVE_TITLE',
-        placeholder: 'targetFolder',
-        defaultValue: folder,
-        fileData: event.data.rowValue
-      };
-
-      let cfg: MatDialogConfig = {
-        role: 'dialog',
-        disableClose: false,
-        data: dialogData,
-        panelClass: ['o-dialog-class']
-      };
-      let dialogRef = this.dialog.open(CopyDialogComponent, cfg);
-      const self = this;
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          self.move(result);
-        }
-      });
-    }
+    this.onContextCopyAndMoveHelper( event, 'MOVE_TITLE', this.move );
   }
 
   move( folder: string ): void{
-    const tableService = this.oTable.getDataService();
-    if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      const loadingMoveSubject: BehaviorSubject<boolean> = this.oTable.loadingMoveSubject;
-      loadingMoveSubject.next( true );
-      const workspaceId = this.workspaceService.getWorkspace();
-      const selectedItems = this.oTable.getSelectedItems();
-      const kv = {};
-      const currentFilter = this.stateService.getCurrentQueryFilter();
-      if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
-        kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
-      }
-      const self = this;
-      tableService[this.moveMethod](workspaceId, selectedItems, folder, kv )
-      .subscribe( result => {
-        self.oTable.reloadCurrentFolder();
-      }, err => {
-        if (err && typeof err !== 'object') {
-          this.dialogService.alert('ERROR', err);
-        } else {
-          this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_MOVE'));
-        }
-      }, () => {
-        loadingMoveSubject.next( false );
-      });
-    }
+    const loadingMoveSubject: BehaviorSubject<boolean> = this.oTable.loadingMoveSubject;
+    this.copyAndMoveHelper( folder, this.moveMethod, loadingMoveSubject, 'MESSAGES.ERROR_MOVE' );
   }
 
   onContextChangeName(event): void {

@@ -82,10 +82,6 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 // ------------------------------------------------------------------------------------------------------ \\
 
   public queryItems( workspace: any, kv?: Object, av?: Array<string> ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Build request data
     const data: any = {
       filter:{
@@ -113,32 +109,12 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe(( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if( body ){
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( this.createServiceResponseFromBody( body ) );
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.simpleRequest( request );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
 
   public download( workspace: any, files: FileClass[] ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Check if there is more than one file
     const file: FileClass = files[0];
     if ( files.length > 1 || file.directory ) {
@@ -168,41 +144,12 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     });
 
     //Request
-    this.httpClient
-      .request( request )
-      .subscribe( response => {
-        if ( HttpEventType.DownloadProgress === response.type ) {
-          let progressData: any = {
-            loaded: response.loaded
-          };
-          _innerObserver.next( progressData );
-        }
-        else if ( HttpEventType.Response === response.type ) {
-          const body: any = response.body;
-          if ( body ) {
-            this.mapDataBodyToFileClass( body );
-            const fileName = this.getFileNameFromHeadersIfExists( response.headers, file.name );
-            this.createDownloadLink( body, fileName );
-            _innerObserver.next( response );
-          }
-          else {
-            this.errorHandler( body, _innerObserver );
-          }
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.downloadRequest( request, file.name );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
 
   public downloadMultiple( workspace: any, files: FileClass[] ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Build request data
     const keys: string[] = [];
     files.forEach( target => keys.push( target.id ));
@@ -229,32 +176,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     });
 
     //Request
-    this.httpClient
-      .request( request )
-      .subscribe( response => {
-        if ( HttpEventType.DownloadProgress === response.type ) {
-          let progressData: any = {
-            loaded: response.loaded
-          };
-          _innerObserver.next( progressData );
-        }
-        else if ( HttpEventType.Response === response.type ) {
-          const body: any = response.body;
-          if ( body ) {
-            this.mapDataBodyToFileClass( body );
-            const fileName = this.getFileNameFromHeadersIfExists( response.headers, 'data.zip' );
-            this.createDownloadLink( body, fileName );
-            _innerObserver.next( response );
-          }
-          else {
-            this.errorHandler( body, _innerObserver );
-          }
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.downloadRequest( request, 'data.zip' );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -328,7 +250,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
           this.errorHandler(error, _innerObserver);
         }, () => _innerObserver.complete());
 
-    files.forEach( item => {
+      files.forEach( item => {
       item._uploadSuscription = httpSubscription;
     });
 
@@ -338,10 +260,6 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 // ------------------------------------------------------------------------------------------------------ \\
 
   public deleteItems( workspace: any, files: FileClass[] ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Build request data
     const keys: string[] = [];
     if( files ) files.forEach( target => keys.push( target.id ));
@@ -364,32 +282,12 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_DELETE, url, body, { headers } );
 
     //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe( ( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if ( body ) {
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( body );
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.simpleRequest( request );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
 
   public insertFolder( workspace: any, name: any, kv?: Object ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Build request data
     const data: any = {
       filter:{
@@ -413,32 +311,12 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe( ( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if ( body ) {
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( body );
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.simpleRequest( request );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
 
   public changeItemName( workspace: any, name: string, file: FileClass ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Check if it's a directory
     if( file.directory ) return this.changeFolderNameHelper( workspace, name, file );
 
@@ -473,25 +351,8 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     });
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
-
     //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe( ( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if ( body ) {
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( body );
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.simpleRequest( request );
   }
 
 
@@ -504,7 +365,7 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     let newPrefix: string = `${folder.directoryPath}${name}`;
     const kv: any = { FM_FOLDER_PARENT_KEY: folder.id };
 
-    if( folder.path === newPrefix ) return result;
+    if( folder && folder.path === newPrefix ) return _innerObserver;
 
     //Move items
     this.moveItems( workspace, [ folder ], newPrefix, kv ).subscribe( moveResponse => {
@@ -534,10 +395,6 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 // ------------------------------------------------------------------------------------------------------ \\
 
   public copyItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Build request data
     let keys: string[] = [];
     items.forEach( target => keys.push( target.id ))
@@ -575,34 +432,13 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     });
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
-
     //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe( ( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if ( body ) {
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( body );
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.simpleRequest( request );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
 
   public moveItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
-    //Initialize result
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
     //Build request data
     let keys: string[] = [];
     items.forEach( target => keys.push( target.id ))
@@ -640,25 +476,8 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
     });
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
-
     //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe( ( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if ( body ) {
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( body );
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
+    return this.simpleRequest( request );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -767,6 +586,65 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 
       body[ FileManagerS3Service.RESPONSE_KEY_DATA ] = newData;
     }
+  }
+
+
+  private simpleRequest( request: HttpRequest<string> ): Observable<any>{
+    let _innerObserver: any;
+    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
+
+    //Request
+    this.httpClient
+      .request( request )
+      .pipe( filter( response => HttpEventType.Response === response.type ))
+      .subscribe( ( response: HttpResponse<any> ) => {
+        const body: any = response.body;
+        if ( body ) {
+          this.mapDataBodyToFileClass( body );
+          _innerObserver.next( this.createServiceResponseFromBody( body ));
+        }
+        else {
+          this.errorHandler( response, _innerObserver );
+        }
+      }, error => {
+        this.errorHandler( error, _innerObserver );
+      }, () => _innerObserver.complete());
+
+    return result;
+  }
+
+
+  private downloadRequest( request: HttpRequest<string>, fileNameDefault: string ): Observable<any>{
+    let _innerObserver: any;
+    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
+
+    //Request
+    this.httpClient
+      .request( request )
+      .subscribe( response => {
+        if ( HttpEventType.DownloadProgress === response.type ) {
+          let progressData: any = {
+            loaded: response.loaded
+          };
+          _innerObserver.next( progressData );
+        }
+        else if ( HttpEventType.Response === response.type ) {
+          const body: any = response.body;
+          if ( body ) {
+            this.mapDataBodyToFileClass( body );
+            const fileName = this.getFileNameFromHeadersIfExists( response.headers, fileNameDefault );
+            this.createDownloadLink( body, fileName );
+            _innerObserver.next( response );
+          }
+          else {
+            this.errorHandler( body, _innerObserver );
+          }
+        }
+      }, error => {
+        this.errorHandler( error, _innerObserver );
+      }, () => _innerObserver.complete());
+
+    return result;
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
