@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { OFormComponent } from 'ontimize-web-ngx';
 import { WorkspaceProvider } from '../providers/workspace/workspace.provider';
 import { WorkspaceOntimizeProvider } from '../providers/workspace/workspace-ontimize.provider';
@@ -15,13 +15,6 @@ export class WorkspaceService{
   private provider: WorkspaceProvider;
 
 // ------------------------------------------------------------------------------------------------------ \\
-
-  /**
-   * Creates an instance of WorkspaceService.
-   */
-  public constructor() {}
-
-
 
   /**
    * Initializes the workspace provider with an Ontimize form component.
