@@ -4,29 +4,17 @@ import { OntimizeEEService } from 'ontimize-web-ngx';
 import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
-import { FileClass } from '../../util';
-import { FileManagerService } from './filemanager.service';
+import { FileClass } from '../util';
+import { IFileManagerService } from './filemanager.service.interface';
 
 @Injectable()
-export class FileManagerOntimizeService extends OntimizeEEService implements FileManagerService{
+export class FileManagerService extends OntimizeEEService implements IFileManagerService{
 
   protected httpClient: HttpClient;
-
-  private static HTTP_HEADER_CONTEN_TYPE_KEY : string = 'Content-Type';
-  private static HTTP_HEADER_CONTEN_TYPE_VALUE : string = 'application/json;charset=UTF-8';
-  private static HTTP_GET : string = 'GET';
-  private static HTTP_POST : string = 'POST';
 
   constructor(injector: Injector) {
     super(injector);
     this.httpClient = this.injector.get(HttpClient);
-  }
-
-  configureService(config: any): void {
-    super.configureService(config);
-    if (config.fileManagerPath) {
-      this.path = config.fileManagerPath;
-    }
   }
 
   protected manageError(error: any, observer: any) {
@@ -39,8 +27,13 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
 
   queryItems(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
     const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
-    const headers: HttpHeaders = this.getHeaders();
-    headers.append( FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_KEY, FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_VALUE );
+
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
 
     const body = JSON.stringify({
       filter: kv,
@@ -50,7 +43,9 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_POST, url, body, { headers });
+    const request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
 
 
     this.httpClient
@@ -77,11 +72,16 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
 
     const url = this._urlBase + this.path + '/getFile/' + file.id;
 
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Authorization': authorizationToken
+    });
+
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
-    const headers: HttpHeaders = this.getHeaders();
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_GET, url, null, {
+    const request = new HttpRequest('GET', url, null, {
       headers: headers,
       reportProgress: true,
       responseType: 'blob'
@@ -117,11 +117,16 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     // Send data to generate zip file
     const url = this._urlBase + this.path + '/getFiles/' + workspaceId;
 
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Authorization': authorizationToken
+    });
+
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
 
-    const headers: HttpHeaders = this.getHeaders();
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_POST, url, files, {
+    const request = new HttpRequest('POST', url, files, {
       headers: headers,
       responseType: 'text'
     });
@@ -137,8 +142,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
         // Download zip file
         const url_zip = this._urlBase + this.path + '/getZipFile/' + zipFileName.substring(0, zipFileName.lastIndexOf('.'));
 
-        const headers: HttpHeaders = this.getHeaders();
-        const request_zip = new HttpRequest(FileManagerOntimizeService.HTTP_GET, url_zip, null, {
+        const request_zip = new HttpRequest('GET', url_zip, null, {
           headers: headers,
           reportProgress: true,
           responseType: 'blob'
@@ -191,6 +195,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
 
   upload(workspaceId: any, folderId: any, files: any[]): Observable<any> {
     const url = this._urlBase + this.path + '/insertFile/' + workspaceId;
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Authorization': authorizationToken
+    });
 
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
@@ -207,8 +216,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
       toUpload.append('folderId', folderId);
     }
 
-    const headers: HttpHeaders = this.getHeaders();
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_POST, url, toUpload, {
+    const request = new HttpRequest('POST', url, toUpload, {
       headers: headers,
       reportProgress: true
     });
@@ -242,16 +250,23 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     return dataObservable;
   }
 
-  deleteItems(workspaceId: any, files: FileClass[] = []): Observable<any> {
+  deleteItems(workspaceId: any, items: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
-    const headers: HttpHeaders = this.getHeaders();
-    headers.append( FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_KEY, FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_VALUE );
 
-    const body = JSON.stringify({
-      fileList: files
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
     });
 
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_POST, url, body, { headers });
+    const body = JSON.stringify({
+      fileList: items
+    });
+
+    const request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
 
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
@@ -270,14 +285,20 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
 
   insertFolder(workspaceId: any, name: any, kv?: Object): Observable<any> {
     const url = this._urlBase + this.path + '/insertFolder/' + workspaceId + '/' + name;
-    const headers: HttpHeaders = this.getHeaders();
-    headers.append( FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_KEY, FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_VALUE );
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
 
     const body = JSON.stringify({
       data: kv
     });
 
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_POST, url, body, { headers });
+    const request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
 
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
@@ -293,17 +314,23 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
     return dataObservable;
   }
 
-  changeItemName(workspaceId: any, name: string, file: FileClass): Observable<any> {
+  changeItemName(workspace: any, name: string, item: FileClass): Observable<any>{
     const url = this._urlBase + this.path + '/fileUpdate';
-    const headers: HttpHeaders = this.getHeaders();
-    headers.append( FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_KEY, FileManagerOntimizeService.HTTP_HEADER_CONTEN_TYPE_VALUE );
+    const authorizationToken = 'Bearer ' + this.sessionId;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Authorization': authorizationToken
+    });
 
     const body = JSON.stringify({
-      file: file,
+      file: item,
       params: { name: name }
     });
 
-    const request = new HttpRequest(FileManagerOntimizeService.HTTP_POST, url, body, { headers });
+    const request = new HttpRequest('POST', url, body, {
+      headers: headers
+    });
 
     let _innerObserver: any;
     const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
@@ -335,13 +362,6 @@ export class FileManagerOntimizeService extends OntimizeEEService implements Fil
 
   moveItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
-  }
-
-  private getHeaders(): HttpHeaders{
-    return new HttpHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Authorization': `Bearer ${this.sessionId}`
-    });
   }
 
 }

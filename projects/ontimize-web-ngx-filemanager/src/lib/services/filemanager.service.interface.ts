@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { FileClass } from '../../util';
+import { FileClass } from '../util';
 import { OntimizeEEService } from 'ontimize-web-ngx';
 
 
@@ -8,7 +8,7 @@ import { OntimizeEEService } from 'ontimize-web-ngx';
  *
  * @see OntimizeEEService
  */
-export interface FileManagerService extends OntimizeEEService{
+export interface IFileManagerService extends OntimizeEEService{
 
   /**
    * Configures the service with the provided configuration.

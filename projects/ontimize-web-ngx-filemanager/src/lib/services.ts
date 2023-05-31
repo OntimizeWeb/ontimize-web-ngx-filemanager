@@ -2,10 +2,10 @@ import { Injector, ComponentFactoryResolver, ApplicationRef } from '@angular/cor
 import { FileManagerStateService } from './services/filemanager-state.service';
 import { DomService } from './services/dom.service';
 import { WorkspaceService } from './services/workspace.service';
-import { FileManagerS3Service } from './services/filemanager/filemanager-s3.service';
-import { FileManagerOntimizeService } from './services/filemanager/filemanager-ontimize.service';
+import { FileManagerS3Service } from './services/filemanager-s3.service';
+import { FileManagerService } from './services/filemanager.service';
 
-export * from './services/filemanager/filemanager-ontimize.service';
+export * from './services/filemanager.service';
 export * from './services/filemanager-state.service';
 export * from './services/dom.service';
 
@@ -22,8 +22,8 @@ export function getWorkspaceServiceProvider() {
 }
 
 export const OFILEMANAGER_PROVIDERS: any = [{
-  provide: 'FileManagerOntimizeService',
-  useValue: FileManagerOntimizeService
+  provide: 'FileManagerService',
+  useValue: FileManagerService
 }, {
   provide: 'FileManagerS3Service',
   useValue: FileManagerS3Service

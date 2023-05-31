@@ -2,9 +2,9 @@ import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } fro
 import { Injectable, Injector } from '@angular/core';
 import { Observable, OntimizeEEService, OntimizeServiceResponse, ServiceResponse } from 'ontimize-web-ngx';
 
-import { FileClass } from '../../util';
-import { FileManagerService } from './filemanager.service';
-import { OFileManagerTableComponent } from '../../components';
+import { FileClass } from '../util';
+import { IFileManagerService } from './filemanager.service.interface';
+import { OFileManagerTableComponent } from '../components';
 import { filter, share } from 'rxjs/operators';
 
 
@@ -17,7 +17,7 @@ import { filter, share } from 'rxjs/operators';
  * @see FileManagerService
  */
 @Injectable()
-export class FileManagerS3Service extends OntimizeEEService implements FileManagerService {
+export class FileManagerS3Service extends OntimizeEEService implements IFileManagerService {
 
   //Constants
   private static SYMBOL_SLASH : string = '/';
@@ -384,48 +384,16 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 // ------------------------------------------------------------------------------------------------------ \\
 
   public copyItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
-    //Build request data
-    let keys: string[] = [];
-    items.forEach( target => keys.push( target.id ))
-
-    if( !folder.endsWith( FileManagerS3Service.SYMBOL_SLASH )) folder = `${folder}${FileManagerS3Service.SYMBOL_SLASH}`;
-
-    const data: any = {
-      filter:{
-        workspace: workspace.name,
-        data: workspace.data,
-        key: keys
-      },
-      data: {}
-    };
-
-    if( keys.length === 1 && !items[0].directory ){
-      let file: FileClass = items[ 0 ];
-      data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
-      data.data[ FileManagerS3Service.DATA_NAME ] = file.name;
-    }
-    else if( keys.length > 0 ){
-      let currentFolder: string = FileManagerS3Service.ROOT;
-      if( kv[ FileManagerS3Service.KV_FOLDER_KEY ] ) currentFolder = kv[ FileManagerS3Service.KV_FOLDER_KEY ];
-      data.data[ FileManagerS3Service.DATA_PREFIX ] = folder;
-      data.data[ FileManagerS3Service.DATA_CURRENT_PREFIX ] = currentFolder;
-    }
-
-
-    //Build request
-    const httpMethod: string = FileManagerS3Service.HTTP_PUT;
     const url: string = `${this.host}/copy`;
-    const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
-    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
-
-    //Request
-    return this.simpleRequest( request );
+    return this.copyAndMoveItemsHelper( url, workspace, items, folder, kv );
   }
 
-// ------------------------------------------------------------------------------------------------------ \\
-
   public moveItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
+    const url: string = `${this.host}/move`;
+    return this.copyAndMoveItemsHelper( url, workspace, items, folder, kv );
+  }
+
+  private copyAndMoveItemsHelper( url: string, workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
     //Build request data
     let keys: string[] = [];
     items.forEach( target => keys.push( target.id ))
@@ -455,7 +423,6 @@ export class FileManagerS3Service extends OntimizeEEService implements FileManag
 
 
     //Build request
-    const url: string = `${this.host}/move`;
     const body: string = JSON.stringify( data );
     const headers: HttpHeaders = this.getHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
