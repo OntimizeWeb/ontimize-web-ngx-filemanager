@@ -236,9 +236,8 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 }
 
 @NgModule({
-  declarations: [OTableExtendedComponent, FolderNameDialogComponent],
-  entryComponents: [FolderNameDialogComponent],
-  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule],
-  exports: [OTableExtendedComponent]
+    declarations: [OTableExtendedComponent, FolderNameDialogComponent],
+    imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule],
+    exports: [OTableExtendedComponent]
 })
 export class OTableExtendedModule { }

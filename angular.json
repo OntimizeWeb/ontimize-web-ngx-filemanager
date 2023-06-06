@@ -28,18 +28,6 @@
             "tsConfig": "projects/ontimize-web-ngx-filemanager/tsconfig.spec.json",
             "karmaConfig": "projects/ontimize-web-ngx-filemanager/karma.conf.js"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/ontimize-web-ngx-filemanager/tsconfig.lib.json",
-              "projects/ontimize-web-ngx-filemanager/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }
