@@ -13,29 +13,24 @@ import { ChangeNameDialogComponent } from './table-extended/dialog/changename/ch
 import { OTableExtendedModule } from './table-extended/o-table-extended.component';
 
 @NgModule({
-  declarations: [
-    OFileManagerTableComponent,
-    OTableColumnRendererFileTypeComponent,
-    OTableColumnRendererFileSizeComponent,
-    ChangeNameDialogComponent,
-    UploadProgressComponent,
-    DownloadProgressComponent
-  ],
-  imports: [
-    CommonModule,
-    OntimizeWebModule,
-    OSharedModule,
-    OTableExtendedModule,
-    OFileInputExtendedModule,
-    OFileManagerTranslateModule
-  ],
-  entryComponents: [
-    ChangeNameDialogComponent,
-    UploadProgressComponent,
-    DownloadProgressComponent
-  ],
-  exports: [OFileManagerTableComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    declarations: [
+        OFileManagerTableComponent,
+        OTableColumnRendererFileTypeComponent,
+        OTableColumnRendererFileSizeComponent,
+        ChangeNameDialogComponent,
+        UploadProgressComponent,
+        DownloadProgressComponent
+    ],
+    imports: [
+        CommonModule,
+        OntimizeWebModule,
+        OSharedModule,
+        OTableExtendedModule,
+        OFileInputExtendedModule,
+        OFileManagerTranslateModule
+    ],
+    exports: [OFileManagerTableComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OFileManagerTableModule {
 }
