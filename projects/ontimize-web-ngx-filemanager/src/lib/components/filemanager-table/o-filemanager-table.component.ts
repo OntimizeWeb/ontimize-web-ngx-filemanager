@@ -336,6 +336,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       .subscribe( result => {
         self.oTable.reloadCurrentFolder();
       }, err => {
+        loading.next( false );
         if (err && typeof err !== 'object') {
           this.dialogService.alert('ERROR', err);
         } else {
@@ -399,6 +400,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       const workspaceId = this.workspaceService.getWorkspace();
       tableService[this.changeNameMethod](workspaceId, name, file).subscribe(() => {
       }, err => {
+        loadingRenameSubject.next( false );
         if (err && typeof err !== 'object') {
           self.dialogService.alert('ERROR', err);
         }

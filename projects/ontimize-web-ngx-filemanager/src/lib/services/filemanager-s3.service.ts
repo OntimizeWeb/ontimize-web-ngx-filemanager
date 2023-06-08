@@ -206,7 +206,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       formData.append( FileManagerS3Service.FORMDATA_DATA, JSON.stringify( data ) );
       formData.append( FileManagerS3Service.FORMDATA_FILE, item.file );
     });
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = new HttpHeaders({'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL});
     const request = new HttpRequest( FileManagerS3Service.HTTP_POST, url, formData, {
       headers: headers,
       reportProgress: true
