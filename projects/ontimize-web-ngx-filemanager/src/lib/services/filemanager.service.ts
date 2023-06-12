@@ -5,22 +5,16 @@ import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
 import { FileClass } from '../util';
+import { IFileManagerService } from './filemanager.service.interface';
 
 @Injectable()
-export class FileManagerService extends OntimizeEEService {
+export class FileManagerService extends OntimizeEEService implements IFileManagerService{
 
   protected httpClient: HttpClient;
 
   constructor(injector: Injector) {
     super(injector);
     this.httpClient = this.injector.get(HttpClient);
-  }
-
-  configureService(config: any): void {
-    super.configureService(config);
-    if (config.fileManagerPath) {
-      this.path = config.fileManagerPath;
-    }
   }
 
   protected manageError(error: any, observer: any) {
@@ -31,7 +25,7 @@ export class FileManagerService extends OntimizeEEService {
     }
   }
 
-  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+  queryItems(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
     const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -256,7 +250,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  deleteFiles(workspaceId: any, files: FileClass[] = []): Observable<any> {
+  deleteItems(workspaceId: any, items: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -267,7 +261,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     const body = JSON.stringify({
-      fileList: files
+      fileList: items
     });
 
     const request = new HttpRequest('POST', url, body, {
@@ -320,7 +314,7 @@ export class FileManagerService extends OntimizeEEService {
     return dataObservable;
   }
 
-  changeFileName(name: string, file: FileClass): Observable<any> {
+  changeItemName(workspace: any, name: string, item: FileClass): Observable<any>{
     const url = this._urlBase + this.path + '/fileUpdate';
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({
@@ -330,7 +324,7 @@ export class FileManagerService extends OntimizeEEService {
     });
 
     const body = JSON.stringify({
-      file: file,
+      file: item,
       params: { name: name }
     });
 
@@ -361,4 +355,13 @@ export class FileManagerService extends OntimizeEEService {
   get sessionId() {
     return this.authService.getSessionInfo().id;
   }
+
+  copyItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  moveItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
+    throw new Error('Method not implemented.');
+  }
+
 }
