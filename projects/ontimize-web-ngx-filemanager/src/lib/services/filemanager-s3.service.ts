@@ -101,7 +101,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/find`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
@@ -129,7 +129,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     const id: string = btoa( file.id );
     const dataEncoded: string = encodeURIComponent( JSON.stringify( data ) );
     const url: string = `${this.host}/download/id/${id}?data=${dataEncoded}`;
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_GET, url, null, {
       headers: headers,
       reportProgress: true,
@@ -158,7 +158,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/download`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, {
       headers: headers,
       reportProgress: true,
@@ -206,7 +206,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       formData.append( FileManagerS3Service.FORMDATA_DATA, JSON.stringify( data ) );
       formData.append( FileManagerS3Service.FORMDATA_FILE, item.file );
     });
-    const headers: HttpHeaders = new HttpHeaders({'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL});
+    const headers: HttpHeaders = this.getHeaders();
     const request = new HttpRequest( FileManagerS3Service.HTTP_POST, url, formData, {
       headers: headers,
       reportProgress: true
@@ -263,7 +263,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/delete`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_DELETE, url, body, { headers } );
 
     //Request
@@ -289,7 +289,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/create`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
@@ -327,7 +327,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/update`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -424,7 +424,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
     //Build request
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeaders();
+    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -489,7 +489,11 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
    * @param observer The observer to notify in case of an error.
    */
   private errorHandler( error: any, observer: any ): void {
-    observer.error(error);
+    if (error.status === 401) {
+      this.authService.logout();
+    } else {
+      observer.error(error);
+    }
   }
 
 
@@ -615,10 +619,21 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 
   private getHeaders(): HttpHeaders{
+    const sessionId = this.authService.getSessionInfo().id;
+    const authorizationToken = `Bearer ${sessionId}`;
     return new HttpHeaders({
       'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Content-Type': FileManagerS3Service.HTTP_HEADER_CONTENT_TYPE_JSON_VALUE
+      'Authorization': authorizationToken
     });
+  }
+
+
+  private getHeadersWithContentTypeJSON(): HttpHeaders{
+    const sessionId = this.authService.getSessionInfo().id;
+    const authorizationToken = `Bearer ${sessionId}`;
+    let headers: HttpHeaders = this.getHeaders();
+    headers.append( 'Content-Type', FileManagerS3Service.HTTP_HEADER_CONTENT_TYPE_JSON_VALUE );
+    return headers;
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
