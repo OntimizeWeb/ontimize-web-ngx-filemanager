@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
 import { FileClass } from '../util';
-import { IFileManagerService } from './filemanager.service.interface';
+import { IFileManagerService } from '../interfaces/filemanager.service.interface';
 
 @Injectable()
 export class FileManagerService extends OntimizeEEService implements IFileManagerService{
@@ -314,7 +314,7 @@ export class FileManagerService extends OntimizeEEService implements IFileManage
     return dataObservable;
   }
 
-  changeItemName(workspace: any, name: string, item: FileClass): Observable<any>{
+  changeItemName(workspace: string, name: string, item: FileClass): Observable<any>{
     const url = this._urlBase + this.path + '/fileUpdate';
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({

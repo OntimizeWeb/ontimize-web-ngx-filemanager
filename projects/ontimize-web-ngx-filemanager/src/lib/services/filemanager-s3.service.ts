@@ -3,9 +3,10 @@ import { Injectable, Injector } from '@angular/core';
 import { Observable, OntimizeEEService, OntimizeServiceResponse, ServiceResponse } from 'ontimize-web-ngx';
 
 import { FileClass } from '../util';
-import { IFileManagerService } from './filemanager.service.interface';
+import { IFileManagerService } from '../interfaces/filemanager.service.interface';
 import { OFileManagerTableComponent } from '../components';
 import { filter, share } from 'rxjs/operators';
+import { WorkspaceS3 } from '../interfaces/workspaceS3.interface';
 
 
 
@@ -80,7 +81,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public queryItems( workspace: any, kv?: Object, av?: Array<string> ): Observable<any> {
+  public queryItems( workspace: WorkspaceS3, kv?: Object, av?: Array<string> ): Observable<any> {
     //Build request data
     const data: any = {
       filter:{
@@ -101,7 +102,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/find`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
@@ -110,7 +111,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public download( workspace: any, files: FileClass[] ): Observable<any> {
+  public download( workspace: WorkspaceS3, files: FileClass[] ): Observable<any> {
     //Check if there is more than one file
     const file: FileClass = files[0];
     if ( files.length > 1 || file.directory ) {
@@ -129,7 +130,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     const id: string = btoa( file.id );
     const dataEncoded: string = encodeURIComponent( JSON.stringify( data ) );
     const url: string = `${this.host}/download/id/${id}?data=${dataEncoded}`;
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_GET, url, null, {
       headers: headers,
       reportProgress: true,
@@ -142,7 +143,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public downloadMultiple( workspace: any, files: FileClass[] ): Observable<any> {
+  public downloadMultiple( workspace: WorkspaceS3, files: FileClass[] ): Observable<any> {
     //Build request data
     const keys: string[] = [];
     files.forEach( target => keys.push( target.id ));
@@ -158,7 +159,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/download`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, {
       headers: headers,
       reportProgress: true,
@@ -171,7 +172,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public upload( workspace: any, folderId: any, files: any[] ): Observable<any> {
+  public upload( workspace: WorkspaceS3, folderId: any, files: any[] ): Observable<any> {
     //Initialize result
     let _innerObserver: any;
     const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
@@ -206,7 +207,12 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       formData.append( FileManagerS3Service.FORMDATA_DATA, JSON.stringify( data ) );
       formData.append( FileManagerS3Service.FORMDATA_FILE, item.file );
     });
-    const headers: HttpHeaders = this.getHeaders();
+    const sessionId = this.authService.getSessionInfo().id;
+    const authorizationToken = `Bearer ${sessionId}`;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
+      'Authorization': authorizationToken
+    });
     const request = new HttpRequest( FileManagerS3Service.HTTP_POST, url, formData, {
       headers: headers,
       reportProgress: true
@@ -247,7 +253,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public deleteItems( workspace: any, files: FileClass[] ): Observable<any> {
+  public deleteItems( workspace: WorkspaceS3, files: FileClass[] ): Observable<any> {
     //Build request data
     const keys: string[] = [];
     if( files ) files.forEach( target => keys.push( target.id ));
@@ -263,7 +269,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/delete`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_DELETE, url, body, { headers } );
 
     //Request
@@ -272,7 +278,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public insertFolder( workspace: any, name: any, kv?: Object ): Observable<any> {
+  public insertFolder( workspace: WorkspaceS3, name: any, kv?: Object ): Observable<any> {
     //Build request data
     const data: any = {
       filter:{
@@ -289,7 +295,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/create`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
@@ -298,7 +304,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public changeItemName( workspace: any, name: string, file: FileClass ): Observable<any> {
+  public changeItemName( workspace: WorkspaceS3, name: string, file: FileClass ): Observable<any> {
     //Check if it's a directory
     if( file.directory ) return this.changeFolderNameHelper( workspace, name, file );
 
@@ -327,7 +333,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     //Build request
     const url: string = `${this.host}/update`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -345,7 +351,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
    *
    * @returns An Observable that emits the result of the folder name change operation.
    */
-  private changeFolderNameHelper( workspace: any, name: string, folder: FileClass ): Observable<any> {
+  private changeFolderNameHelper( workspace: WorkspaceS3, name: string, folder: FileClass ): Observable<any> {
     //Initialize result
     let _innerObserver: any;
     const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
@@ -383,17 +389,17 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public copyItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
+  public copyItems( workspace: WorkspaceS3, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
     const url: string = `${this.host}/copy`;
     return this.copyAndMoveItemsHelper( url, workspace, items, folder, kv );
   }
 
-  public moveItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
+  public moveItems( workspace: WorkspaceS3, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
     const url: string = `${this.host}/move`;
     return this.copyAndMoveItemsHelper( url, workspace, items, folder, kv );
   }
 
-  private copyAndMoveItemsHelper( url: string, workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
+  private copyAndMoveItemsHelper( url: string, workspace: WorkspaceS3, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
     //Build request data
     let keys: string[] = [];
     items.forEach( target => keys.push( target.id ))
@@ -424,7 +430,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
     //Build request
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.getHeadersWithContentTypeJSON();
+    const headers: HttpHeaders = this.buildHeaders();
     const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
@@ -615,25 +621,6 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       }, () => _innerObserver.complete());
 
     return result;
-  }
-
-
-  private getHeaders(): HttpHeaders{
-    const sessionId = this.authService.getSessionInfo().id;
-    const authorizationToken = `Bearer ${sessionId}`;
-    return new HttpHeaders({
-      'Access-Control-Allow-Origin': FileManagerS3Service.SYMBOL_ALL,
-      'Authorization': authorizationToken
-    });
-  }
-
-
-  private getHeadersWithContentTypeJSON(): HttpHeaders{
-    const sessionId = this.authService.getSessionInfo().id;
-    const authorizationToken = `Bearer ${sessionId}`;
-    let headers: HttpHeaders = this.getHeaders();
-    headers.append( 'Content-Type', FileManagerS3Service.HTTP_HEADER_CONTENT_TYPE_JSON_VALUE );
-    return headers;
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
