@@ -1,12 +1,13 @@
-import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
 import { Observable, OntimizeEEService, OntimizeServiceResponse, ServiceResponse } from 'ontimize-web-ngx';
 
 import { FileClass } from '../util';
 import { IFileManagerService } from '../interfaces/filemanager.service.interface';
 import { OFileManagerTableComponent } from '../components';
-import { filter, share } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 import { WorkspaceS3 } from '../interfaces/workspaceS3.interface';
+import { S3ServiceResponseAdapter } from '../adapters/filemanager-s3-response.adapter';
 
 
 
@@ -23,7 +24,6 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
   //Constants
   private static SYMBOL_SLASH : string = '/';
   private static SYMBOL_ALL : string = '*';
-  private static HTTP_HEADER_CONTENT_TYPE_JSON_VALUE : string = 'application/json;charset=UTF-8';
   private static FORMDATA_DATA : string = 'data';
   private static FORMDATA_FILE : string = 'file';
 
@@ -39,16 +39,10 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
   private static DATA_NAME: string = 'fileName';
   private static DATA_CURRENT_PREFIX: string = 'currentPrefix';
 
-  private static RESPONSE_KEY_CODE: string = 'code';
-  private static RESPONSE_KEY_MESSAGE: string = 'message';
-  private static RESPONSE_KEY_DATA: string = 'data';
-
   private static HEADER_CONTENT_DISPOSITION : string = 'content-disposition';
 
   private static HTTP_GET : string = 'GET';
   private static HTTP_POST : string = 'POST';
-  private static HTTP_PUT : string = 'PUT';
-  private static HTTP_DELETE : string = 'DELETE';
 
   //Dependencies
   protected httpClient: HttpClient;
@@ -65,7 +59,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
-// -----| Implemented Methods |-------------------------------------------------------------------------- \\
+// -----| Config Methods |------------------------------------------------------------------------------- \\
 // ------------------------------------------------------------------------------------------------------ \\
 
   public configureService( config: any ): void {
@@ -77,6 +71,10 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       this.path = `${config.path}/${this.entity}`;
       this.host = `${this._urlBase}${this.path}/sdms`;
     }
+  }
+
+  public configureAdapter() {
+    this.adapter = this.injector.get( S3ServiceResponseAdapter );
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -99,14 +97,18 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       data.filter[ FileManagerS3Service.FILTER_DELIMITER ] = FileManagerS3Service.ROOT;
     }
 
-    //Build request
+    //Init request data
     const url: string = `${this.host}/find`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.buildHeaders();
-    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
-    return this.simpleRequest( request );
+    return this.doRequest({
+      method: 'POST',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulQueryResponse,
+      errorCallBack: this.parseUnsuccessfulQueryResponse
+    });
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -231,17 +233,17 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
             _innerObserver.next( progressData );
           }
           else if ( HttpEventType.Response === response.type ) {
+            const serviceResponse: ServiceResponse = this.adapter.adapt( response );
             const body: any = response.body;
             if ( body ) {
-              this.mapDataBodyToFileClass( body );
-              _innerObserver.next( body );
+              this.parseSuccessfulInsertResponse( serviceResponse, _innerObserver );
             }
             else {
-              this.errorHandler( response, _innerObserver );
+              this.parseUnsuccessfulInsertResponse( serviceResponse, _innerObserver );
             }
           }
         }, error => {
-          this.errorHandler(error, _innerObserver);
+          this.parseUnsuccessfulInsertResponse( error, _innerObserver );
         }, () => _innerObserver.complete());
 
       files.forEach( item => {
@@ -266,14 +268,18 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       }
     };
 
-    //Build request
+    //Init request data
     const url: string = `${this.host}/delete`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.buildHeaders();
-    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_DELETE, url, body, { headers } );
 
     //Request
-    return this.simpleRequest( request );
+    return this.doRequest({
+      method: 'DELETE',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulDeleteResponse,
+      errorCallBack: this.parseUnsuccessfulDeleteResponse
+    });
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -292,14 +298,18 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
     if( kv[ FileManagerS3Service.KV_FOLDER_KEY ] ) data.data = { key: `${kv[ FileManagerS3Service.KV_FOLDER_KEY ]}${name}`};
 
-    //Build request
+    //Init request data
     const url: string = `${this.host}/create`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.buildHeaders();
-    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_POST, url, body, { headers } );
 
     //Request
-    return this.simpleRequest( request );
+    return this.doRequest({
+      method: 'POST',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulInsertResponse,
+      errorCallBack: this.parseUnsuccessfulInsertResponse
+    });
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -330,14 +340,18 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       }
     };
 
-    //Build request
+    //Init request data
     const url: string = `${this.host}/update`;
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.buildHeaders();
-    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
-    return this.simpleRequest( request );
+    return this.doRequest({
+      method: 'PUT',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulUpdateResponse,
+      errorCallBack: this.parseUnsuccessfulUpdateResponse
+    });
   }
 
 
@@ -368,20 +382,20 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
         //Delete old items
         this.deleteItems( workspace, [ folder ] ).subscribe( deleteResponse => {
           if( deleteResponse ){
-            _innerObserver.next( this.createServiceResponseFromBody( deleteResponse ));
+            this.parseSuccessfulUpdateResponse( moveResponse, _innerObserver );
           }
           else {
-            this.errorHandler( deleteResponse, _innerObserver );
+            this.parseUnsuccessfulDeleteResponse( deleteResponse, _innerObserver );
           }
         }, error => {
-          this.errorHandler( error, _innerObserver );
+          this.parseUnsuccessfulDeleteResponse( error, _innerObserver );
         }, () => _innerObserver.complete());
       }
       else {
-        this.errorHandler( moveResponse, _innerObserver );
+        this.parseUnsuccessfulUpdateResponse( moveResponse, _innerObserver );
       }
     }, error => {
-      this.errorHandler( error, _innerObserver );
+      this.parseUnsuccessfulUpdateResponse( error, _innerObserver );
     }, () => _innerObserver.complete());
 
     return result;
@@ -427,14 +441,17 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
       data.data[ FileManagerS3Service.DATA_CURRENT_PREFIX ] = currentFolder;
     }
 
-
-    //Build request
+    //Init request data
     const body: string = JSON.stringify( data );
-    const headers: HttpHeaders = this.buildHeaders();
-    const request: HttpRequest<string> = new HttpRequest( FileManagerS3Service.HTTP_PUT, url, body, { headers } );
 
     //Request
-    return this.simpleRequest( request );
+    return this.doRequest({
+      method: 'PUT',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulUpdateResponse,
+      errorCallBack: this.parseUnsuccessfulUpdateResponse
+    });
   }
 
 // ------------------------------------------------------------------------------------------------------ \\
@@ -503,85 +520,6 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
   }
 
 
-
-  /**
-   * Creates a service response object from the provided response body.
-   *
-   * @param body The response body containing the response code, message, and data.
-   * @returns A ServiceResponse object created from the response body.
-   */
-  private createServiceResponseFromBody( body: any ): ServiceResponse{
-    //Get Data from body
-    const responseCode: number = body[ FileManagerS3Service.RESPONSE_KEY_CODE ];
-    const responseMessage: string = body[ FileManagerS3Service.RESPONSE_KEY_MESSAGE ];
-    const responseData: FileClass[] = body[ FileManagerS3Service.RESPONSE_KEY_DATA ];
-
-    //Create a new ServiceResponse
-    return new OntimizeServiceResponse( responseCode, responseData, responseMessage );
-  }
-
-
-
-  /**
-   * Maps the data in the response body to an array of FileClass objects.
-   * @param body The response body containing the data to be mapped.
-   */
-  private mapDataBodyToFileClass( body: any ): void {
-    if( body && body[ FileManagerS3Service.RESPONSE_KEY_DATA ] ){
-      const data: any[] = body[ FileManagerS3Service.RESPONSE_KEY_DATA ];
-      const newData: FileClass[] = [];
-
-      if( data != null && data instanceof Array ){
-        data.forEach( target => {
-          const file: any = {
-            id: target.key,
-            name: target.name,
-            size: target.size,
-            directory: target.folder,
-            directoryPath: target.relativePrefix,
-            path: target.relativeKey
-          }
-          newData.push( new FileClass( file ) );
-        });
-      }
-
-      body[ FileManagerS3Service.RESPONSE_KEY_DATA ] = newData;
-    }
-  }
-
-
-  /**
-   * Performs a simple request and returns an Observable that emits the response.
-   *
-   * @param request - HttpRequest object representing the request.
-   *
-   * @returns An Observable that emits the response of the request.
-   */
-  private simpleRequest( request: HttpRequest<string> ): Observable<any>{
-    let _innerObserver: any;
-    const result: Observable<any> = new Observable( observer => _innerObserver = observer ).pipe( share() );
-
-    //Request
-    this.httpClient
-      .request( request )
-      .pipe( filter( response => HttpEventType.Response === response.type ))
-      .subscribe( ( response: HttpResponse<any> ) => {
-        const body: any = response.body;
-        if ( body ) {
-          this.mapDataBodyToFileClass( body );
-          _innerObserver.next( this.createServiceResponseFromBody( body ));
-        }
-        else {
-          this.errorHandler( response, _innerObserver );
-        }
-      }, error => {
-        this.errorHandler( error, _innerObserver );
-      }, () => _innerObserver.complete());
-
-    return result;
-  }
-
-
   /**
    * Performs a download request and returns an Observable that emits the response.
    *
@@ -598,6 +536,9 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     this.httpClient
       .request( request )
       .subscribe( response => {
+        const successfullResponse: ServiceResponse = new OntimizeServiceResponse( 0, [], '' );
+        const unsuccessfullResponse: ServiceResponse = new OntimizeServiceResponse( 1, [], '' );
+
         if ( HttpEventType.DownloadProgress === response.type ) {
           let progressData: any = {
             loaded: response.loaded
@@ -605,19 +546,18 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
           _innerObserver.next( progressData );
         }
         else if ( HttpEventType.Response === response.type ) {
-          const body: any = response.body;
-          if ( body ) {
-            this.mapDataBodyToFileClass( body );
+          if ( response.body ) {
             const fileName = this.getFileNameFromHeadersIfExists( response.headers, fileNameDefault );
-            this.createDownloadLink( body, fileName );
+            this.createDownloadLink( response.body, fileName );
+            this.parseSuccessfulQueryResponse( successfullResponse, _innerObserver );
             _innerObserver.next( response );
           }
           else {
-            this.errorHandler( body, _innerObserver );
+            this.parseUnsuccessfulQueryResponse( unsuccessfullResponse, _innerObserver );
           }
         }
       }, error => {
-        this.errorHandler( error, _innerObserver );
+        this.parseUnsuccessfulQueryResponse( error, _innerObserver );
       }, () => _innerObserver.complete());
 
     return result;
