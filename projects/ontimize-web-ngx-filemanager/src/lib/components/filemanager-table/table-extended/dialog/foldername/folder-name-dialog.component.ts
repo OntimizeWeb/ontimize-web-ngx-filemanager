@@ -1,5 +1,5 @@
 import { Component, ElementRef, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../util';
@@ -16,7 +16,7 @@ import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../uti
 export class FolderNameDialogComponent {
 
   public foldername: string;
-  public foldernameFormControl = new FormControl('', [
+  public foldernameFormControl = new UntypedFormControl('', [
     Validators.required,
     fileNameValidator
   ]);
