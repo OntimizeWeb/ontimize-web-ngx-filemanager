@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { FileClass } from '../util';
 import { OntimizeEEService } from 'ontimize-web-ngx';
+import { WorkspaceS3 } from './workspaceS3.interface';
 
 
 /**

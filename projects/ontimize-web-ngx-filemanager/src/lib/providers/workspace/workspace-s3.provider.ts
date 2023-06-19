@@ -1,4 +1,5 @@
-import { WorkspaceProvider } from './workspace.provider';
+import { WorkspaceProvider } from '../../interfaces/workspace.provider.interface';
+import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
 
 
 /**
@@ -19,7 +20,7 @@ export class WorkspaceS3Provider implements WorkspaceProvider{
    *
    * @example workspace = { name: 'default', data: {}}
    */
-  public constructor( workspace: any ){
+  public constructor( workspace: WorkspaceS3 ){
     this.workspace = workspace;
   }
 
@@ -29,7 +30,7 @@ export class WorkspaceS3Provider implements WorkspaceProvider{
    *
    * @returns The workspace object.
    */
-  public getWorkspace(): any {
+  public getWorkspace(): WorkspaceS3 {
     return this.workspace;
   }
 

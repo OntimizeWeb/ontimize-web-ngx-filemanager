@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { OFormComponent } from 'ontimize-web-ngx';
-import { WorkspaceProvider } from '../providers/workspace/workspace.provider';
+import { WorkspaceProvider } from '../interfaces/workspace.provider.interface';
 import { WorkspaceOntimizeProvider } from '../providers/workspace/workspace-ontimize.provider';
 import { WorkspaceS3Provider } from '../providers/workspace/workspace-s3.provider';
 

@@ -1,5 +1,5 @@
 import { OFormComponent } from 'ontimize-web-ngx';
-import { WorkspaceProvider } from './workspace.provider';
+import { WorkspaceProvider } from '../../interfaces/workspace.provider.interface';
 
 
 /**
