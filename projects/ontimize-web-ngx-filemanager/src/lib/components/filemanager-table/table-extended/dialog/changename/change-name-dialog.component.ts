@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FileClass } from '../../../../../util/file.class';
@@ -24,7 +24,7 @@ export class ChangeNameDialogData {
 export class ChangeNameDialogComponent implements AfterViewInit {
 
   public filename: string;
-  public filenameFormControl = new FormControl('', [
+  public filenameFormControl = new UntypedFormControl('', [
     Validators.required,
     fileNameValidator
   ]);
