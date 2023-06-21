@@ -15,9 +15,11 @@ import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extende
 import { OTableExtendedComponent } from './table-extended/o-table-extended.component';
 import { WorkspaceService } from '../../services/workspace.service';
 import { CopyDialogComponent, CopyDialogData } from './table-extended/dialog/copy/copy-dialog.component';
+import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'workspaceKey: workspace-key',
+  /*Funtion called for creating the workspace S3.The function return a object of type WorkspaceS3*/
   'workspaceS3: workspace-s3',
   'service',
   'parentKeys: parent-keys',
@@ -58,7 +60,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   public static S3_TYPE = 'S3';
 
   type: string = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
-  workspaceS3: any;
+  workspaceS3: (values: Array<{ attr, value }>) => WorkspaceS3;
   workspaceKey: string;
   service: string;
   parentKeys: string;
@@ -134,13 +136,13 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngOnInit() {
-    if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE ) {
+    if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE) {
       this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
-      this.workspaceService.initializeOntimizeProvider( this.workspaceKey, this.oForm );
+      this.workspaceService.initializeOntimizeProvider(this.workspaceKey, this.oForm);
     }
-    else if (!this.serviceType && this.type === OFileManagerTableComponent.S3_TYPE ) {
+    else if (!this.serviceType && this.type === OFileManagerTableComponent.S3_TYPE) {
       this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
-      this.workspaceService.initializeS3Provider( this.workspaceS3 );
+      this.workspaceService.initializeS3Provider(this.workspaceKey, this.oForm, this.workspaceS3);
     }
     this.oTable.setStateService(this.stateService);
   }
@@ -293,8 +295,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  private onContextCopyAndMoveHelper( event: any, keyDialogTitle: string, action: any ): void{
-    if ( event && event.data ) {
+  private onContextCopyAndMoveHelper(event: any, keyDialogTitle: string, action: any): void {
+    if (event && event.data) {
       let folder: string = event.data.rowValue.directoryPath;
       if (this.oTable.getSelectedItems().length > 0) folder = this.oTable.getSelectedItems()[0].directoryPath;
 
@@ -314,16 +316,16 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       let dialogRef = this.dialog.open(CopyDialogComponent, cfg);
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          action( result ).bind( this );
+          action(result).bind(this);
         }
       });
     }
   }
 
-  private copyAndMoveHelper( folder: string, method: any, loading: BehaviorSubject<boolean>, keyMsgError: string ): void{
+  private copyAndMoveHelper(folder: string, method: any, loading: BehaviorSubject<boolean>, keyMsgError: string): void {
     const tableService = this.oTable.getDataService();
     if (tableService && (this.downloadMethod in tableService) && (this.oTable.getSelectedItems().length > 0)) {
-      loading.next( true );
+      loading.next(true);
       const workspaceId = this.workspaceService.getWorkspace();
       const selectedItems = this.oTable.getSelectedItems();
       const kv = {};
@@ -332,38 +334,38 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
         kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
       }
       const self = this;
-      tableService[method](workspaceId, selectedItems, folder, kv )
-      .subscribe( result => {
-        self.oTable.reloadCurrentFolder();
-      }, err => {
-        loading.next( false );
-        if (err && typeof err !== 'object') {
-          this.dialogService.alert('ERROR', err);
-        } else {
-          this.dialogService.alert('ERROR', this.translatePipe.transform( keyMsgError ));
-        }
-      }, () => {
-        loading.next( false );
-      });
+      tableService[method](workspaceId, selectedItems, folder, kv)
+        .subscribe(result => {
+          self.oTable.reloadCurrentFolder();
+        }, err => {
+          loading.next(false);
+          if (err && typeof err !== 'object') {
+            this.dialogService.alert('ERROR', err);
+          } else {
+            this.dialogService.alert('ERROR', this.translatePipe.transform(keyMsgError));
+          }
+        }, () => {
+          loading.next(false);
+        });
     }
   }
 
-  onContextCopy( event: any ): void{
-    this.onContextCopyAndMoveHelper( event, 'COPY_TITLE', this.copy.bind( this ) );
+  onContextCopy(event: any): void {
+    this.onContextCopyAndMoveHelper(event, 'COPY_TITLE', this.copy.bind(this));
   }
 
-  copy( folder: string ): void{
+  copy(folder: string): void {
     const loadingCopySubject: BehaviorSubject<boolean> = this.oTable.loadingCopySubject;
-    this.copyAndMoveHelper( folder, this.copyMethod, loadingCopySubject, 'MESSAGES.ERROR_COPY' );
+    this.copyAndMoveHelper(folder, this.copyMethod, loadingCopySubject, 'MESSAGES.ERROR_COPY');
   }
 
-  onContextMove( event ): void{
-    this.onContextCopyAndMoveHelper( event, 'MOVE_TITLE', this.move.bind( this ) );
+  onContextMove(event): void {
+    this.onContextCopyAndMoveHelper(event, 'MOVE_TITLE', this.move.bind(this));
   }
 
-  move( folder: string ): void{
+  move(folder: string): void {
     const loadingMoveSubject: BehaviorSubject<boolean> = this.oTable.loadingMoveSubject;
-    this.copyAndMoveHelper( folder, this.moveMethod, loadingMoveSubject, 'MESSAGES.ERROR_MOVE' );
+    this.copyAndMoveHelper(folder, this.moveMethod, loadingMoveSubject, 'MESSAGES.ERROR_MOVE');
   }
 
   onContextChangeName(event): void {
@@ -395,17 +397,17 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     let tableService = this.oTable.getDataService();
     if (tableService && (this.changeNameMethod in tableService)) {
       const loadingRenameSubject: BehaviorSubject<boolean> = this.oTable.loadingRenameSubject;
-      loadingRenameSubject.next( true );
+      loadingRenameSubject.next(true);
       let self = this;
       const workspaceId = this.workspaceService.getWorkspace();
       tableService[this.changeNameMethod](workspaceId, name, file).subscribe(() => {
       }, err => {
-        loadingRenameSubject.next( false );
+        loadingRenameSubject.next(false);
         if (err && typeof err !== 'object') {
           self.dialogService.alert('ERROR', err);
         }
       }, () => {
-        loadingRenameSubject.next( false );
+        loadingRenameSubject.next(false);
         self.oTable.reloadCurrentFolder();
       });
     }
