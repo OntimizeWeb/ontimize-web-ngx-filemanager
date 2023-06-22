@@ -3,9 +3,9 @@ import { FileManagerStateService } from './services/filemanager-state.service';
 import { DomService } from './services/dom.service';
 import { WorkspaceService } from './services/workspace.service';
 import { FileManagerS3Service } from './services/filemanager-s3.service';
-import { FileManagerService } from './services/filemanager.service';
+import { FileManagerOntimizeService } from './services/filemanager-ontimize.service';
 
-export * from './services/filemanager.service';
+export * from './services/filemanager-ontimize.service';
 export * from './services/filemanager-state.service';
 export * from './services/dom.service';
 
@@ -22,8 +22,8 @@ export function getWorkspaceServiceProvider() {
 }
 
 export const OFILEMANAGER_PROVIDERS: any = [{
-  provide: 'FileManagerService',
-  useValue: FileManagerService
+  provide: 'FileManagerOntimizeService',
+  useValue: FileManagerOntimizeService
 }, {
   provide: 'FileManagerS3Service',
   useValue: FileManagerS3Service

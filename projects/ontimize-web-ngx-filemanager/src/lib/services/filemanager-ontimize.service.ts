@@ -8,7 +8,7 @@ import { FileClass } from '../util';
 import { IFileManagerService } from '../interfaces/filemanager.service.interface';
 
 @Injectable()
-export class FileManagerService extends OntimizeEEService implements IFileManagerService{
+export class FileManagerOntimizeService extends OntimizeEEService implements IFileManagerService{
 
   protected httpClient: HttpClient;
 
@@ -25,7 +25,14 @@ export class FileManagerService extends OntimizeEEService implements IFileManage
     }
   }
 
-  queryItems(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+  configureService(config: any): void {
+    super.configureService(config);
+    if (config.fileManagerPath) {
+      this.path = config.fileManagerPath;
+    }
+  }
+
+  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
     const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -250,7 +257,7 @@ export class FileManagerService extends OntimizeEEService implements IFileManage
     return dataObservable;
   }
 
-  deleteItems(workspaceId: any, items: FileClass[] = []): Observable<any> {
+  deleteFiles(workspaceId: any, items: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -314,7 +321,7 @@ export class FileManagerService extends OntimizeEEService implements IFileManage
     return dataObservable;
   }
 
-  changeItemName(workspace: string, name: string, item: FileClass): Observable<any>{
+  changeFileName(workspace: string, name: string, item: FileClass): Observable<any>{
     const url = this._urlBase + this.path + '/fileUpdate';
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({
