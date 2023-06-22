@@ -4,18 +4,18 @@ import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
+import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
 import { DomService } from '../../services/dom.service';
 import { FileManagerStateService } from '../../services/filemanager-state.service';
+import { WorkspaceService } from '../../services/workspace.service';
 import { FileClass } from '../../util/file.class';
 import { OFileManagerTranslatePipe } from '../../util/o-filemanager-translate.pipe';
 import { OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
 import { DownloadProgressComponent } from '../status/download/download-progress.component';
 import { UploadProgressComponent } from '../status/upload/upload-progress.component';
 import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
-import { OTableExtendedComponent } from './table-extended/o-table-extended.component';
-import { WorkspaceService } from '../../services/workspace.service';
 import { CopyDialogComponent, CopyDialogData } from './table-extended/dialog/copy/copy-dialog.component';
-import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
+import { OTableExtendedComponent } from './table-extended/o-table-extended.component';
 
 export const DEFAULT_INPUTS_O_FILEMANAGER_TABLE = [
   'workspaceKey: workspace-key',
@@ -49,7 +49,7 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   providers: [{
     provide: FileManagerStateService,
     useClass: FileManagerStateService
-  }]
+  }, WorkspaceService]
 })
 export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewInit {
 

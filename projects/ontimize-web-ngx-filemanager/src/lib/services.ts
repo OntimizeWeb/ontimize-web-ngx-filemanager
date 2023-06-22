@@ -1,9 +1,9 @@
-import { Injector, ComponentFactoryResolver, ApplicationRef } from '@angular/core';
-import { FileManagerStateService } from './services/filemanager-state.service';
+import { ApplicationRef, ComponentFactoryResolver, Injector } from '@angular/core';
+
 import { DomService } from './services/dom.service';
-import { WorkspaceService } from './services/workspace.service';
-import { FileManagerS3Service } from './services/filemanager-s3.service';
 import { FileManagerOntimizeService } from './services/filemanager-ontimize.service';
+import { FileManagerS3Service } from './services/filemanager-s3.service';
+import { FileManagerStateService } from './services/filemanager-state.service';
 
 export * from './services/filemanager-ontimize.service';
 export * from './services/filemanager-state.service';
@@ -17,9 +17,6 @@ export function getDomServiceProvider(componentFactoryResolver: ComponentFactory
   return new DomService(componentFactoryResolver, appRef, injector);
 }
 
-export function getWorkspaceServiceProvider() {
-  return new WorkspaceService();
-}
 
 export const OFILEMANAGER_PROVIDERS: any = [{
   provide: 'FileManagerOntimizeService',
@@ -31,12 +28,9 @@ export const OFILEMANAGER_PROVIDERS: any = [{
   provide: FileManagerStateService,
   useFactory: getFileManagerStateServiceProvider,
   deps: [Injector]
-}, {
-  provide: DomService,
-  useFactory: getDomServiceProvider,
-  deps: [ComponentFactoryResolver, ApplicationRef, Injector]
-}, {
-  provide: WorkspaceService,
-  useFactory: getWorkspaceServiceProvider,
-  deps: []
-}];
+  }, {
+    provide: DomService,
+    useFactory: getDomServiceProvider,
+    deps: [ComponentFactoryResolver, ApplicationRef, Injector]
+  }
+];
