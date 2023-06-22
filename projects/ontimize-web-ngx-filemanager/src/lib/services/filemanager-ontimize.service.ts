@@ -4,8 +4,8 @@ import { OntimizeEEService } from 'ontimize-web-ngx';
 import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
-import { FileClass } from '../util';
 import { IFileManagerService } from '../interfaces/filemanager.service.interface';
+import { FileClass } from '../util';
 
 @Injectable()
 export class FileManagerOntimizeService extends OntimizeEEService implements IFileManagerService{
@@ -260,103 +260,50 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
   deleteFiles(workspaceId: any, items: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
-    const authorizationToken = 'Bearer ' + this.sessionId;
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json;charset=UTF-8',
-      'Authorization': authorizationToken
-    });
-
     const body = JSON.stringify({
       fileList: items
     });
 
-    const request = new HttpRequest('POST', url, body, {
-      headers: headers
+    return this.doRequest({
+      method: 'POST',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulQueryResponse,
+      errorCallBack: this.parseUnsuccessfulQueryResponse
     });
-
-    let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
-
-
-    this.httpClient
-      .request(request)
-      .pipe(filter(resp => HttpEventType.Response === resp.type))
-      .subscribe((resp: HttpResponse<any>) => {
-        _innerObserver.next(resp);
-      }, error => {
-        this.manageError(error, _innerObserver);
-      }, () => _innerObserver.complete());
-    return dataObservable;
   }
 
   insertFolder(workspaceId: any, name: any, kv?: Object): Observable<any> {
     const url = this._urlBase + this.path + '/insertFolder/' + workspaceId + '/' + name;
-    const authorizationToken = 'Bearer ' + this.sessionId;
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json;charset=UTF-8',
-      'Authorization': authorizationToken
-    });
 
     const body = JSON.stringify({
       data: kv
     });
 
-    const request = new HttpRequest('POST', url, body, {
-      headers: headers
+    return this.doRequest({
+      method: 'POST',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulQueryResponse,
+      errorCallBack: this.parseUnsuccessfulQueryResponse
     });
-
-    let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
-
-    this.httpClient
-      .request(request)
-      .pipe(filter(resp => HttpEventType.Response === resp.type))
-      .subscribe((resp: HttpResponse<any>) => {
-        _innerObserver.next(resp);
-      }, error => {
-        this.manageError(error, _innerObserver);
-      }, () => _innerObserver.complete());
-    return dataObservable;
   }
 
   changeFileName(workspace: string, name: string, item: FileClass): Observable<any>{
     const url = this._urlBase + this.path + '/fileUpdate';
-    const authorizationToken = 'Bearer ' + this.sessionId;
-    const headers: HttpHeaders = new HttpHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json;charset=UTF-8',
-      'Authorization': authorizationToken
-    });
 
     const body = JSON.stringify({
       file: item,
       params: { name: name }
     });
 
-    const request = new HttpRequest('POST', url, body, {
-      headers: headers
+    return this.doRequest({
+      method: 'POST',
+      url: url,
+      body: body,
+      successCallback: this.parseSuccessfulQueryResponse,
+      errorCallBack: this.parseUnsuccessfulQueryResponse
     });
-
-    let _innerObserver: any;
-    const dataObservable = new Observable(observer => _innerObserver = observer).pipe(share());
-
-
-    this.httpClient
-      .request(request)
-      .pipe(filter(resp => HttpEventType.Response === resp.type))
-      .subscribe((resp: HttpResponse<any>) => {
-        _innerObserver.next(resp);
-      }, error => {
-        if (error.status === 401) {
-          this.authService.logout();
-        } else {
-          _innerObserver.error(error);
-        }
-      }, () => _innerObserver.complete());
-
-    return dataObservable;
   }
 
   get sessionId() {
