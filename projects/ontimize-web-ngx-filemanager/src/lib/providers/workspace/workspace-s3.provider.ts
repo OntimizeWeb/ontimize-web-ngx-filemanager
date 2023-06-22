@@ -1,4 +1,5 @@
 import { OFormComponent, Util } from 'ontimize-web-ngx';
+
 import { WorkspaceProvider } from '../../interfaces/workspace.provider.interface';
 import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
 
@@ -45,9 +46,10 @@ export class WorkspaceS3Provider implements WorkspaceProvider {
     if (Util.isDefined(this.workspaceKey)) {
       const workspaceKey = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
       workspace.data = { id: [workspaceKey] };
-
     } if (Util.isDefined(this.workspaceS3)) {
       workspace = this.workspaceS3 ? this.workspaceS3(this.form.getDataValue) : undefined;
+    } else {
+      console.warn('[File manager]: The workspace-key or workspace-S3 should be configured for correct use')
     }
     return workspace;
   }
