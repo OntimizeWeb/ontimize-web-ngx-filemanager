@@ -14,7 +14,6 @@ export class CopyDialogData {
 @Component({
   selector: 'copy-dialog',
   templateUrl: 'copy-dialog.component.html',
-  styleUrls: ['copy-dialog.component.scss'],
   host: {
     '[class.copy-dialog]': 'true'
   }
