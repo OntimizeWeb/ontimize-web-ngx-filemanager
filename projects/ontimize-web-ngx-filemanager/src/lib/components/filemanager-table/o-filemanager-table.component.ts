@@ -52,6 +52,7 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   }, WorkspaceService]
 })
 export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewInit {
+  public isS3Type: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   public static DEFAULT_SERVICE_TYPE = 'FileManagerOntimizeService';
   public static DEFAULT_TYPE = 'Ontimize';
@@ -136,6 +137,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngOnInit() {
+    this.isS3Type.next(this.type === OFileManagerTableComponent.S3_TYPE);
     if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE) {
       this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
       this.workspaceService.initializeOntimizeProvider(this.workspaceKey, this.oForm);

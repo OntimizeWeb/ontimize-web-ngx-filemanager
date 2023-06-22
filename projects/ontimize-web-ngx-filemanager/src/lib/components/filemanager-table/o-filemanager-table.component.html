@@ -35,8 +35,8 @@
     </o-context-menu-item>
     <o-context-menu-item icon="file_download" [label]="downloadLabel" (execute)="onContextDownloadFile()"></o-context-menu-item>
     <o-context-menu-item icon="edit" [label]="changeNameLabel" (execute)="onContextChangeName($event)"></o-context-menu-item>
-    <o-context-menu-item icon="content_copy" [label]="copyLabel" (execute)="onContextCopy($event)"></o-context-menu-item>
-    <o-context-menu-item icon="content_cut" [label]="moveLabel" (execute)="onContextMove($event)"></o-context-menu-item>
+    <o-context-menu-item icon="content_copy" [label]="copyLabel" (execute)="onContextCopy($event)" [visible]="isS3Type | async"></o-context-menu-item>
+    <o-context-menu-item icon="content_cut" [label]="moveLabel" (execute)="onContextMove($event)" [visible]="isS3Type | async"></o-context-menu-item>
     <o-context-menu-item icon="delete" label="TABLE.BUTTONS.DELETE" (execute)="onContextDelete($event)"></o-context-menu-item>
   </o-context-menu>
 
