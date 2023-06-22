@@ -18,13 +18,14 @@ import {
   OTableVirtualScrollStrategy,
   Util
 } from 'ontimize-web-ngx';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
+import { WorkspaceS3 } from '../../../interfaces/workspaceS3.interface';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
+import { WorkspaceService } from '../../../services/workspace.service';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { WorkspaceService } from '../../../services/workspace.service';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'o-table-extended',
@@ -62,7 +63,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 
   public static FM_FOLDER_PARENT_KEY = 'FM_FOLDER_PARENT_KEY';
 
-  protected workspaceId: any;
+  protected workspaceId: string | WorkspaceS3;
   protected addFolderMethod: string;
 
   protected stateService: FileManagerStateService;
@@ -106,12 +107,13 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     );
 
   public ngOnInit(): void {
+    super.ngOnInit();
+
     //Initialize Provider
     this.workspaceService = this.injector.get(WorkspaceService);
 
     // setting fake value for avoid entity is undefined checking
     this.entity = 'fakeEntity';
-    super.ngOnInit();
     this.paginationControls = false;
   }
 
