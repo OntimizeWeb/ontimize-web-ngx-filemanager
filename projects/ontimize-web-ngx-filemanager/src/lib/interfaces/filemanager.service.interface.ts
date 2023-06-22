@@ -28,7 +28,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the query results.
    */
-  queryItems( workspace: any, kv?: Object, av?: Array<string> ): Observable<any>;
+  queryFiles( workspace: any, kv?: Object, av?: Array<string> ): Observable<any>;
 
 
   /**
@@ -71,7 +71,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the result of the name change operation.
    */
-  changeItemName( workspace: any, name: string, item: FileClass ): Observable<any>;
+  changeFileName( workspace: any, name: string, item: FileClass ): Observable<any>;
 
   /**
    * Deletes the specified files or directories from the provided workspace.
@@ -81,7 +81,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the result of the file deletion operation.
    */
-  deleteItems( workspace: any, items: FileClass[] ): Observable<any>;
+  deleteFiles( workspace: any, items: FileClass[] ): Observable<any>;
 
   /**
    * Inserts a new folder in the specified workspace with the provided name.

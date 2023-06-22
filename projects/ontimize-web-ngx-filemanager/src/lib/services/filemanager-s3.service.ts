@@ -79,7 +79,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public queryItems( workspace: WorkspaceS3, kv?: Object, av?: Array<string> ): Observable<any> {
+  public queryFiles( workspace: WorkspaceS3, kv?: Object, av?: Array<string> ): Observable<any> {
     //Build request data
     const data: any = {
       filter:{
@@ -255,7 +255,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public deleteItems( workspace: WorkspaceS3, files: FileClass[] ): Observable<any> {
+  public deleteFiles( workspace: WorkspaceS3, files: FileClass[] ): Observable<any> {
     //Build request data
     const keys: string[] = [];
     if( files ) files.forEach( target => keys.push( target.id ));
@@ -314,7 +314,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public changeItemName( workspace: WorkspaceS3, name: string, file: FileClass ): Observable<any> {
+  public changeFileName( workspace: WorkspaceS3, name: string, file: FileClass ): Observable<any> {
     //Check if it's a directory
     if( file.directory ) return this.changeFolderNameHelper( workspace, name, file );
 
@@ -380,7 +380,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     this.moveItems( workspace, [ folder ], newPrefix, kv ).subscribe( moveResponse => {
       if( moveResponse ){
         //Delete old items
-        this.deleteItems( workspace, [ folder ] ).subscribe( deleteResponse => {
+        this.deleteFiles( workspace, [ folder ] ).subscribe( deleteResponse => {
           if( deleteResponse ){
             this.parseSuccessfulUpdateResponse( moveResponse, _innerObserver );
           }

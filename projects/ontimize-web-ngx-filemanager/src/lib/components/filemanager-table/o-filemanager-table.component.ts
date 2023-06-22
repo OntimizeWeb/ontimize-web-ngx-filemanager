@@ -75,10 +75,10 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   @InputConverter()
   public enabled: boolean = true;
 
-  queryMethod: string = 'queryItems';
-  deleteMethod: string = 'deleteItems';
+  queryMethod: string = 'queryFiles';
+  deleteMethod: string = 'deleteFiles';
   addFolderMethod: string = 'insertFolder';
-  changeNameMethod: string = 'changeItemName';
+  changeNameMethod: string = 'changeFileName';
 
   protected uploadMethod: string = 'upload';
   protected downloadMethod: string = 'download';
