@@ -25,6 +25,7 @@ export class S3ServiceResponseAdapter implements ServiceResponseAdapter<BaseServ
               id: target.key,
               name: target.name,
               size: target.size,
+              creationDate: target.creationDate,
               directory: target.folder,
               directoryPath: target.relativePrefix,
               path: target.relativeKey
