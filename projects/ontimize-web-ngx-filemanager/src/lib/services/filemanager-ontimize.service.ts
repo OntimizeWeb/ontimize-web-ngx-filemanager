@@ -1,12 +1,12 @@
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
-import { OntimizeEEService, ServiceResponse } from 'ontimize-web-ngx';
-import { Observable, Subscriber } from 'rxjs';
+import { OntimizeEEService } from 'ontimize-web-ngx';
+import { Observable } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
+import { OntimizeDMSServiceResponseAdapter } from '../adapters/filemanager-dms-response.adapter';
 import { IFileManagerService } from '../interfaces/filemanager.service.interface';
 import { FileClass } from '../util';
-import { OntimizeDMSServiceResponseAdapter } from '../adapters/filemanager-dms-response.adapter';
 
 @Injectable()
 export class FileManagerOntimizeService extends OntimizeEEService implements IFileManagerService {
