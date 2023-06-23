@@ -212,10 +212,8 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(() => {
       //Do Nothing
     }, err => {
-      this.loadingAddFolderSubject.next( false );
-      if (err && typeof err !== 'object') {
-        this.dialogService.alert('ERROR', err);
-      }
+      this.loadingAddFolderSubject.next(false);
+      this.showDialogError(err, 'MESSAGES.ERROR_INSERT');
     }, () => {
       this.loadingAddFolderSubject.next( false );
       this.queryData(kv);

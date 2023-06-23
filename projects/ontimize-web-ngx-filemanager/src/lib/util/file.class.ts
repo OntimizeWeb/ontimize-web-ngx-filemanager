@@ -8,13 +8,6 @@ export class FileClass {
   public directoryPath: string;
   public path: string;
 
-  // public path;
-  // public type;
-  // public modified;
-  // public stats;
-  // public isFile;
-  // public isLink;
-  // public mime;
 
   constructor(obj?: any) {
     this.id = obj && obj.id ? obj.id : null;

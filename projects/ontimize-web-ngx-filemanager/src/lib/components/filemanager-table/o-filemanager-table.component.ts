@@ -402,11 +402,13 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
       loadingRenameSubject.next(true);
       let self = this;
       const workspaceId = this.workspaceService.getWorkspace();
-      tableService[this.changeNameMethod](workspaceId, name, file).subscribe(() => {
+      tableService[this.changeNameMethod](name, file, workspaceId).subscribe(() => {
       }, err => {
         loadingRenameSubject.next(false);
         if (err && typeof err !== 'object') {
-          self.dialogService.alert('ERROR', err);
+          this.dialogService.alert('ERROR', err);
+        } else {
+          this.dialogService.alert('ERROR', this.translatePipe.transform('MESSAGES.ERROR_CHANGE_FILE'));
         }
       }, () => {
         loadingRenameSubject.next(false);
