@@ -21,12 +21,11 @@ import {
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
-import { WorkspaceS3 } from '../../../interfaces/workspaceS3.interface';
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
 import { WorkspaceService } from '../../../services/workspace.service';
+import { Workspace } from '../../../types/workspace.type';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { Workspace } from '../../../types/workspace.type';
 
 @Component({
   selector: 'o-table-extended',
