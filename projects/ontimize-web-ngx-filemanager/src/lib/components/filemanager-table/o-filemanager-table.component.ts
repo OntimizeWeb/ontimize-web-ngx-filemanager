@@ -83,8 +83,8 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
 
   protected uploadMethod: string = 'upload';
   protected downloadMethod: string = 'download';
-  protected copyMethod: string = 'copyItems';
-  protected moveMethod: string = 'moveItems';
+  protected copyMethod: string = 'copyFiles';
+  protected moveMethod: string = 'moveFiles';
 
   protected onFormDataSubscribe: Subscription;
   protected stateService: FileManagerStateService;
