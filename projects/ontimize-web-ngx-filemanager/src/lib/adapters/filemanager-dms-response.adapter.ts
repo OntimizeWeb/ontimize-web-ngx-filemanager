@@ -28,8 +28,5 @@ export class OntimizeDMSServiceResponseAdapter implements ServiceResponseAdapter
         res.body.totalQueryRecordsNumber
       );
     }
-
-    // Create Ontimize service response with the data adapted
-    return new OntimizeServiceResponse(code, data, message);
   }
 }
