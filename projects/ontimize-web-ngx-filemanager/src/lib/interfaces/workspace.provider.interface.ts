@@ -1,3 +1,5 @@
+import { Workspace } from "../types/workspace.type";
+
 /**
  * Interface that defines a contract for a workspace provider.
  * Workspace provider is responsible for retrieving the workspace object.
@@ -9,5 +11,5 @@ export interface WorkspaceProvider{
    *
    * @returns The workspace object.
    */
-  getWorkspace(): any;
+  getWorkspace(): Workspace;
 }

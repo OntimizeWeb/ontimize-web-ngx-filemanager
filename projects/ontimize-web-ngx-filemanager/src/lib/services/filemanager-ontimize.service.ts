@@ -36,7 +36,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     this.adapter = this.injector.get(OntimizeDMSServiceResponseAdapter);
   }
 
-  queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
+  queryFiles(workspaceId: string, kv?: Object, av?: Array<string>): Observable<any> {
     const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
 
     const authorizationToken = 'Bearer ' + this.sessionId;
@@ -75,7 +75,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return dataObservable;
   }
 
-  download(workspaceId: any, files: FileClass[]): Observable<any> {
+  download(workspaceId: string, files: FileClass[]): Observable<any> {
     const file: FileClass = files[0];
     if (files.length > 1 || file.directory) {
       return this.downloadMultiple(workspaceId, files);
@@ -124,7 +124,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return dataObservable;
   }
 
-  downloadMultiple(workspaceId: any, files: FileClass[]): Observable<any> {
+  downloadMultiple(workspaceId: string, files: FileClass[]): Observable<any> {
     // Send data to generate zip file
     const url = this._urlBase + this.path + '/getFiles/' + workspaceId;
 
@@ -204,7 +204,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     a.click();
   }
 
-  upload(workspaceId: any, folderId: any, files: any[]): Observable<any> {
+  upload(workspaceId: string, folderId: any, files: any[]): Observable<any> {
     const url = this._urlBase + this.path + '/insertFile/' + workspaceId;
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({
@@ -261,7 +261,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return dataObservable;
   }
 
-  deleteFiles(workspaceId: any, items: FileClass[] = []): Observable<any> {
+  deleteFiles(workspaceId: string, items: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
     const body = JSON.stringify({
@@ -277,7 +277,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     });
   }
 
-  insertFolder(workspaceId: any, name: any, kv?: Object): Observable<any> {
+  insertFolder(workspaceId: string, name: any, kv?: Object): Observable<any> {
     const url = this._urlBase + this.path + '/insertFolder/' + workspaceId + '/' + name;
 
     const body = JSON.stringify({
@@ -314,11 +314,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return this.authService.getSessionInfo().id;
   }
 
-  copyItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
+  copyItems(workspaceId: string, items: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 
-  moveItems(workspaceId: any, items: FileClass[], folder: string, kv?: Object): Observable<any> {
+  moveItems(workspaceId: string, items: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 

@@ -26,6 +26,7 @@ import { FileManagerStateService } from '../../../services/filemanager-state.ser
 import { WorkspaceService } from '../../../services/workspace.service';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
+import { Workspace } from '../../../types/workspace.type';
 
 @Component({
   selector: 'o-table-extended',
@@ -63,7 +64,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 
   public static FM_FOLDER_PARENT_KEY = 'FM_FOLDER_PARENT_KEY';
 
-  protected workspaceId: string | WorkspaceS3;
+  protected workspaceId: Workspace;
   protected addFolderMethod: string;
 
   protected stateService: FileManagerStateService;

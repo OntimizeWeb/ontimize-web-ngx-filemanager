@@ -2,6 +2,7 @@ import { OntimizeEEService } from 'ontimize-web-ngx';
 import { Observable } from 'rxjs';
 
 import { FileClass } from '../util';
+import { Workspace } from '../types/workspace.type';
 
 
 /**
@@ -71,7 +72,7 @@ export interface IFileManagerService extends OntimizeEEService {
    *
    * @returns An Observable emitting the result of the name change operation.
    */
-  changeFileName(name: string, item: FileClass, workspace?: any): Observable<any>;
+  changeFileName(name: string, item: FileClass, workspace?: Workspace): Observable<any>;
 
   /**
    * Deletes the specified files or directories from the provided workspace.
@@ -81,7 +82,7 @@ export interface IFileManagerService extends OntimizeEEService {
    *
    * @returns An Observable emitting the result of the file deletion operation.
    */
-  deleteFiles(workspace: any, items: FileClass[]): Observable<any>;
+  deleteFiles(workspace: Workspace, items: FileClass[]): Observable<any>;
 
   /**
    * Inserts a new folder in the specified workspace with the provided name.
@@ -92,7 +93,7 @@ export interface IFileManagerService extends OntimizeEEService {
    *
    * @returns An Observable emitting the result of the folder insertion operation.
    */
-  insertFolder(workspace: any, name: any, kv?: Object): Observable<any>;
+  insertFolder(workspace: Workspace, name: any, kv?: Object): Observable<any>;
 
   /**
    * Copies the specified items (files and folders) to the provided destination folder in the workspace.
@@ -104,7 +105,7 @@ export interface IFileManagerService extends OntimizeEEService {
    *
    * @returns An Observable emitting the result of the copy operation.
    */
-  copyItems(workspace: any, items: FileClass[], folder: string, kv?: Object): Observable<any>;
+  copyItems(workspace: Workspace, items: FileClass[], folder: string, kv?: Object): Observable<any>;
 
   /**
    * Moves the specified items (files and folders) to the provided destination folder in the workspace.
@@ -116,5 +117,5 @@ export interface IFileManagerService extends OntimizeEEService {
    *
    * @returns An Observable emitting the result of the move operation.
    */
-  moveItems(workspace: any, items: FileClass[], folder: string, kv?: Object): Observable<any>;
+  moveItems(workspace: Workspace, items: FileClass[], folder: string, kv?: Object): Observable<any>;
 }

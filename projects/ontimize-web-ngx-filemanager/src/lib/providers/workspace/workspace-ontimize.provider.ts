@@ -1,5 +1,6 @@
 import { OFormComponent } from 'ontimize-web-ngx';
 import { WorkspaceProvider } from '../../interfaces/workspace.provider.interface';
+import { Workspace } from '../../types/workspace.type';
 
 
 /**
@@ -33,7 +34,7 @@ export class WorkspaceOntimizeProvider implements WorkspaceProvider{
    *
    * @returns The workspace object, or undefined if not found.
    */
-  public getWorkspace(): any {
+  public getWorkspace(): Workspace {
     return this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined
   }
 
