@@ -1,6 +1,6 @@
 <span mat-dialog-title>{{ title }}</span>
 <mat-dialog-content>
-  <mat-form-field>
+  <mat-form-field fxFlex="100">
     <input matInput #inputRef placeholder="{{ placeholder }}" [(ngModel)]="foldername" (keydown)="onKeyDown($event)" required>
   </mat-form-field>
 </mat-dialog-content>

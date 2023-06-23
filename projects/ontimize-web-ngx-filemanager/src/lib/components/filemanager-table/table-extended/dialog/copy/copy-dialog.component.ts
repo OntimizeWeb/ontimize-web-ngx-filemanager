@@ -22,6 +22,8 @@ export class CopyDialogComponent {
 
   @ViewChild('inputRef', { static: false }) inputRef: ElementRef;
   public foldername: string;
+  public title: string;
+  public placeholder: string;
   protected data: CopyDialogData;
   protected translatePipe: OFileManagerTranslatePipe;
 
@@ -31,24 +33,15 @@ export class CopyDialogComponent {
   ) {
     this.translatePipe = new OFileManagerTranslatePipe(this.injector);
     this.data = this.injector.get(MAT_DIALOG_DATA);
-    this.foldername = this.defaultValue;
+    this.initialize();
   }
 
-  get title(): string {
-    return this.translatePipe.transform( this.data.title );
+  initialize() {
+    this.foldername = this.data.defaultValue || this.translatePipe.transform('name');
+    this.title = this.translatePipe.transform(this.data.title);
+    this.placeholder = this.translatePipe.transform(this.data.placeholder);
   }
 
-  get folderName(): string {
-    return this.translatePipe.transform('name');
-  }
-
-  get placeholder(): string {
-    return this.translatePipe.transform( this.data.placeholder );
-  }
-
-  get defaultValue(): string {
-    return this.data.defaultValue;
-  }
 
   onKeyDown(e: Event): void {
     if (e['keyCode'] === 13) {
