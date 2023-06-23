@@ -9,14 +9,14 @@ import { FileClass } from '../util';
  *
  * @see OntimizeEEService
  */
-export interface IFileManagerService extends OntimizeEEService{
+export interface IFileManagerService extends OntimizeEEService {
 
   /**
    * Configures the service with the provided configuration.
    *
    * @param config The configuration object for the service.
    */
-  configureService( config: any ): void;
+  configureService(config: any): void;
 
 
   /**
@@ -28,7 +28,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the query results.
    */
-  queryFiles( workspace: any, kv?: Object, av?: Array<string> ): Observable<any>;
+  queryFiles(workspace: any, kv?: Object, av?: Array<string>): Observable<any>;
 
 
   /**
@@ -39,7 +39,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the download results.
    */
-  download( workspace: any, files: FileClass[] ): Observable<any>;
+  download(workspace: any, files: FileClass[]): Observable<any>;
 
   /**
    * Downloads multiple files from the provided workspace.
@@ -49,7 +49,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the download results.
    */
-  downloadMultiple( workspace: any, files: FileClass[] ): Observable<any>;
+  downloadMultiple(workspace: any, files: FileClass[]): Observable<any>;
 
   /**
    * Uploads the specified files to the provided workspace and folder.
@@ -60,18 +60,18 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the upload results.
    */
-  upload( workspace: any, folderId: any, files: any[] ): Observable<any>;
+  upload(workspace: any, folderId: any, files: any[]): Observable<any>;
 
   /**
    * Changes the name of a file or directory in the specified workspace.
    *
-   * @param workspace The workspace where the file resides.
    * @param name The new name for the file.
    * @param item The FileClass object representing the file to rename.
+   * @param workspace The workspace where the file resides.
    *
    * @returns An Observable emitting the result of the name change operation.
    */
-  changeFileName( workspace: any, name: string, item: FileClass ): Observable<any>;
+  changeFileName(name: string, item: FileClass, workspace?: any): Observable<any>;
 
   /**
    * Deletes the specified files or directories from the provided workspace.
@@ -81,7 +81,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the result of the file deletion operation.
    */
-  deleteFiles( workspace: any, items: FileClass[] ): Observable<any>;
+  deleteFiles(workspace: any, items: FileClass[]): Observable<any>;
 
   /**
    * Inserts a new folder in the specified workspace with the provided name.
@@ -92,7 +92,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the result of the folder insertion operation.
    */
-  insertFolder( workspace: any, name: any, kv?: Object ): Observable<any>;
+  insertFolder(workspace: any, name: any, kv?: Object): Observable<any>;
 
   /**
    * Copies the specified items (files and folders) to the provided destination folder in the workspace.
@@ -104,7 +104,7 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the result of the copy operation.
    */
-  copyItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any>;
+  copyItems(workspace: any, items: FileClass[], folder: string, kv?: Object): Observable<any>;
 
   /**
    * Moves the specified items (files and folders) to the provided destination folder in the workspace.
@@ -116,5 +116,5 @@ export interface IFileManagerService extends OntimizeEEService{
    *
    * @returns An Observable emitting the result of the move operation.
    */
-  moveItems( workspace: any, items: FileClass[], folder: string, kv?: Object ): Observable<any>;
+  moveItems(workspace: any, items: FileClass[], folder: string, kv?: Object): Observable<any>;
 }

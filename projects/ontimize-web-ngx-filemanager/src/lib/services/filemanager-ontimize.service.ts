@@ -1,14 +1,15 @@
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
-import { OntimizeEEService } from 'ontimize-web-ngx';
-import { Observable } from 'rxjs';
+import { OntimizeEEService, ServiceResponse } from 'ontimize-web-ngx';
+import { Observable, Subscriber } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
 import { IFileManagerService } from '../interfaces/filemanager.service.interface';
 import { FileClass } from '../util';
+import { OntimizeDMSServiceResponseAdapter } from '../adapters/filemanager-dms-response.adapter';
 
 @Injectable()
-export class FileManagerOntimizeService extends OntimizeEEService implements IFileManagerService{
+export class FileManagerOntimizeService extends OntimizeEEService implements IFileManagerService {
 
   protected httpClient: HttpClient;
 
@@ -30,6 +31,9 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     if (config.fileManagerPath) {
       this.path = config.fileManagerPath;
     }
+  }
+  public configureAdapter() {
+    this.adapter = this.injector.get(OntimizeDMSServiceResponseAdapter);
   }
 
   queryFiles(workspaceId: any, kv?: Object, av?: Array<string>): Observable<any> {
@@ -289,7 +293,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     });
   }
 
-  changeFileName(workspace: string, name: string, item: FileClass): Observable<any>{
+  changeFileName(name: string, item: FileClass): Observable<any> {
     const url = this._urlBase + this.path + '/fileUpdate';
 
     const body = JSON.stringify({

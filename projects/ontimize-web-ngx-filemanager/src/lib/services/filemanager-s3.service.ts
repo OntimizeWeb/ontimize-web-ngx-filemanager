@@ -314,7 +314,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public changeFileName( workspace: WorkspaceS3, name: string, file: FileClass ): Observable<any> {
+  public changeFileName(name: string, file: FileClass, workspace: WorkspaceS3): Observable<any> {
     //Check if it's a directory
     if( file.directory ) return this.changeFolderNameHelper( workspace, name, file );
 
