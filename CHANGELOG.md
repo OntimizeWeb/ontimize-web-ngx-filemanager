@@ -2,7 +2,7 @@
 The implementation has been updated so that the filemanager can get the data through the new DMS service running against the *Amazon AWS S3* service.
 
 ### BREAKING CHANGES
-* Service `FileManagerService` has been renamed to `FileManagerOntimizeService`.
+* Service `FileManagerService` has been renamed to `FileManagerOntimizeService` in order to differenciate from new `FileManagerS3Service`.
 
 ## 8.5.6 (2023-01-26)
 ### DEPENDENCY UPDATES
