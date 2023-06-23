@@ -261,11 +261,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return dataObservable;
   }
 
-  deleteFiles(workspaceId: string, items: FileClass[] = []): Observable<any> {
+  deleteFiles(workspaceId: string, files: FileClass[] = []): Observable<any> {
     const url = this._urlBase + this.path + '/deleteFiles/' + workspaceId;
 
     const body = JSON.stringify({
-      fileList: items
+      fileList: files
     });
 
     return this.doRequest({
@@ -293,11 +293,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     });
   }
 
-  changeFileName(name: string, item: FileClass): Observable<any> {
+  changeFileName(name: string, file: FileClass): Observable<any> {
     const url = this._urlBase + this.path + '/fileUpdate';
 
     const body = JSON.stringify({
-      file: item,
+      file: file,
       params: { name: name }
     });
 
@@ -314,11 +314,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return this.authService.getSessionInfo().id;
   }
 
-  copyItems(workspaceId: string, items: FileClass[], folder: string, kv?: Object): Observable<any> {
+  copyItems(workspaceId: string, files: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 
-  moveItems(workspaceId: string, items: FileClass[], folder: string, kv?: Object): Observable<any> {
+  moveItems(workspaceId: string, files: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 
