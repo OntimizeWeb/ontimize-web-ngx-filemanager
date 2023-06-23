@@ -1,5 +1,5 @@
 ## 8.6.0 (2023-06-23)
-The implementation has been updated so that the filemanager can get the data through the new DMS service running against the *Amazon AWS S3* service.
+The implementation has been updated so that the filemanager can get the data through the new DMS service running against the *Amazon AWS S3* service. ([71b17a7](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/71b17a7))
 
 ### BREAKING CHANGES
 * Service `FileManagerService` has been renamed to `FileManagerOntimizeService` in order to differenciate from new `FileManagerS3Service`.
