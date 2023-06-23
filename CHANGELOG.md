@@ -1,5 +1,5 @@
-## 8.6.0
-
+## 8.6.0 (2023-06-23)
+The implementation has been updated so that the filemanager can get the data through the new DMS service running against the *Amazon AWS S3* service.
 ## 8.5.6 (2023-01-26)
 ### DEPENDENCY UPDATES
 * **ontimize-web-ngx**: fixing compatibility with '*ontimize-web-ngx@8.10.0*'
