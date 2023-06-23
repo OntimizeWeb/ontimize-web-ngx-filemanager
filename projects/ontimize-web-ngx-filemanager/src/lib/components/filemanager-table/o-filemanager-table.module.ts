@@ -11,6 +11,7 @@ import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-ta
 import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
 import { ChangeNameDialogComponent } from './table-extended/dialog/changename/change-name-dialog.component';
 import { OTableExtendedModule } from './table-extended/o-table-extended.component';
+import { CopyDialogComponent } from './table-extended/dialog/copy/copy-dialog.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { OTableExtendedModule } from './table-extended/o-table-extended.componen
     OTableColumnRendererFileTypeComponent,
     OTableColumnRendererFileSizeComponent,
     ChangeNameDialogComponent,
+    CopyDialogComponent,
     UploadProgressComponent,
     DownloadProgressComponent
   ],
@@ -31,6 +33,7 @@ import { OTableExtendedModule } from './table-extended/o-table-extended.componen
   ],
   entryComponents: [
     ChangeNameDialogComponent,
+    CopyDialogComponent,
     UploadProgressComponent,
     DownloadProgressComponent
   ],
