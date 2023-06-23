@@ -9,7 +9,6 @@ export class OntimizeDMSServiceResponseAdapter implements ServiceResponseAdapter
     let code = 1;
     let data = [];
     let message = '';
-    console.log('adapt =>', res);
     // Adapt the data received from the service
     if (res && !Util.isDefined(res.body)) {
       return new OntimizeServiceResponse(
