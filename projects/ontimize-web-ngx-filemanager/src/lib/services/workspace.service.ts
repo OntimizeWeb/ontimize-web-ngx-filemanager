@@ -4,6 +4,7 @@ import { WorkspaceProvider } from '../interfaces/workspace.provider.interface';
 import { WorkspaceOntimizeProvider } from '../providers/workspace/workspace-ontimize.provider';
 import { WorkspaceS3Provider } from '../providers/workspace/workspace-s3.provider';
 import { WorkspaceS3 } from '../interfaces/workspaceS3.interface';
+import { Workspace } from '../types/workspace.type';
 
 
 /**
@@ -45,7 +46,7 @@ export class WorkspaceService {
    *
    * @returns The workspace object.
    */
-  public getWorkspace(): any {
+  public getWorkspace(): Workspace {
     return this.provider.getWorkspace();
   }
 
