@@ -32,6 +32,8 @@ export class ChangeNameDialogComponent implements AfterViewInit {
   @ViewChild('inputRef', { static: false }) inputRef: ElementRef;
   protected data: ChangeNameDialogData;
   protected translatePipe: OFileManagerTranslatePipe;
+  public title: string;
+  public placeholder: string;
 
   constructor(
     protected injector: Injector,
@@ -39,7 +41,13 @@ export class ChangeNameDialogComponent implements AfterViewInit {
   ) {
     this.translatePipe = new OFileManagerTranslatePipe(this.injector);
     this.data = this.injector.get(MAT_DIALOG_DATA);
-    this.filename = this.defaultValue;
+    this.initialize();
+  }
+
+  initialize() {
+    this.filename = this.data.defaultValue || this.translatePipe.transform('name');
+    this.title = this.translatePipe.transform(this.data.title);
+    this.placeholder = this.translatePipe.transform(this.data.placeholder);
   }
 
   ngAfterViewInit() {
@@ -50,17 +58,6 @@ export class ChangeNameDialogComponent implements AfterViewInit {
     this.inputRef.nativeElement.setSelectionRange(0, lastIndex);
   }
 
-  get title(): string {
-    return this.translatePipe.transform(this.data.title);
-  }
-
-  get placeholder(): string {
-    return this.translatePipe.transform(this.data.placeholder);
-  }
-
-  get defaultValue(): string {
-    return this.data.defaultValue;
-  }
 
   onKeyDown(e: Event): void {
     if (e['keyCode'] === 13) {
