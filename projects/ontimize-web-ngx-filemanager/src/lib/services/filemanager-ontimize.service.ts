@@ -314,11 +314,11 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     return this.authService.getSessionInfo().id;
   }
 
-  copyItems(workspaceId: string, files: FileClass[], folder: string, kv?: Object): Observable<any> {
+  copyFiles(workspaceId: string, files: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 
-  moveItems(workspaceId: string, files: FileClass[], folder: string, kv?: Object): Observable<any> {
+  moveFiles(workspaceId: string, files: FileClass[], folder: string, kv?: Object): Observable<any> {
     throw new Error('Method not implemented.');
   }
 

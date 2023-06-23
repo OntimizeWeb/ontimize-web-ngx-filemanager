@@ -377,7 +377,7 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
     if( folder && folder.path === newPrefix ) return _innerObserver;
 
     //Move items
-    this.moveItems( workspace, [ folder ], newPrefix, kv ).subscribe( moveResponse => {
+    this.moveFiles( workspace, [ folder ], newPrefix, kv ).subscribe( moveResponse => {
       if( moveResponse ){
         //Delete old items
         this.deleteFiles( workspace, [ folder ] ).subscribe( deleteResponse => {
@@ -403,14 +403,14 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
 
 // ------------------------------------------------------------------------------------------------------ \\
 
-  public copyItems( workspace: WorkspaceS3, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
+  public copyFiles( workspace: WorkspaceS3, files: FileClass[], folder: string, kv?: Object ): Observable<any> {
     const url: string = `${this.host}/copy`;
-    return this.copyAndMoveItemsHelper( url, workspace, items, folder, kv );
+    return this.copyAndMoveItemsHelper( url, workspace, files, folder, kv );
   }
 
-  public moveItems( workspace: WorkspaceS3, items: FileClass[], folder: string, kv?: Object ): Observable<any> {
+  public moveFiles( workspace: WorkspaceS3, files: FileClass[], folder: string, kv?: Object ): Observable<any> {
     const url: string = `${this.host}/move`;
-    return this.copyAndMoveItemsHelper( url, workspace, items, folder, kv );
+    return this.copyAndMoveItemsHelper( url, workspace, files, folder, kv );
   }
 
   private copyAndMoveItemsHelper( url: string, workspace: WorkspaceS3, items: FileClass[], folder: string, kv?: Object ): Observable<any> {

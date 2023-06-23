@@ -99,23 +99,23 @@ export interface IFileManagerService extends OntimizeEEService {
    * Copies the specified items (files and folders) to the provided destination folder in the workspace.
    *
    * @param workspace The workspace where the items exist and will be copied from.
-   * @param items An array of FileClass objects representing the items to copy.
+   * @param files An array of FileClass objects representing the items to copy.
    * @param folder The destination folder where the items will be copied to.
    * @param kv (Optional) Key-value pairs.
    *
    * @returns An Observable emitting the result of the copy operation.
    */
-  copyItems(workspace: Workspace, items: FileClass[], folder: string, kv?: Object): Observable<any>;
+  copyFiles(workspace: Workspace, files: FileClass[], folder: string, kv?: Object): Observable<any>;
 
   /**
    * Moves the specified items (files and folders) to the provided destination folder in the workspace.
    *
    * @param workspace The workspace where the items exist and will be moved from.
-   * @param items An array of FileClass objects representing the items to move.
+   * @param files An array of FileClass objects representing the items to move.
    * @param folder The destination folder where the items will be moved to.
    * @param kv (Optional) Key-value pairs.
    *
    * @returns An Observable emitting the result of the move operation.
    */
-  moveItems(workspace: Workspace, items: FileClass[], folder: string, kv?: Object): Observable<any>;
+  moveFiles(workspace: Workspace, files: FileClass[], folder: string, kv?: Object): Observable<any>;
 }
