@@ -1,3 +1,7 @@
+## 8.6.1 (2023-06-30)
+### Bug fixes
+*  Fixed the function `workspace-S3`  was not taken the form data as a parameter
+
 ## 8.6.0 (2023-06-23)
 ### Features
 * The implementation has been updated so that the filemanager can get the data through the new DMS service running against the *Amazon AWS S3* service. ([71b17a7](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/71b17a7))
