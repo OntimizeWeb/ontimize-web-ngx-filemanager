@@ -61,7 +61,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   public static S3_TYPE = 'S3';
 
   type: string = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
-  workspaceS3: (values: Array<{ attr, value }>) => WorkspaceS3;
+  workspaceS3: (values: { [key: string]: any }) => WorkspaceS3;
   workspaceKey: string;
   service: string;
   parentKeys: string;

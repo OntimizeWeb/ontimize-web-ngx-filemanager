@@ -47,7 +47,8 @@ export class WorkspaceS3Provider implements WorkspaceProvider {
       const workspaceKey = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
       workspace.data = { id: [workspaceKey] };
     } else if (Util.isDefined(this.workspaceS3)) {
-      workspace = this.workspaceS3 ? this.workspaceS3(this.form.getDataValue) : undefined;
+      const formData = this.form ? this.form.toJSONData(this.form.getDataValues()) :{ };
+      workspace = this.workspaceS3 ? this.workspaceS3(formData) : undefined;
     } else {
       console.warn('[File manager]: The workspace-key or workspace-S3 should be configured for correct use')
     }
