@@ -1,4 +1,4 @@
-## 8.6.1 (2023-06-30)
+## 8.6.1 (2023-07-03)
 ### Bug fixes
 *  Fixed the function `workspace-S3`  was not taken the form data as a parameter
 
