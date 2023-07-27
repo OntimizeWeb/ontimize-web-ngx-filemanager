@@ -15,6 +15,7 @@ Steps to reproduce the behavior.
 
 ### Affected versions:
 - `ontimize-web-ngx`: X.Y.Z
+- `ontimize-web-ngx-filemanager`: X.Y.Z
 
 ### Additional context
 Add any other context about the problem here.
