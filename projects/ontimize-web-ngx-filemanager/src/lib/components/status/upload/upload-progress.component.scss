@@ -8,6 +8,7 @@
         overflow: hidden;
       }
     }
+
     position: fixed;
     bottom: 24px;
     right: 24px;
@@ -41,38 +42,43 @@
 
       .mat-mdc-list {
         padding: 0;
+
         .mat-mdc-list-item {
           border-bottom: solid 1px #eee;
           padding: 0 14px;
           width: auto;
         }
-        /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-        .mat-list-item-content {
-          padding: 0;
-          font-size: 13px;
 
+
+        .mdc-list-item__content {
           .file-data {
             width: 100%;
             cursor: default;
+
             .mat-icon {
               width: 40px;
               text-align: center;
             }
           }
         }
+
         .file-name.uploading {
           opacity: 0.35;
         }
+
         .file-cancelled-text {
           opacity: 0.35;
           margin-left: 24px;
         }
+
         .cancelled {
           opacity: 0.5;
         }
+
         .uploaded {
           color: #0f9d58;
         }
+
         .error {
           color: #db4437;
         }
