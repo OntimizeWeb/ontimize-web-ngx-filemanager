@@ -1,5 +1,5 @@
 import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FileClass } from '../../../../../util/file.class';
 import { OFileManagerTranslatePipe } from '../../../../../util/o-filemanager-translate.pipe';
