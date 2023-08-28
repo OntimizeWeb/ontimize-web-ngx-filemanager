@@ -1,5 +1,5 @@
 <div class="o-table-container" fxLayout="column" fxLayoutAlign="start stretch" [style.display]="isVisible()? '' : 'none'"
-  [class.block-events]="showLoading | async">
+  [class.block-events]="showLoadingExtended | async">
 
   <o-data-toolbar #tableToolbar *ngIf="hasControls()" [title]="title" [show-title]="showTitle" class="o-table-toolbar">
     <ng-container o-data-toolbar-projection-start>
@@ -67,7 +67,7 @@
   </mat-paginator>
 
   <!--LOADING-->
-  <div #spinnerContainer *ngIf="showLoading | async" fxLayout="column" fxLayoutAlign="center center" [ngStyle]="{'top.px': headerHeight}"
+  <div #spinnerContainer *ngIf="showLoadingExtended | async" fxLayout="column" fxLayoutAlign="center center" [ngStyle]="{'top.px': headerHeight}"
     class="spinner-container" [class.spinner-container-scrollable]="loadingScroll | async">
     <mat-progress-spinner mode="indeterminate" strokeWidth="3" [diameter]="diameterSpinner"></mat-progress-spinner>
   </div>
