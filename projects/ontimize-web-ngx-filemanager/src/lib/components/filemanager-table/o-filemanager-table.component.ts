@@ -1,7 +1,7 @@
 import { HttpEventType } from '@angular/common/http';
 import { AfterViewInit, Component, forwardRef, Inject, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { DialogService, InputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
+import { DialogService, BooleanInputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
@@ -65,15 +65,15 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   workspaceKey: string;
   service: string;
   parentKeys: string;
-  @InputConverter()
+  @BooleanInputConverter()
   autoHideUpload: boolean = true;
-  @InputConverter()
+  @NumberInputConverter()
   autoHideTimeout: number = 20000;
   serviceType: string;
-  @InputConverter()
+  @BooleanInputConverter()
   newFolderButton: boolean = false;
   selectAllCheckbox: string;
-  @InputConverter()
+  @BooleanInputConverter()
   public enabled: boolean = true;
 
   queryMethod: string = 'queryFiles';
@@ -576,3 +576,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
 }
+function NumberInputConverter(): (target: OFileManagerTableComponent, propertyKey: "autoHideTimeout") => void {
+  throw new Error('Function not implemented.');
+}
+
