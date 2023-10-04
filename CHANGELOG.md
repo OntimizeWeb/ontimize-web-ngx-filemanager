@@ -1,3 +1,8 @@
+## 15.0.0-beta.0
+### Features
+* Migration to Angular 15.
+* Migration to Angular Material 15.
+
 ## 8.6.1 (2023-07-03)
 ### Bug fixes
 *  Fixed the function `workspace-S3`  was not taken the form data as a parameter

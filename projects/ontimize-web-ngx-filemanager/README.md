@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <div style="display:inline-block;vertical-align: middle;">
-    <a name="logo" href="https://ontimizeweb.github.io/docs/v8/filemanager/">
+    <a name="logo" href="https://ontimizeweb.github.io/docs/v15/filemanager/">
       Ontimize Web File Manager
     </a>
   </div>
@@ -26,7 +26,7 @@ The Ontimize Web File Manager is a web file manager for web applications based i
 
 ### 📖 Documentation
 
-Check out our [documentation site](https://ontimizeweb.github.io/docs/v8/filemanager/) to know more details.
+Check out our [documentation site](https://ontimizeweb.github.io/docs/v15/filemanager/) to know more details.
 
 ## 💡 Ideas
 
@@ -35,7 +35,7 @@ We would love any feedback you have or to know when you encounter issues, by fil
 
 ## :gear: Development
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.9.
 
 ### Installation
 
