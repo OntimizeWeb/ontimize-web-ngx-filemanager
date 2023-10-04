@@ -10,6 +10,7 @@ import {
   OntimizeServiceProvider,
   OntimizeWebModule,
   OQueryDataArgs,
+  OTableBase,
   OTableComponent,
   OTableComponentStateService,
   OTableDataSourceService,
@@ -32,6 +33,7 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     OntimizeServiceProvider,
     OTableDataSourceService,
     { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
+    { provide: OTableBase, useExisting: forwardRef(() => OTableExtendedComponent) },
     { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] },
     { provide: VIRTUAL_SCROLL_STRATEGY, useClass: OTableVirtualScrollStrategy }
   ],
