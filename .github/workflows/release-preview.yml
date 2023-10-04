@@ -44,11 +44,11 @@ jobs:
           The release version detected was: $RELEASE_VERSION" >> $GITHUB_ENV
           exit 1
 
-      - name: npm install and npm run build
+      - name: npm install and npm run build-prod
         run: |
           echo "FAILURE_MESSAGE=The build process has failed" >> $GITHUB_ENV
           npm i
-          npm run build
+          npm run build-prod
 
       - name: Add PR comment with release preview
         env:

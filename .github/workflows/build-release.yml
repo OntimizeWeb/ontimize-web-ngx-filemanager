@@ -62,10 +62,10 @@ jobs:
           echo "Version ${{ steps.project.outputs.version }} is not a properly named for RELEASE"
           exit 1
 
-      - name: npm install and npm run build
+      - name: npm install and npm run build-prod
         run: |
           npm i
-          npm run build
+          npm run build-prod
 
       - name: Publish
         run: |
@@ -76,6 +76,7 @@ jobs:
       - name: GitHub Release / Create release
         uses: ncipollo/release-action@2792aea87063cfd0d27953ac38e3ab45afacc154
         with:
+          commit: ${{ env.BASELINE_BRANCH }}
           tag: ${{ steps.project.outputs.version }}
           name: ${{ steps.project.outputs.version }}
           token: ${{ secrets.OWEB_GH_TOKEN_PUSH }}
