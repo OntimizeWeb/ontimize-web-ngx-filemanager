@@ -1,4 +1,4 @@
-## 15.0.0-beta.0 (2023-10-04)
+## 15.0.0-beta.0 (2023-10-06)
 ### Features
 * Migration to Angular 15.
 * Migration to Angular Material 15.

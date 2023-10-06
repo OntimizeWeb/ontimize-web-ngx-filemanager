@@ -24,6 +24,6 @@
   },
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "ontimize-web-ngx": "ontimize-web-ngx-15.0.0-SNAPSHOT-2"
+    "ontimize-web-ngx": "15.0.0-beta.0"
   }
 }
