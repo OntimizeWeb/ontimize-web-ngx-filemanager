@@ -24,20 +24,20 @@ export class FolderNameDialogComponent {
   @ViewChild('folderNameRef') inputRef: ElementRef;
 
   protected translatePipe: OFileManagerTranslatePipe;
+  public title: string;
+  public folderName: string;
 
   constructor(
     protected injector: Injector,
     public dialogRef: MatDialogRef<FolderNameDialogComponent>
   ) {
     this.translatePipe = new OFileManagerTranslatePipe(this.injector);
+    this.initialize();
   }
 
-  get title(): string {
-    return this.translatePipe.transform('EXTENDED_TABLE.NEW_FOLDER_TITLE');
-  }
-
-  get folderName(): string {
-    return this.translatePipe.transform('name');
+  initialize() {
+    this.title = this.translatePipe.transform('EXTENDED_TABLE.NEW_FOLDER_TITLE');
+    this.folderName = this.translatePipe.transform('name')
   }
 
   onKeyDown(e: Event): void {

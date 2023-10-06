@@ -1,3 +1,19 @@
+## 15.0.0-beta.0 (2023-10-06)
+### Features
+* Migration to Angular 15.
+* Migration to Angular Material 15.
+
+## 8.6.1 (2023-07-03)
+### Bug fixes
+*  Fixed the function `workspace-S3`  was not taken the form data as a parameter
+
+## 8.6.0 (2023-06-23)
+### Features
+* The implementation has been updated so that the filemanager can get the data through the new DMS service running against the *Amazon AWS S3* service. ([71b17a7](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/71b17a7))
+
+### BREAKING CHANGES
+* Service `FileManagerService` has been renamed to `FileManagerOntimizeService` in order to differenciate from new `FileManagerS3Service`.
+
 ## 8.5.6 (2023-01-26)
 ### DEPENDENCY UPDATES
 * **ontimize-web-ngx**: fixing compatibility with '*ontimize-web-ngx@8.10.0*'

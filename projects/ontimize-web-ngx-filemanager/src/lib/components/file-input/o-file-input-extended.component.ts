@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, forwardRef, NgModule } from '@angular/core';
 import { OFileInputComponent, OFileItem, OSharedModule } from 'ontimize-web-ngx';
 
+import { WorkspaceService } from '../../services/workspace.service';
 import { OFileUploaderExtended } from './o-file-uploader-extended';
 
 @Component({
@@ -21,12 +22,12 @@ import { OFileUploaderExtended } from './o-file-uploader-extended';
 })
 export class OFileInputExtendedComponent extends OFileInputComponent {
   uploader: OFileUploaderExtended;
-  protected workspaceKey: string;
   parentKey: string;
 
   initialize() {
     super.initialize();
-    this.uploader = new OFileUploaderExtended(this.fileService, this.entity, this.form, this.workspaceKey, this.parentKey, this.fileService);
+    const workspaceService: WorkspaceService = this.injector.get( WorkspaceService );
+    this.uploader = new OFileUploaderExtended( this.fileService, this.entity, this.form, this.parentKey, this.fileService, workspaceService );
     this.uploader.splitUpload = this.splitUpload;
   }
 
