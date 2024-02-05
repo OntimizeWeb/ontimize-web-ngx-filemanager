@@ -10,14 +10,19 @@ import {
   OntimizeServiceProvider,
   OntimizeWebModule,
   OQueryDataArgs,
+  OTableBase,
   OTableComponent,
   OTableComponentStateService,
   OTableDataSourceService,
   OTableVirtualScrollStrategy,
   Util
 } from 'ontimize-web-ngx';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 import { FileManagerStateService } from '../../../services/filemanager-state.service';
+import { WorkspaceService } from '../../../services/workspace.service';
+import { Workspace } from '../../../types/workspace.type';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
 
@@ -28,6 +33,7 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     OntimizeServiceProvider,
     OTableDataSourceService,
     { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
+    { provide: OTableBase, useExisting: forwardRef(() => OTableExtendedComponent) },
     { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] },
     { provide: VIRTUAL_SCROLL_STRATEGY, useClass: OTableVirtualScrollStrategy }
   ],
@@ -56,8 +62,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 
   public static FM_FOLDER_PARENT_KEY = 'FM_FOLDER_PARENT_KEY';
 
-  protected workspaceId: any;
-  protected workspaceKey: string;
+  protected workspaceId: Workspace;
   protected addFolderMethod: string;
 
   protected stateService: FileManagerStateService;
@@ -65,10 +70,49 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 
   protected mutationObserver: MutationObserver;
 
+  protected workspaceService: WorkspaceService;
+
+  public loadingRemoveSubject = new BehaviorSubject<boolean>(false);
+  protected loadingRemove: Observable<boolean> = this.loadingRemoveSubject.asObservable();
+
+  public loadingCopySubject = new BehaviorSubject<boolean>(false);
+  protected loadingCopy: Observable<boolean> = this.loadingCopySubject.asObservable();
+
+  public loadingMoveSubject = new BehaviorSubject<boolean>(false);
+  protected loadingMove: Observable<boolean> = this.loadingMoveSubject.asObservable();
+
+  public loadingRenameSubject = new BehaviorSubject<boolean>(false);
+  protected loadingRename: Observable<boolean> = this.loadingRenameSubject.asObservable();
+
+  public loadingAddFolderSubject = new BehaviorSubject<boolean>(false);
+  protected loadingAddFolder: Observable<boolean> = this.loadingAddFolderSubject.asObservable();
+
+  public showLoadingExtended: Observable<boolean> = combineLatest([
+      this.showLoading,
+      this.loadingRemove,
+      this.loadingCopy,
+      this.loadingMove,
+      this.loadingRename,
+      this.loadingAddFolder
+    ]).pipe(
+      distinctUntilChanged((prev, curr) =>
+        prev[0] === curr[0] &&
+        prev[1] === curr[1] &&
+        prev[2] === curr[2] &&
+        prev[3] === curr[3] &&
+        prev[4] === curr[4] &&
+        prev[5] === curr[5] ), // avoid emitting same value multiple times // avoid emitting same value multiple times
+      map((res: boolean[]) => res.some(r => r))
+    );
+
   public ngOnInit(): void {
+    super.ngOnInit();
+
+    //Initialize Provider
+    this.workspaceService = this.injector.get(WorkspaceService);
+
     // setting fake value for avoid entity is undefined checking
     this.entity = 'fakeEntity';
-    super.ngOnInit();
     this.paginationControls = false;
   }
 
@@ -94,7 +138,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
    * @param ovrrArgs override arguments
    */
   public queryData(filter?: any, ovrrArgs?: OQueryDataArgs): void {
-    this.workspaceId = this.form.formData[this.workspaceKey] ? this.form.formData[this.workspaceKey].value : undefined;
+    this.workspaceId = this.workspaceService.getWorkspace();
 
     if (!Util.isDefined(this.workspaceId)) {
       this.setData([], []);
@@ -116,13 +160,16 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
+          this.loadingRemoveSubject.next( true );
+          const workspaceId = this.workspaceService.getWorkspace();
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
           }, error => {
+            this.loadingRemoveSubject.next( false );
             this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
           }, () => {
+            this.loadingRemoveSubject.next( false );
             this.reloadCurrentFolder();
           });
         } else {
@@ -154,19 +201,20 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    const workspaceId = (this.form as any).getDataValue(this.workspaceKey).value;
+    this.loadingAddFolderSubject.next( true );
+    const workspaceId = this.workspaceService.getWorkspace();
     const kv = {};
     const currentFilter = this.stateService.getCurrentQueryFilter();
     if (currentFilter.hasOwnProperty(OTableExtendedComponent.FM_FOLDER_PARENT_KEY)) {
       kv[OTableExtendedComponent.FM_FOLDER_PARENT_KEY] = currentFilter[OTableExtendedComponent.FM_FOLDER_PARENT_KEY];
     }
     tableService[this.addFolderMethod](workspaceId, folderName, kv).subscribe(() => {
-      // do nothing
+      //Do Nothing
     }, err => {
-      if (err && typeof err !== 'object') {
-        this.dialogService.alert('ERROR', err);
-      }
+      this.loadingAddFolderSubject.next(false);
+      this.showDialogError(err, 'MESSAGES.ERROR_INSERT');
     }, () => {
+      this.loadingAddFolderSubject.next( false );
       this.queryData(kv);
     });
   }

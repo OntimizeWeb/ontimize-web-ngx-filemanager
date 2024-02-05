@@ -1,6 +1,6 @@
 <span mat-dialog-title>{{ title }}</span>
 <mat-dialog-content>
-  <mat-form-field>
+  <mat-form-field fxFlex="100">
     <input matInput #folderNameRef placeholder="{{ folderName }}" [formControl]="foldernameFormControl" [(ngModel)]="foldername"
       (keydown)="onKeyDown($event)" required>
     <mat-error *ngIf="foldernameFormControl.hasError('invalidFileName')">{{ 'VALIDATE.FILENAME.INVALID' | oFileManagerTranslate }}</mat-error>
