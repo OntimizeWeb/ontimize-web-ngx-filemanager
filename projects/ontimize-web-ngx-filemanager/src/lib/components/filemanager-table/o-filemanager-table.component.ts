@@ -137,14 +137,22 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngOnInit() {
+
     this.isS3Type.next(this.type === OFileManagerTableComponent.S3_TYPE);
-    if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE) {
-      this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
-      this.workspaceService.initializeOntimizeProvider(this.workspaceKey, this.oForm);
-    }
-    else if (!this.serviceType && this.type === OFileManagerTableComponent.S3_TYPE) {
-      this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
-      this.workspaceService.initializeS3Provider(this.workspaceKey, this.oForm, this.workspaceS3);
+    switch (this.type) {
+      case OFileManagerTableComponent.DEFAULT_SERVICE_TYPE:
+        if (!this.serviceType) {
+          this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
+        }
+        this.workspaceService.initializeOntimizeProvider(this.workspaceKey, this.oForm);
+        break;
+      case OFileManagerTableComponent.S3_TYPE:
+
+        if (!this.serviceType) {
+          this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
+        }
+        this.workspaceService.initializeS3Provider(this.workspaceKey, this.oForm, this.workspaceS3);
+        break;
     }
     this.oTable.setStateService(this.stateService);
   }
