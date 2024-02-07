@@ -1,6 +1,6 @@
 ## 8.6.2 (2024-02-07)
 ### Bug fixes
-*  Fixed `o-filemanager-table` not working when the `service-type` was configured ([](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/)) Closes [#119](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/issues/119)
+*  Fixed `o-filemanager-table` not working when the `service-type` was configured ([0403ebc](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/0403ebc)) Closes [#119](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/issues/119)
 
 ## 8.6.1 (2023-07-03)
 ### Bug fixes
