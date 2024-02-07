@@ -54,11 +54,11 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
 export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewInit {
   public isS3Type: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
-  public static DEFAULT_SERVICE_TYPE = 'FileManagerOntimizeService';
-  public static DEFAULT_TYPE = 'Ontimize';
+  public static readonly DEFAULT_SERVICE_TYPE = 'FileManagerOntimizeService';
+  public static readonly DEFAULT_TYPE = 'Ontimize';
 
-  public static S3_SERVICE_TYPE = 'FileManagerS3Service';
-  public static S3_TYPE = 'S3';
+  public static readonly S3_SERVICE_TYPE = 'FileManagerS3Service';
+  public static readonly S3_TYPE = 'S3';
 
   type: string = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
   workspaceS3: (values: { [key: string]: any }) => WorkspaceS3;
@@ -137,14 +137,22 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
   }
 
   ngOnInit() {
+
     this.isS3Type.next(this.type === OFileManagerTableComponent.S3_TYPE);
-    if (!this.serviceType && this.type === OFileManagerTableComponent.DEFAULT_SERVICE_TYPE) {
-      this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
-      this.workspaceService.initializeOntimizeProvider(this.workspaceKey, this.oForm);
-    }
-    else if (!this.serviceType && this.type === OFileManagerTableComponent.S3_TYPE) {
-      this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
-      this.workspaceService.initializeS3Provider(this.workspaceKey, this.oForm, this.workspaceS3);
+    switch (this.type) {
+      case OFileManagerTableComponent.DEFAULT_SERVICE_TYPE:
+        if (!this.serviceType) {
+          this.serviceType = OFileManagerTableComponent.DEFAULT_SERVICE_TYPE;
+        }
+        this.workspaceService.initializeOntimizeProvider(this.workspaceKey, this.oForm);
+        break;
+      case OFileManagerTableComponent.S3_TYPE:
+
+        if (!this.serviceType) {
+          this.serviceType = OFileManagerTableComponent.S3_SERVICE_TYPE;
+        }
+        this.workspaceService.initializeS3Provider(this.workspaceKey, this.oForm, this.workspaceS3);
+        break;
     }
     this.oTable.setStateService(this.stateService);
   }
