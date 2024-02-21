@@ -1,3 +1,11 @@
+## 15.0.0 (2024-02-21)
+### DEPENDENCY UPDATES
+* **Updated**: ontimize-web-ngx@15.0.0
+
+## 8.6.2 (2024-02-07)
+### Bug fixes
+*  Fixed `o-filemanager-table` not working when the `service-type` was configured ([0403ebc](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/0403ebc)) Closes [#119](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/issues/119)
+
 ## 15.0.0-beta.0 (2023-10-06)
 ### Features
 * Migration to Angular 15.
