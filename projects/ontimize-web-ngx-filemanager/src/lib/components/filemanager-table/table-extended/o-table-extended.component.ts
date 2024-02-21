@@ -17,7 +17,6 @@ import {
   OTableVirtualScrollStrategy,
   Util
 } from 'ontimize-web-ngx';
-import { OTableSkeletonComponent } from 'ontimize-web-ngx/lib/components/table/extensions/skeleton/o-table-skeleton/o-table-skeleton.component';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
