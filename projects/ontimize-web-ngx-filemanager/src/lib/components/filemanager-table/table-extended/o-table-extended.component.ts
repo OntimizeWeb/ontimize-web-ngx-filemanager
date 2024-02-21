@@ -25,6 +25,8 @@ import { WorkspaceService } from '../../../services/workspace.service';
 import { Workspace } from '../../../types/workspace.type';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
+import { OTableSkeletonExtendedComponent } from './skeleton/o-table-skeleton/o-table-skeleton.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'o-table-extended',
@@ -88,22 +90,22 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
   protected loadingAddFolder: Observable<boolean> = this.loadingAddFolderSubject.asObservable();
 
   public showLoadingExtended: Observable<boolean> = combineLatest([
-      this.showLoading,
-      this.loadingRemove,
-      this.loadingCopy,
-      this.loadingMove,
-      this.loadingRename,
-      this.loadingAddFolder
-    ]).pipe(
-      distinctUntilChanged((prev, curr) =>
-        prev[0] === curr[0] &&
-        prev[1] === curr[1] &&
-        prev[2] === curr[2] &&
-        prev[3] === curr[3] &&
-        prev[4] === curr[4] &&
-        prev[5] === curr[5] ), // avoid emitting same value multiple times // avoid emitting same value multiple times
-      map((res: boolean[]) => res.some(r => r))
-    );
+    this.showLoading,
+    this.loadingRemove,
+    this.loadingCopy,
+    this.loadingMove,
+    this.loadingRename,
+    this.loadingAddFolder
+  ]).pipe(
+    distinctUntilChanged((prev, curr) =>
+      prev[0] === curr[0] &&
+      prev[1] === curr[1] &&
+      prev[2] === curr[2] &&
+      prev[3] === curr[3] &&
+      prev[4] === curr[4] &&
+      prev[5] === curr[5]), // avoid emitting same value multiple times // avoid emitting same value multiple times
+    map((res: boolean[]) => res.some(r => r))
+  );
 
   public ngOnInit(): void {
     super.ngOnInit();
@@ -160,16 +162,16 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     this.dialogService.confirm('CONFIRM', 'MESSAGES.CONFIRM_DELETE').then(res => {
       if (res === true) {
         if (this.dataService && (this.deleteMethod in this.dataService) && (this.keysArray.length > 0)) {
-          this.loadingRemoveSubject.next( true );
+          this.loadingRemoveSubject.next(true);
           const workspaceId = this.workspaceService.getWorkspace();
           this.dataService[this.deleteMethod](workspaceId, this.selection.selected).subscribe(() => {
             this.clearSelection();
             ObservableWrapper.callEmit(this.onRowDeleted, this.selection.selected);
           }, error => {
-            this.loadingRemoveSubject.next( false );
+            this.loadingRemoveSubject.next(false);
             this.showDialogError(error, 'MESSAGES.ERROR_DELETE');
           }, () => {
-            this.loadingRemoveSubject.next( false );
+            this.loadingRemoveSubject.next(false);
             this.reloadCurrentFolder();
           });
         } else {
@@ -201,7 +203,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     if (!tableService || !(this.addFolderMethod in tableService)) {
       return;
     }
-    this.loadingAddFolderSubject.next( true );
+    this.loadingAddFolderSubject.next(true);
     const workspaceId = this.workspaceService.getWorkspace();
     const kv = {};
     const currentFilter = this.stateService.getCurrentQueryFilter();
@@ -214,7 +216,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
       this.loadingAddFolderSubject.next(false);
       this.showDialogError(err, 'MESSAGES.ERROR_INSERT');
     }, () => {
-      this.loadingAddFolderSubject.next( false );
+      this.loadingAddFolderSubject.next(false);
       this.queryData(kv);
     });
   }
@@ -284,8 +286,8 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 }
 
 @NgModule({
-    declarations: [OTableExtendedComponent, FolderNameDialogComponent],
-    imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule],
-    exports: [OTableExtendedComponent]
+  declarations: [OTableExtendedComponent, FolderNameDialogComponent, OTableSkeletonExtendedComponent],
+  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule, NgxSkeletonLoaderModule,],
+  exports: [OTableExtendedComponent]
 })
 export class OTableExtendedModule { }

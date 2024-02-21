@@ -69,7 +69,7 @@
   <!--LOADING-->
   <div #spinnerContainer *ngIf="showLoadingExtended | async" fxLayout="column" fxLayoutAlign="center center" [ngStyle]="{'top.px': headerHeight}"
     class="spinner-container" [class.spinner-container-scrollable]="loadingScroll | async">
-    <mat-progress-spinner mode="indeterminate" strokeWidth="3" [diameter]="diameterSpinner"></mat-progress-spinner>
+    <o-table-skeleton></o-table-skeleton>
   </div>
 
   <!-- Disable blocker -->
