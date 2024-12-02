@@ -57,7 +57,7 @@
     "typescript": "~3.5.3",
     "tar": ">=3.2.3",
     "path-parse": ">=1.0.7",
-    "ng-packagr": "4.1.0",
+    "ng-packagr": "15.1.1",
     "xmlhttprequest-ssl": "^1.6.2",
     "socket.io": "^2.4.0",
     "postcss": "^7.0.36",
