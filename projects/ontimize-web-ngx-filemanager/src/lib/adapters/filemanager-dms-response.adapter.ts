@@ -1,9 +1,9 @@
-import { HttpResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { BaseServiceResponse, OntimizeServiceResponse, ServiceResponseAdapter, Util } from "ontimize-web-ngx";
+import { HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BaseServiceResponse, IServiceResponseAdapter, OntimizeServiceResponse, Util } from 'ontimize-web-ngx';
 
 @Injectable({ providedIn: 'root' })
-export class OntimizeDMSServiceResponseAdapter implements ServiceResponseAdapter<BaseServiceResponse> {
+export class OntimizeDMSServiceResponseAdapter implements IServiceResponseAdapter<BaseServiceResponse> {
 
   public adapt(res: HttpResponse<any>): BaseServiceResponse {
     let code = 1;

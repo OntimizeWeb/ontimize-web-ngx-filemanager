@@ -10,6 +10,7 @@ import {
   OntimizeServiceProvider,
   OntimizeWebModule,
   OQueryDataArgs,
+  OQueryParams,
   OTableBase,
   OTableComponent,
   OTableComponentStateService,
@@ -25,8 +26,6 @@ import { WorkspaceService } from '../../../services/workspace.service';
 import { Workspace } from '../../../types/workspace.type';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
-import { OTableSkeletonExtendedComponent } from './skeleton/o-table-skeleton/o-table-skeleton.component';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'o-table-extended',
@@ -149,9 +148,9 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
     super.queryData(filter, ovrrArgs);
   }
 
-  public getQueryArguments(filter: object, ovrrArgs?: any): any[] {
+  public getQueryArguments(filter: object, ovrrArgs?: OQueryDataArgs): OQueryParams {
     const queryArguments = super.getQueryArguments(filter, ovrrArgs);
-    queryArguments.unshift(this.workspaceId);
+    queryArguments.filter = { ...queryArguments.filter, ... { workspaceId : this.workspaceId } };
     return queryArguments;
   }
 
@@ -286,8 +285,8 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 }
 
 @NgModule({
-  declarations: [OTableExtendedComponent, FolderNameDialogComponent, OTableSkeletonExtendedComponent],
-  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule, NgxSkeletonLoaderModule,],
+  declarations: [OTableExtendedComponent, FolderNameDialogComponent],
+  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule],
   exports: [OTableExtendedComponent]
 })
 export class OTableExtendedModule { }
