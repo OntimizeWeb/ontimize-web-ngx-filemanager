@@ -19,6 +19,10 @@
   "metadata": "./index.metadata.json",
   "module": "./index.js",
   "es2015": "./esm2015/ontimize-web-ngx-filemanager.js",
+  "scripts": {
+    "test": "karma start",
+    "test-watch": "karma start --singleRun=false --autoWatch=true"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   },
