@@ -18,7 +18,11 @@ module.exports = function (config) {
     },
     coverageReporter: {
       dir: require('path').join(__dirname, '../../coverage/ontimize-web-ngx-filemanager'),
-      reports: ['html', 'lcovonly', 'text-summary'],
+       subdir: '.',
+     reporters: [
+        { type: 'html' },
+        { type: 'lcovonly' },
+        { type: 'text-summary' }],
       fixWebpackSourcePaths: true
     },
     sonarQubeUnitReporter: {
