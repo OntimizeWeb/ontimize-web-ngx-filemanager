@@ -18,7 +18,11 @@ module.exports = function (config) {
     },
     coverageReporter: {
       dir: require('path').join(__dirname, '../../coverage/ontimize-web-ngx-filemanager'),
-      reports: ['html', 'lcovonly', 'text-summary'],
+       subdir: '.',
+     reporters: [
+        { type: 'html' },
+        { type: 'lcovonly' },
+        { type: 'text-summary' }],
       fixWebpackSourcePaths: true
     },
     sonarQubeUnitReporter: {
@@ -29,7 +33,7 @@ module.exports = function (config) {
       testFilePattern: '.spec.ts',
       useBrowserName: false
     },
-    reporters: ['progress', 'kjhtml', 'sonarqubeUnit', 'coverage'],
+    reporters: ['progress', 'kjhtml', 'sonarqubeUnit'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
