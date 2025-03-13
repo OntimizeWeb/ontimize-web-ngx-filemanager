@@ -4,14 +4,26 @@ concurrency:
   group: build-ci-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
+env:
+  NEXUS_REGISTRY: https://nexus.imatia.com/repository/npm-group/
+
 on:
   push:
     branches: [15.x.x, hotfix/15.*]
     paths: ['projects/ontimize-web-ngx-filemanager/**']
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, labeled]
     paths: ['projects/ontimize-web-ngx-filemanager/**']
   workflow_dispatch:
+    inputs:
+      snapshot_mode:
+        description: "Using SNAPSHOT dependencies from private Nexus repository"
+        type: choice
+        required: true
+        default: 'false'
+        options:
+          - true
+          - false
 
 jobs:
   build:
@@ -32,6 +44,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.10.0
+
+      - name: Setup Node registry
+        if: (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'snapshot')) ||
+            (github.event_name == 'workflow_dispatch' && github.event.inputs.snapshot_mode == 'true')
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_NEXUS_AUTH_TOKEN }}
+        run: |
+          npm set registry=${{ env.NEXUS_REGISTRY }}
+          npm set _auth=$NPM_AUTH_TOKEN
 
       - name: npm install and npm run build
         run: |
