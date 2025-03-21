@@ -235,12 +235,10 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
           else if ( HttpEventType.Response === response.type ) {
             const serviceResponse: ServiceResponse = this.adapter.adapt( response );
             const body: any = response.body;
-            if ( body ) {
+            if (body) {
               this.parseSuccessfulInsertResponse( serviceResponse, _innerObserver );
             }
-            else {
-              this.parseUnsuccessfulInsertResponse( serviceResponse, _innerObserver );
-            }
+
           }
         }, error => {
           this.parseUnsuccessfulInsertResponse( error, _innerObserver );
@@ -551,9 +549,6 @@ export class FileManagerS3Service extends OntimizeEEService implements IFileMana
             this.createDownloadLink( response.body, fileName );
             this.parseSuccessfulQueryResponse( successfullResponse, _innerObserver );
             _innerObserver.next( response );
-          }
-          else {
-            this.parseUnsuccessfulQueryResponse( unsuccessfullResponse, _innerObserver );
           }
         }
       }, error => {
