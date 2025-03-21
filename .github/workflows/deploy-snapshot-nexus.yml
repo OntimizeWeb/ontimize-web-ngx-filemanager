@@ -23,7 +23,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       - name: Node 18.x
         uses: actions/setup-node@v4
         with:
@@ -33,13 +32,19 @@ jobs:
         id: project
         run: |
           echo "version=$(node -pe "require('./package.json')['version']")" >> "$GITHUB_OUTPUT"
-
       - name: abort if not SNAPSHOT
         if: "!contains(steps.project.outputs.version, 'SNAPSHOT')"
         run: |
           echo "Version ${{ steps.project.outputs.version }} is not a properly named SNAPSHOT"
           exit 1
-      - name: npm install and npm run build-prod
+      - name: Setup Node registry
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_NEXUS_AUTH_TOKEN }}
+        run: |
+          npm set registry=${{ env.NEXUS_REGISTRY }}
+          npm set _auth=$NPM_AUTH_TOKEN
+
+      - name: npm install and npm run build
         run: |
           npm i
           npm run build-prod
