@@ -9,7 +9,8 @@ import { OFILEMANAGER_PROVIDERS } from './services';
 export * from './components';
 export * from './util';
 export * from './services';
-export * from './components/filemanager-table/o-filemanager-table.module'
+export * from './components/filemanager-table/o-filemanager-table.module';
+export * from './components/camera-file-input/o-camera-file-input.module';
 
 @NgModule({
   imports: OFILEMANAGER_MODULES,

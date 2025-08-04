@@ -22,6 +22,12 @@ export var MAP = {
     'COPY_TITLE': 'Copy',
     'MOVE_TITLE': 'Move',
 
+    'CAMERA_FILE_INPUT.CAMERA': "Camera",
+    "CAMERA_FILE_INPUT.DOCUMENT": "Document",
+    "CAMERA_FILE_INPUT.CANCEL": "Cancel",
+    'CAMERA_FILE_INPUT.TAKE_PHOTO': "Take a photo",
+    'CAMERA_FILE_INPUT.CHOOSE_DOCUMENT': "Choose a document",
+
     'MESSAGES.UPLOADING_SINGLE_FILE': 'Uploading 1 element',
     'MESSAGES.UPLOADING_MULTIPLE_FILE': 'Uploading elements',
     'MESSAGES.UPLOADING_COMPLETED': 'Uploading completed',
@@ -63,6 +69,12 @@ export var MAP = {
     'CHANGE_NAME_TITLE': 'Cambiar nombre',
     'COPY_TITLE': 'Copiar',
     'MOVE_TITLE': 'Mover',
+    
+    'CAMERA_FILE_INPUT.CAMERA': "Cámara",
+    "CAMERA_FILE_INPUT.DOCUMENT": "Documento",
+    "CAMERA_FILE_INPUT.CANCEL": "Cancelar",
+    'CAMERA_FILE_INPUT.TAKE_PHOTO': "Hacer una foto",
+    'CAMERA_FILE_INPUT.CHOOSE_DOCUMENT': "Elegir un archivo existente",
 
     'MESSAGES.UPLOADING_SINGLE_FILE': 'Subiendo 1 elemento',
     'MESSAGES.UPLOADING_MULTIPLE_FILE': 'Subiendo elementos',
