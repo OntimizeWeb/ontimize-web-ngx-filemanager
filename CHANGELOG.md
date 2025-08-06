@@ -8,6 +8,18 @@
 ### DEPENDENCY UPDATES
 * **Updated**: ontimize-web-ngx@15.6.0
 
+## 15.1.0.
+### DEPENDENCY UPDATES
+* **Updated**: ontimize-web-ngx@15.6.0
+
+## 15.1.0-next.1 (2025-07-30)
+### DEPENDENCY UPDATES
+* **Updated**: ontimize-web-ngx@15.6.0-next.9
+
+## 15.1.0-next.0 (2025-03-25)
+### DEPENDENCY UPDATES
+* **Updated**: ontimize-web-ngx@15.6.0-next.3
+
 ## 15.0.0 (2024-02-21)
 ### DEPENDENCY UPDATES
 * **Updated**: ontimize-web-ngx@15.0.0

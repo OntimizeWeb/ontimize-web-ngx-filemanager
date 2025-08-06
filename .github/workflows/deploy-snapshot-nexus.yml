@@ -2,9 +2,19 @@ name: Deploy snapshot Nexus
 
 on:
   workflow_dispatch:
+    inputs:
+      snapshot_mode:
+        description: "Using SNAPSHOT dependencies from private Nexus repository"
+        type: choice
+        required: true
+        default: 'false'
+        options:
+          - true
+          - false
 
 env:
-  NEXUS_REGISTRY: https://nexus.imatia.com/repository/npm/
+  NEXUS_REGISTRY: https://nexus.imatia.com/repository/npm-group/
+  NEXUS_REGISTRY_PUBLISH: https://nexus.imatia.com/repository/npm/
 
 jobs:
   build:
@@ -23,17 +33,22 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       - name: Node 18.x
         uses: actions/setup-node@v4
         with:
           node-version: 18.10.0
 
+      - name: Setup Node registry
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.snapshot_mode == 'true'
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_NEXUS_AUTH_TOKEN }}
+        run: |
+          npm set registry=${{ env.NEXUS_REGISTRY }}
+          npm set _auth=$NPM_AUTH_TOKEN
       - name: obtain package.json version
         id: project
         run: |
           echo "version=$(node -pe "require('./package.json')['version']")" >> "$GITHUB_OUTPUT"
-
       - name: abort if not SNAPSHOT
         if: "!contains(steps.project.outputs.version, 'SNAPSHOT')"
         run: |
@@ -46,7 +61,7 @@ jobs:
       - name: Publish
         run: |
           cd dist
-          npm set registry=${{ env.NEXUS_REGISTRY }}
+          npm set registry=${{ env.NEXUS_REGISTRY_PUBLISH }}
           npm set _auth=$NPM_AUTH_TOKEN
           npm publish
         env:
