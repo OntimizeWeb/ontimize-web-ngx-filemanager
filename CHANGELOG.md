@@ -3,7 +3,7 @@
 > This version requires `ontimize-web-ngx` version `15.6.0` or higher.
 
 ### Feature
-* Full adaptation to [JSON:API](https://jsonapi.org/) specification for improved interoperability. ([](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/)) Closes [#1525](https://github.com/OntimizeWeb/ontimize-web-ngx/issues/#1525)
+* Full adaptation to [JSON:API](https://jsonapi.org/) specification for improved interoperability. ([859be00](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/859be00)) Closes [#1525](https://github.com/OntimizeWeb/ontimize-web-ngx/issues/#1525)
 
 ### DEPENDENCY UPDATES
 * **Updated**: ontimize-web-ngx@15.6.0
