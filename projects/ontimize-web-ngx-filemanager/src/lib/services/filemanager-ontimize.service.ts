@@ -1,7 +1,7 @@
-import { HttpClient, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
-import { OntimizeEEService } from 'ontimize-web-ngx';
-import { Observable } from 'rxjs';
+import { OntimizeEEService, Util } from 'ontimize-web-ngx';
+import { Observable, Observer, throwError } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
 import { OntimizeDMSServiceResponseAdapter } from '../adapters/filemanager-dms-response.adapter';
@@ -18,7 +18,7 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     this.httpClient = this.injector.get(HttpClient);
   }
 
-  protected manageError(error: any, observer: any) {
+  protected manageError(error: HttpErrorResponse, observer: Observer<any>): void {
     if (error.status === 401) {
       this.authService.logout();
     } else {
@@ -36,8 +36,12 @@ export class FileManagerOntimizeService extends OntimizeEEService implements IFi
     this.adapter = this.injector.get(OntimizeDMSServiceResponseAdapter);
   }
 
-  queryFiles(workspaceId: string, kv?: Object, av?: Array<string>): Observable<any> {
-    const url = this._urlBase + this.path + '/queryFiles/' + workspaceId;
+  queryFiles(kv?: Object, av?: Array<string>): Observable<any> {
+    if (!Util.isDefined(kv?.['workspaceId'])) {
+      console.warn('No workspaceId configured! Aborting query files.');
+      return throwError(() => new Error('No workspaceId configured.'));
+    }
+    const url = this._urlBase + this.path + '/queryFiles/' + kv['workspaceId'];
 
     const authorizationToken = 'Bearer ' + this.sessionId;
     const headers: HttpHeaders = new HttpHeaders({
