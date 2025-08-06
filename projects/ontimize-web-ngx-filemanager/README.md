@@ -54,3 +54,4 @@ npm install
 
 Run `npm run build` to execute the build process that will generate the dist folder and a .tgz file.
 You can use this .tgz file to install the library in your project through the package.json file.
+

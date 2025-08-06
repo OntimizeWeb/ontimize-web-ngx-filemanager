@@ -1,10 +1,11 @@
-import { HttpResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { BaseServiceResponse, OntimizeServiceResponse, ServiceResponseAdapter } from "ontimize-web-ngx";
-import { FileClass } from "../util";
+import { HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BaseServiceResponse, IServiceResponseAdapter, OntimizeServiceResponse } from 'ontimize-web-ngx';
+
+import { FileClass } from '../util';
 
 @Injectable({ providedIn: 'root' })
-export class S3ServiceResponseAdapter implements ServiceResponseAdapter<BaseServiceResponse> {
+export class S3ServiceResponseAdapter implements IServiceResponseAdapter<BaseServiceResponse> {
 
   public adapt(resp: HttpResponse<any>): BaseServiceResponse {
     let code = 1;
