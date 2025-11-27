@@ -1,3 +1,10 @@
+## 15.1.1 (2025-11-27)
+> [!NOTE]
+> This version requires `ontimize-web-ngx` version `15.7.1` or higher.
+
+### DEPENDENCY UPDATES
+* **Updated**: ontimize-web-ngx@15.7.1
+
 ## 15.1.0 (2025-08-06)
 > [!NOTE]
 > This version requires `ontimize-web-ngx` version `15.6.0` or higher.
