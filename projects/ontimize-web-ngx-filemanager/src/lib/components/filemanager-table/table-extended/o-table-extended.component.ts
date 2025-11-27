@@ -15,6 +15,7 @@ import {
   OTableComponent,
   OTableComponentStateService,
   OTableDataSourceService,
+  OTableLoadingService,
   OTableVirtualScrollStrategy,
   Util
 } from 'ontimize-web-ngx';
@@ -26,6 +27,7 @@ import { WorkspaceService } from '../../../services/workspace.service';
 import { Workspace } from '../../../types/workspace.type';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
+import { ObserversModule } from '@angular/cdk/observers';
 
 @Component({
   selector: 'o-table-extended',
@@ -36,7 +38,8 @@ import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialo
     { provide: OTableComponent, useExisting: forwardRef(() => OTableExtendedComponent) },
     { provide: OTableBase, useExisting: forwardRef(() => OTableExtendedComponent) },
     { provide: AbstractComponentStateService, useClass: OTableComponentStateService, deps: [Injector] },
-    { provide: VIRTUAL_SCROLL_STRATEGY, useClass: OTableVirtualScrollStrategy }
+    { provide: VIRTUAL_SCROLL_STRATEGY, useClass: OTableVirtualScrollStrategy },
+    OTableLoadingService
   ],
   animations: [
     trigger('detailExpand', [
@@ -286,7 +289,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 
 @NgModule({
   declarations: [OTableExtendedComponent, FolderNameDialogComponent],
-  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule],
+  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule, ObserversModule],
   exports: [OTableExtendedComponent]
 })
 export class OTableExtendedModule { }
