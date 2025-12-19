@@ -1,6 +1,5 @@
 <div class="o-table-container" fxLayout="column" fxLayoutAlign="start stretch" [style.display]="isVisible()? '' : 'none'"
-  [class.block-events]="showLoadingExtended | async">
-
+  [class.block-events]="loadingService.isProcessing$ | async">
   <o-data-toolbar #tableToolbar *ngIf="hasControls()" [title]="title" [show-title]="showTitle" class="o-table-toolbar">
     <ng-container o-data-toolbar-projection-start>
       <o-table-buttons #tableButtons [insert-button]="insertButton" [refresh-button]="refreshButton" [delete-button]="showDeleteButton">
@@ -46,7 +45,8 @@
     </div>
   </div>
 
-  <div #tableBody class="o-table-body o-scroll" [class.horizontal-scroll]="horizontalScroll" [class.scrolled]="horizontalScrolled">
+  <div #tableBody class="o-table-body o-scroll" [class.horizontal-scroll]="horizontalScroll" [class.scrolled]="horizontalScrolled"
+  [ngStyle]="{'visibility': spinnerContainer ? 'hidden' : 'visible'}">
     <ng-container *ngIf="!enabledVirtualScroll; else tableWithVirtualScroll">
       <div class="o-table-overflow o-scroll">
         <ng-template *ngTemplateOutlet="table"></ng-template>
@@ -61,7 +61,7 @@
   <!--TABLE PAGINATOR-->
   <mat-paginator *ngIf="paginator" #matpaginator [length]="dataSource?.resultsLength" [pageIndex]="paginator.pageIndex" [pageSize]="queryRows"
     [pageSizeOptions]="paginator.pageSizeOptions" (page)="onChangePage($event)" [showFirstLastButtons]="paginator.showFirstLastButtons"
-     [ngStyle]="{'visibility': spinnerContainer ? 'hidden' : 'visible'}">
+    [ngStyle]="{'visibility': spinnerContainer ? 'hidden' : 'visible'}">
   </mat-paginator>
 
   <!--LOADING-->
@@ -75,11 +75,9 @@
 </div>
 
 <ng-template #table>
-
   <table mat-table #table [class.autoadjusted]="autoAdjust" [trackBy]="getTrackByFunction()" [dataSource]="dataSource" oMatSort
-    [oMatSortColumns]="sortColArray" [ngClass]="rowHeightObservable | async" (cdkObserveContent)="projectContentChanged()"
-    [oTableExpandedFooter]="(loading | async) === false" [oTableExpandedFooterColspan]="visibleColArray.length" [multiTemplateDataRows]="showExpandableRow()"
-    aria-describedby="ontimize-web table">
+    [oMatSortColumns]="sortColArray" [ngClass]="rowHeightObservable | async" (cdkObserveContent)="projectContentChanged()" oTableExpandedFooter
+    [oTableExpandedFooterColspan]="visibleColArray.length" [multiTemplateDataRows]="showExpandableRow()" aria-describedby="ontimize-web table">
 
     <!--Checkbox Column -->
     <ng-container [matColumnDef]="oTableOptions.selectColumn.name" *ngIf="oTableOptions.selectColumn.visible">
@@ -90,8 +88,8 @@
           </div>
         </th>
         <td mat-cell *matCellDef="let row">
-          <mat-checkbox name="id[]" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-          [disabled]="isDisableCheckbox(row)" (change)="selectionCheckboxToggle($event, row)" [checked]="isRowSelected(row)">
+          <mat-checkbox name="id[]" (click)="$event.stopPropagation()" [disabled]="isDisableCheckbox(row)"
+            (change)="selectionCheckboxToggle($event, row)" [checked]="isRowSelected(row)">
           </mat-checkbox>
         </td>
       </ng-container>
@@ -105,8 +103,8 @@
         </th>
         <td mat-cell *matCellDef="let row" class="o-center" [style.width]="oTableOptions.selectColumn.width"
           [style.min-width]="getMinWidthColumn(oTableOptions.selectColumn)" [style.max-width]="oTableOptions.selectColumn.maxWidth">
-          <mat-checkbox name="id[]" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-          [disabled]="isDisableCheckbox(row)" (change)="selectionCheckboxToggle($event, row)" [checked]="isRowSelected(row)">
+          <mat-checkbox name="id[]" (click)="$event.stopPropagation()" [disabled]="isDisableCheckbox(row)"
+            (change)="selectionCheckboxToggle($event, row)" [checked]="isRowSelected(row)">
           </mat-checkbox>
         </td>
       </ng-template>
@@ -121,9 +119,8 @@
         {{ oTableOptions.expandableColumn.title }}
       </th>
       <td mat-cell *matCellDef="let row;let rowIndex = dataIndex">
-        <mat-icon *ngIf="showExpandableIcon(row, rowIndex) | async"
-        (click)="toggleRowExpandable(row, $event)"
-        (keydown)="toggleRowExpandable(row, $event)">
+        <mat-icon *ngIf="showExpandableIcon(row, rowIndex) | async" (click)="toggleRowExpandable(row, $event)"
+          (keydown)="toggleRowExpandable(row, $event)">
           <ng-container *ngIf="isExpanded(row)">{{ tableRowExpandable.iconCollapse }}</ng-container>
           <ng-container *ngIf="!isExpanded(row)">{{ tableRowExpandable.iconExpand }}</ng-container>
         </mat-icon>
@@ -175,11 +172,14 @@
           <div class="title" *ngIf="column.aggregate && column.aggregate.title">
             {{ column.aggregate.title | oTranslate }}
           </div>
-          <ng-container *ngIf="!column.renderer">
+          <ng-container *ngIf="!column.renderer || column.aggregate?.operator === 'count'; else rendererTemplate">
             {{ dataSource.getAggregateData(column) }}
           </ng-container>
-          <ng-template *ngIf="column.renderer && column.aggregate" [ngTemplateOutlet]="column.renderer.templateref"
-            [ngTemplateOutletContext]="{cellvalue: dataSource.getAggregateData(column)}"></ng-template>
+          <ng-template #rendererTemplate>
+            <ng-template *ngIf=" column.renderer && column.aggregate" [ngTemplateOutlet]="column.renderer.templateref"
+              [ngTemplateOutletContext]="{cellvalue: dataSource.getAggregateData(column)}">
+            </ng-template>
+          </ng-template>
         </td>
       </ng-container>
 
@@ -203,7 +203,7 @@
       </ng-container>
       <ng-container *ngFor="let column of oTableOptions.columns" [matColumnDef]="column.name+ getSuffixColumnInsertable()">
 
-        <td mat-footer-cell *matFooterCellDef [ngClass]="column.className">
+        <td mat-footer-cell *matFooterCellDef [ngClass]="[column.className, getCellAlignClass(column)]">
           <ng-container *ngIf="oTableInsertableRowComponent.isColumnInsertable(column) && !oTableInsertableRowComponent.useCellEditor(column)">
             <mat-form-field class="insertable-form-field o-table-cell-editor-text o-table-cell-editor" [hideRequiredMarker]="false">
               <input matInput type="text" [placeholder]="oTableInsertableRowComponent.getPlaceholder(column)" [id]="column.attr"
@@ -231,7 +231,7 @@
       </ng-container>
       <ng-container *ngFor="let column of oTableOptions.columns" [matColumnDef]="getColumnInsertable(column.name)">
 
-        <td mat-header-cell *matHeaderCellDef [ngClass]="column.className">
+        <td mat-header-cell *matHeaderCellDef [ngClass]="[column.className, getCellAlignClass(column)]">
           <ng-container *ngIf="oTableInsertableRowComponent.isColumnInsertable(column) && !oTableInsertableRowComponent.useCellEditor(column)">
             <mat-form-field class="insertable-form-field" [hideRequiredMarker]="false">
               <input matInput type="text" [placeholder]="oTableInsertableRowComponent.getPlaceholder(column)" [id]="column.attr"
