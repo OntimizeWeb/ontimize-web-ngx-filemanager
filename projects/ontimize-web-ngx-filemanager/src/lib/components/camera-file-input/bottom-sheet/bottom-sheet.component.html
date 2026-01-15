@@ -1,0 +1,15 @@
+<mat-nav-list>
+  <a mat-list-item (click)="onClickCamera()" role="button">
+    <span matListItemTitle>{{ 'CAMERA_FILE_INPUT.CAMERA' | oFileManagerTranslate }}</span>
+    <span matLine>{{ 'CAMERA_FILE_INPUT.TAKE_PHOTO' | oFileManagerTranslate }}</span>
+  </a>
+
+  <a mat-list-item (click)="onClickDocument()" role="button">
+    <span matListItemTitle>{{ 'CAMERA_FILE_INPUT.DOCUMENT' | oFileManagerTranslate }}</span>
+    <span matLine>{{ 'CAMERA_FILE_INPUT.CHOOSE_DOCUMENT' | oFileManagerTranslate }}</span>
+  </a>
+
+  <a mat-list-item (click)="onClickCancel()" role="button">
+    <span matListItemTitle>{{ 'CAMERA_FILE_INPUT.CANCEL' | oFileManagerTranslate }}</span>
+  </a>
+</mat-nav-list>
