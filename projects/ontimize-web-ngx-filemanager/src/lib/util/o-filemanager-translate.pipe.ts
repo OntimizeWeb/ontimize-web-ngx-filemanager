@@ -1,18 +1,15 @@
-import { Pipe, PipeTransform, Injector, NgModule, ModuleWithProviders } from '@angular/core';
+import { inject, ModuleWithProviders, NgModule, Pipe, PipeTransform } from '@angular/core';
 import { OTranslateService } from 'ontimize-web-ngx';
 import * as CORE_TRANSLATIONS from '../i18n/i18n';
 
 @Pipe({
   name: 'oFileManagerTranslate',
-  pure: false
+  pure: false,
+  standalone: true
 })
 export class OFileManagerTranslatePipe implements PipeTransform {
 
-  protected translateService: OTranslateService;
-
-  constructor(protected injector: Injector) {
-    this.translateService = this.injector.get(OTranslateService);
-  }
+  protected translateService: OTranslateService = inject(OTranslateService);
 
   transform(text: string): string {
     let textTranslated = undefined;
@@ -28,8 +25,7 @@ export class OFileManagerTranslatePipe implements PipeTransform {
 }
 
 @NgModule({
-  declarations: [OFileManagerTranslatePipe],
-  imports: [],
+  imports: [OFileManagerTranslatePipe],
   exports: [OFileManagerTranslatePipe]
 })
 export class OFileManagerTranslateModule {

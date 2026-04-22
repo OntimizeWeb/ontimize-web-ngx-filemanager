@@ -1,10 +1,9 @@
-<div [@containerPosition]="_getContainerState()" [class.opened]="isOpened" class="upload-progress-container mat-elevation-z4"
-  fxLayout="column" fxLayoutAlign="center center" fxFlex="30">
+<div [@containerPosition]="_getContainerState()" [class.opened]="isOpened" class="upload-progress-container mat-elevation-z4 o-flex-column o-flex-align-center-center" style="flex: 0 0 30%">
 
   <mat-toolbar color="primary" class="upload-progress-toolbar">
-    <div class="mat-toolbar-tools" fxLayout="row" fxFill fxLayoutAlign="start center">
+    <div class="mat-toolbar-tools o-flex-row o-flex-fill o-flex-align-start-center">
 
-      <div *ngIf="title" fxLayout="row" fxLayoutAlign="center center">
+      <div *ngIf="title" class="o-flex-row o-flex-align-center-center">
         <span>{{ title }}</span>
       </div>
       <span class="fill-remaining"></span>
@@ -22,9 +21,9 @@
 
   <!-- mat-expansion-panel-content -->
   <div [class.collapsed]="collapsed" class="upload-progress-content" [@contentExpansion]="_getExpandedState()">
-    <mat-list fxFlex>
+    <mat-list class="o-flex-1">
       <mat-list-item *ngFor="let file of uploaderFiles">
-        <div fxLayout="row" fxLayoutAlign="space-between center" class="file-data">
+        <div class="o-flex-row o-flex-align-space-between-center file-data">
           <span class="file-name" [class.uploading]="file.isUploading"> {{ file.name }} </span>
           <span class="file-cancelled-text" *ngIf="!file.isUploaded && file.isCancel"> {{ cancelledUploadText }} </span>
 

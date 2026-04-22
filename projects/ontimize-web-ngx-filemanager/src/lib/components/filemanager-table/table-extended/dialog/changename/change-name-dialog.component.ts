@@ -1,6 +1,10 @@
-import { AfterViewInit, Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { UntypedFormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { OSharedModule } from 'ontimize-web-ngx';
 
 import { FileClass } from '../../../../../util/file.class';
 import { fileNameValidator } from '../../../../../util/filename.validator';
@@ -17,6 +21,8 @@ export class ChangeNameDialogData {
   selector: 'change-name-dialog',
   templateUrl: 'change-name-dialog.component.html',
   styleUrls: ['change-name-dialog.component.scss'],
+  standalone: true,
+  imports: [MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, OFileManagerTranslatePipe, OSharedModule, ReactiveFormsModule],
   host: {
     '[class.change-name-dialog]': 'true'
   }
@@ -30,17 +36,12 @@ export class ChangeNameDialogComponent implements AfterViewInit {
   ]);
 
   @ViewChild('inputRef') inputRef: ElementRef;
-  protected data: ChangeNameDialogData;
-  protected translatePipe: OFileManagerTranslatePipe;
+  protected data: ChangeNameDialogData = inject(MAT_DIALOG_DATA);
+  protected translatePipe: OFileManagerTranslatePipe = inject(OFileManagerTranslatePipe);
   public title: string;
   public placeholder: string;
 
-  constructor(
-    protected injector: Injector,
-    public dialogRef: MatDialogRef<ChangeNameDialogData>
-  ) {
-    this.translatePipe = new OFileManagerTranslatePipe(this.injector);
-    this.data = this.injector.get(MAT_DIALOG_DATA);
+  constructor(public dialogRef: MatDialogRef<ChangeNameDialogData>) {
     this.initialize();
   }
 

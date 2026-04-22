@@ -1,5 +1,10 @@
-import { Component, ElementRef, Injector, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { OSharedModule } from 'ontimize-web-ngx';
 
 import { FileClass } from '../../../../../util/file.class';
 import { OFileManagerTranslatePipe } from '../../../../../util/o-filemanager-translate.pipe';
@@ -14,6 +19,8 @@ export class CopyDialogData {
 @Component({
   selector: 'copy-dialog',
   templateUrl: 'copy-dialog.component.html',
+  standalone: true,
+  imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, OFileManagerTranslatePipe, OSharedModule],
   host: {
     '[class.copy-dialog]': 'true'
   }
@@ -24,15 +31,10 @@ export class CopyDialogComponent {
   public foldername: string;
   public title: string;
   public placeholder: string;
-  protected data: CopyDialogData;
-  protected translatePipe: OFileManagerTranslatePipe;
+  protected data: CopyDialogData = inject(MAT_DIALOG_DATA);
+  protected translatePipe: OFileManagerTranslatePipe = inject(OFileManagerTranslatePipe);
 
-  constructor(
-    protected injector: Injector,
-    public dialogRef: MatDialogRef<CopyDialogComponent>
-  ) {
-    this.translatePipe = new OFileManagerTranslatePipe(this.injector);
-    this.data = this.injector.get(MAT_DIALOG_DATA);
+  constructor(public dialogRef: MatDialogRef<CopyDialogComponent>) {
     this.initialize();
   }
 

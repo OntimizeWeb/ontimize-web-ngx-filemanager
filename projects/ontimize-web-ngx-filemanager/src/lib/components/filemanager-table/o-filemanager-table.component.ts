@@ -1,7 +1,8 @@
 import { HttpEventType } from '@angular/common/http';
 import { AfterViewInit, Component, forwardRef, Inject, Injector, OnDestroy, OnInit, Optional, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { BooleanInputConverter, DialogService, NumberInputConverter, OFormComponent, OnClickTableEvent, OTranslateService } from 'ontimize-web-ngx';
+import { BooleanInputConverter, DialogService, NumberInputConverter, OFormComponent, OnClickTableEvent, OntimizeWebModule, OTranslateService } from 'ontimize-web-ngx';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { WorkspaceS3 } from '../../interfaces/workspaceS3.interface';
@@ -13,6 +14,8 @@ import { OFileManagerTranslatePipe } from '../../util/o-filemanager-translate.pi
 import { OFileInputExtendedComponent } from '../file-input/o-file-input-extended.component';
 import { DownloadProgressComponent } from '../status/download/download-progress.component';
 import { UploadProgressComponent } from '../status/upload/upload-progress.component';
+import { OTableColumnRendererFileSizeComponent } from './renderers/filesize/o-table-column-renderer-filesize.component';
+import { OTableColumnRendererFileTypeComponent } from './renderers/filetype/o-table-column-renderer-filetype.component';
 import { ChangeNameDialogComponent, ChangeNameDialogData } from './table-extended/dialog/changename/change-name-dialog.component';
 import { CopyDialogComponent, CopyDialogData } from './table-extended/dialog/copy/copy-dialog.component';
 import { OTableExtendedComponent } from './table-extended/o-table-extended.component';
@@ -39,6 +42,20 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   selector: 'o-filemanager-table',
   templateUrl: './o-filemanager-table.component.html',
   styleUrls: ['./o-filemanager-table.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    OntimizeWebModule,
+    OTableExtendedComponent,
+    OFileInputExtendedComponent,
+    OFileManagerTranslatePipe,
+    DownloadProgressComponent,
+    UploadProgressComponent,
+    OTableColumnRendererFileSizeComponent,
+    OTableColumnRendererFileTypeComponent,
+    ChangeNameDialogComponent,
+    CopyDialogComponent
+  ],
   inputs: DEFAULT_INPUTS_O_FILEMANAGER_TABLE,
   outputs: DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE,
   encapsulation: ViewEncapsulation.None,
@@ -115,7 +132,7 @@ export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewI
     @Optional() @Inject(forwardRef(() => OFormComponent)) protected oForm: OFormComponent
   ) {
     this.translateService = this.injector.get(OTranslateService);
-    this.translatePipe = new OFileManagerTranslatePipe(this.injector);
+    this.translatePipe = this.injector.get(OFileManagerTranslatePipe);
     this.stateService = this.injector.get(FileManagerStateService);
     this.dialogService = this.injector.get(DialogService);
     this.domService = this.injector.get(DomService);

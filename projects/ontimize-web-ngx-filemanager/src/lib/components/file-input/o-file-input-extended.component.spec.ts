@@ -14,17 +14,13 @@ describe("OFileInputExtendedComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OFileInputExtendedComponent],
+      imports: [OFileInputExtendedComponent, NoopAnimationsModule, HttpClientTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         ONTIMIZE_PROVIDERS,
         { provide: APP_CONFIG, useValue: { uuid: 'com.ontimize.web.test', title: 'Ontimize Web Testing', locale: 'en' } },
         { provide: AppConfig, useFactory: appConfigFactory, deps: [Injector] },
         { provide: TranslateService, useValue: { instant: (k: string) => k, get: (k: string) => of(k), onLangChange: of({}), onTranslationChange: of({}), onDefaultLangChange: of({}) } },
-      ],
-      imports: [
-        NoopAnimationsModule,
-        HttpClientTestingModule
       ]
     }).compileComponents();
   });
@@ -32,8 +28,6 @@ describe("OFileInputExtendedComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(OFileInputExtendedComponent);
     component = fixture.componentInstance;
-
-
   });
 
   describe('fileSelected', () => {

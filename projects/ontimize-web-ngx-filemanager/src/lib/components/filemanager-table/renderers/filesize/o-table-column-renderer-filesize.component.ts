@@ -3,7 +3,8 @@ import { OBaseTableCellRenderer } from 'ontimize-web-ngx';
 
 @Component({
   selector: 'o-table-column-renderer-filesize',
-  templateUrl: './o-table-column-renderer-filesize.component.html'
+  templateUrl: './o-table-column-renderer-filesize.component.html',
+  standalone: true
 })
 
 export class OTableColumnRendererFileSizeComponent extends OBaseTableCellRenderer {

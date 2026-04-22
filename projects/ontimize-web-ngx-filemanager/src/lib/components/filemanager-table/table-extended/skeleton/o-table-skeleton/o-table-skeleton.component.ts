@@ -1,4 +1,5 @@
-import { Component, ElementRef, Injector, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AppearanceService } from 'ontimize-web-ngx';
 import { Subscription } from 'rxjs';
 
@@ -6,6 +7,8 @@ import { Subscription } from 'rxjs';
   selector: 'o-table-skeleton',
   templateUrl: './o-table-skeleton.component.html',
   styleUrls: ['./o-table-skeleton.component.scss'],
+  standalone: true,
+  imports: [NgxSkeletonLoaderModule],
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class.o-table-skeleton]': 'true'
@@ -15,10 +18,9 @@ import { Subscription } from 'rxjs';
 export class OTableSkeletonExtendedComponent implements OnDestroy {
   isDarkMode: boolean;
   subscription: Subscription;
-  appearanceService: AppearanceService;
+  appearanceService: AppearanceService = inject(AppearanceService);
 
-  constructor(protected elRef: ElementRef, protected injector: Injector) {
-    this.appearanceService = this.injector.get<AppearanceService>(AppearanceService);
+  constructor(protected elRef: ElementRef) {
     this.isDarkMode = this.appearanceService.isDarkMode();
     this.subscription = this.appearanceService.isDarkMode$.subscribe(x => this.isDarkMode = x);
   }

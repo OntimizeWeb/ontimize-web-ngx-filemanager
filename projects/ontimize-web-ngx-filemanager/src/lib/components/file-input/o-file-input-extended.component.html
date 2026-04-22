@@ -1,10 +1,9 @@
 <div [formGroup]="getFormGroup()" [matTooltip]="tooltip" [matTooltipPosition]="tooltipPosition" [matTooltipShowDelay]="tooltipShowDelay">
-  <mat-form-field #innerInputContainer (click)="!enabled || isReadOnly ? null : inputFile.click()" fxFill>
-    <div fxLayout="row">
+  <mat-form-field #innerInputContainer (click)="!enabled || isReadOnly ? null : inputFile.click()" class="o-flex-fill">
+    <div class="o-flex-row">
       <input #inputShowValue matInput type="text" [attr.id]="getAttribute()" [id]="getAttribute()" [formControlName]="getAttribute()"
         [placeholder]="placeHolder" [ngModel]="getValue()" (ngModelChange)="innerOnChange($event)" readonly>
-      <div matSuffix *ngIf="getValue()" (click)="$event.stopPropagation()" fxLayout="row" fxLayoutAlign="space-between center"
-        class="o-file-input-buttons">
+      <div matSuffix *ngIf="getValue()" (click)="$event.stopPropagation()" class="o-flex-row o-flex-align-space-between-center o-file-input-buttons">
         <button type="button" mat-icon-button (click)="onClickClearValue($event)">
           <mat-icon aria-label="Clear">clear</mat-icon>
         </button>
@@ -26,7 +25,7 @@
       <mat-list-item *ngFor="let file of files">
         <mat-icon mat-list-icon>insert_drive_file</mat-icon>
         <span mat-line>{{ file.name }}</span>
-        <div fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="o-flex-row o-flex-align-space-between-center">
           <mat-progress-spinner *ngIf="splitUpload && file.isUploading" color="accent" mode="determinate" [value]="file.progress" class="uploading"></mat-progress-spinner>
           <mat-icon *ngIf="splitUpload && file.isUploaded && file.isSuccess" class="uploaded">check_circle</mat-icon>
           <mat-icon *ngIf="splitUpload && file.isUploaded && file.isError" class="error">error</mat-icon>

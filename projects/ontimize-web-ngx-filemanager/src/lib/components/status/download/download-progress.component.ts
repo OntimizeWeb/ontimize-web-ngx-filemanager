@@ -1,5 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { OFileManagerTranslatePipe } from '../../../util/o-filemanager-translate.pipe';
 
@@ -17,6 +23,8 @@ export const EXPANSION_PANEL_ANIMATION_TIMING = '225ms cubic-bezier(0.4,0.0,0.2,
   selector: 'download-progress',
   templateUrl: './download-progress.component.html',
   styleUrls: ['./download-progress.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatListModule, MatProgressSpinnerModule, MatToolbarModule],
   inputs: DEFAULT_INPUTS_DOWNLOAD_PROGRESS,
   outputs: DEFAULT_OUTPUTS_DOWNLOAD_PROGRESS,
   encapsulation: ViewEncapsulation.None,

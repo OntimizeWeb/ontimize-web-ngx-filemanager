@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ReactiveFormsModule } from '@angular/forms';
 import { OFileInputComponent, OFileItem, OSharedModule } from 'ontimize-web-ngx';
 
 import { WorkspaceService } from '../../services/workspace.service';
@@ -9,6 +17,8 @@ import { OFileUploaderExtended } from './o-file-uploader-extended';
   selector: 'o-file-input-extended',
   templateUrl: './o-file-input-extended.component.html',
   styleUrls: ['./o-file-input-extended.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatProgressBarModule, MatProgressSpinnerModule, OSharedModule, ReactiveFormsModule],
   inputs: [
     'workspaceKey: workspace-key',
     'parentKey: parent-key'
@@ -54,8 +64,7 @@ export class OFileInputExtendedComponent extends OFileInputComponent {
 }
 
 @NgModule({
-  declarations: [OFileInputExtendedComponent],
-  imports: [OSharedModule, CommonModule],
+  imports: [OFileInputExtendedComponent],
   exports: [OFileInputExtendedComponent]
 })
 export class OFileInputExtendedModule { }

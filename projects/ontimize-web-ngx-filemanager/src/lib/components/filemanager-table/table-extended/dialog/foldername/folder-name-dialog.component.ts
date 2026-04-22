@@ -1,6 +1,10 @@
-import { Component, ElementRef, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, ElementRef, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import { UntypedFormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { OSharedModule } from 'ontimize-web-ngx';
 
 import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../util';
 
@@ -8,6 +12,8 @@ import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../uti
   selector: 'folder-name-dialog',
   templateUrl: 'folder-name-dialog.component.html',
   styleUrls: ['folder-name-dialog.component.scss'],
+  standalone: true,
+  imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, OFileManagerTranslatePipe, OSharedModule, ReactiveFormsModule],
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class.folder-name-dialog]': 'true'
@@ -23,15 +29,11 @@ export class FolderNameDialogComponent {
 
   @ViewChild('folderNameRef') inputRef: ElementRef;
 
-  protected translatePipe: OFileManagerTranslatePipe;
+  protected translatePipe: OFileManagerTranslatePipe = inject(OFileManagerTranslatePipe);
   public title: string;
   public folderName: string;
 
-  constructor(
-    protected injector: Injector,
-    public dialogRef: MatDialogRef<FolderNameDialogComponent>
-  ) {
-    this.translatePipe = new OFileManagerTranslatePipe(this.injector);
+  constructor(public dialogRef: MatDialogRef<FolderNameDialogComponent>) {
     this.initialize();
   }
 

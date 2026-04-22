@@ -27,11 +27,14 @@ import { WorkspaceService } from '../../../services/workspace.service';
 import { Workspace } from '../../../types/workspace.type';
 import { OFileManagerTranslateModule } from '../../../util';
 import { FolderNameDialogComponent } from './dialog/foldername/folder-name-dialog.component';
+import { OTableSkeletonExtendedComponent } from './skeleton/o-table-skeleton/o-table-skeleton.component';
 import { ObserversModule } from '@angular/cdk/observers';
 
 @Component({
   selector: 'o-table-extended',
   templateUrl: './o-table-extended.component.html',
+  standalone: true,
+  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule, ObserversModule, OTableSkeletonExtendedComponent],
   providers: [
     OntimizeServiceProvider,
     OTableDataSourceService,
@@ -288,8 +291,7 @@ export class OTableExtendedComponent extends OTableComponent implements OnInit, 
 }
 
 @NgModule({
-  declarations: [OTableExtendedComponent, FolderNameDialogComponent],
-  imports: [CommonModule, OntimizeWebModule, OFileManagerTranslateModule, ObserversModule],
+  imports: [OTableExtendedComponent, FolderNameDialogComponent],
   exports: [OTableExtendedComponent]
 })
 export class OTableExtendedModule { }

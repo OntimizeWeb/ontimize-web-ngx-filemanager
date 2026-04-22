@@ -28,7 +28,7 @@
   },
   "typings": "./index.d.ts",
   "peerDependencies": {
-    "ontimize-web-ngx": "^15.9.0"
+    "ontimize-web-ngx": "^18.0.0"
   },
   "devDependencies": {
     "ngx-skeleton-loader": "^8.0.0"
