@@ -1,23 +1,16 @@
-@use '@angular/material/theming';
-@mixin o-filemanager-table-theme($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $warn: map-get($theme, warn);
-  $background: map-get($theme, background);
-  $foreground: map-get($theme, foreground);
+// Filemanager theme — consumes Ontimize's runtime --o-* CSS custom properties
+// (light / dark swap handled by the host theme, not by this mixin).
 
-
+@mixin o-filemanager-table-theme($theme-or-color-config) {
   .o-filemanager-table {
     .filemanager-breadcrumb {
       .breadcrumb-root {
-        color: mat-color($primary, 0.54);
+        color: color-mix(in srgb, var(--o-primary-500) 54%, transparent);
       }
     }
   }
 
   .upload-progress-container > div {
-    background-color: mat-color($background, background);
+    background-color: var(--o-bg-background);
   }
-
-
 }
