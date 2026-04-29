@@ -1,6 +1,6 @@
 {
   "name": "ontimize-web-ngx-filemanager",
-  "version": "15.2.0-SNAPSHOT-0",
+  "version": "18.0.0-next.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -28,7 +28,7 @@
     "luxon": "^3.4.0",
     "moment": "^2.29.4",
     "ngx-skeleton-loader": "^8.0.0",
-    "ontimize-web-ngx": "file:../ontimize-web-ngx/dist/ontimize-web-ngx-18.0.0-SNAPSHOT-0.tgz",
+    "ontimize-web-ngx": "18.0.0-next.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.0"
