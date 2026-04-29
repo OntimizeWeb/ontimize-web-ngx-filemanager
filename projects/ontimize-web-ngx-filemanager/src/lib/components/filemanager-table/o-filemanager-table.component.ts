@@ -66,7 +66,7 @@ export const DEFAULT_OUTPUTS_O_FILEMANAGER_TABLE = [
   providers: [{
     provide: FileManagerStateService,
     useClass: FileManagerStateService
-  }, WorkspaceService]
+  }, WorkspaceService, OFileManagerTranslatePipe]
 })
 export class OFileManagerTableComponent implements OnInit, OnDestroy, AfterViewInit {
   public isS3Type: BehaviorSubject<boolean> = new BehaviorSubject(true);
