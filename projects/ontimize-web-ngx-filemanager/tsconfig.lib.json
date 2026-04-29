@@ -13,7 +13,8 @@
   },
   "angularCompilerOptions": {
     "skipMetadataEmit": false,
-    "strictMetadataEmit": true
+    "strictMetadataEmit": true,
+    "compilationMode": "partial"
   },
   "exclude": [
     "src/test.ts",
