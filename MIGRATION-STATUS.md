@@ -149,6 +149,16 @@ Sin cambios en código fuente.
 
 ---
 
+### Corrección post-migración — commit `ef1ab76` (29 abril 2026)
+
+| Fichero | Cambio |
+|---|---|
+| `o-filemanager-table.component.ts` | `OFileManagerTranslatePipe` añadido a `providers` del componente |
+
+**Causa**: `OFileManagerTranslatePipe` es `standalone: true` y se obtiene vía `injector.get()` en el constructor. Los pipes standalone no se registran automáticamente como providers de DI — deben declararse explícitamente en el array `providers` del componente consumidor.
+
+---
+
 ## PENDIENTE
 
 Ninguno — migración completa ✅
