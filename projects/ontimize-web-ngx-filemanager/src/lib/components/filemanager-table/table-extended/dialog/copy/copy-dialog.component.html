@@ -1,0 +1,10 @@
+<span mat-dialog-title>{{ title }}</span>
+<mat-dialog-content>
+  <mat-form-field fxFlex="100">
+    <input matInput #inputRef placeholder="{{ placeholder }}" [(ngModel)]="foldername" (keydown)="onKeyDown($event)" required>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions fxLayoutAlign="end center">
+  <button type="button" mat-stroked-button [mat-dialog-close]="false">{{ 'CANCEL' | oTranslate }}</button>
+  <button type="button" mat-stroked-button [disabled]="inputRef.value.length === 0" (click)="submit()" class="o-button-primary">{{ 'ACCEPT' | oTranslate }}</button>
+</mat-dialog-actions>

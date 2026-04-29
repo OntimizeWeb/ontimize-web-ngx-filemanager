@@ -1,0 +1,20 @@
+.o-file-input-buttons {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
+
+mat-progress-spinner.uploading {
+  width: 24px;
+  height: 24px;
+}
+
+mat-icon.uploaded {
+  color: #0f9d58;
+}
+
+mat-icon.error {
+  color: #D50000;
+}
