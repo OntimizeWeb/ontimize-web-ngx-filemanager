@@ -24,7 +24,7 @@
       </ng-template>
       <button type="button" *ngIf="showTableMenuButton" mat-icon-button class="o-table-menu-button" [matMenuTriggerFor]="tableMenu.matMenu"
         (click)="$event.stopPropagation()">
-        <mat-icon svgIcon="ontimize:more_vert"></mat-icon>
+        <mat-icon>more_vert</mat-icon>
       </button>
       <o-table-menu #tableMenu [select-all-checkbox]="selectAllCheckbox" [export-button]="exportButton"
         [columns-visibility-button]="columnsVisibilityButton" [show-configuration-option]="showConfigurationOption"
@@ -64,13 +64,17 @@
   </mat-paginator>
 
   <!--LOADING-->
-  <div #spinnerContainer *ngIf="showLoadingExtended | async" class="o-flex-column o-flex-align-center-center" [ngStyle]="{'top.px': toolBarHeight}"
-    class="spinner-container" [class.spinner-container-scrollable]="loadingScroll | async">
-    <o-table-skeleton></o-table-skeleton>
-  </div>
+  @if (showLoadingExtended | async) {
+    <div #spinnerContainer class="o-flex-column o-flex-align-center-center spinner-container"
+      [ngStyle]="{'top.px': toolBarHeight}" [class.spinner-container-scrollable]="loadingScroll | async">
+      <o-table-skeleton></o-table-skeleton>
+    </div>
+  }
 
   <!-- Disable blocker -->
-  <div *ngIf="!enabled" class="o-table-disabled-blocker"></div>
+  @if (!enabled) {
+    <div class="o-table-disabled-blocker"></div>
+  }
 </div>
 
 <ng-template #table>
