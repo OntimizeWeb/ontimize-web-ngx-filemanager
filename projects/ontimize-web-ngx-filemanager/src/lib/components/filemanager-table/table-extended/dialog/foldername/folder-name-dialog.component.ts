@@ -14,6 +14,7 @@ import { fileNameValidator, OFileManagerTranslatePipe } from '../../../../../uti
   styleUrls: ['folder-name-dialog.component.scss'],
   standalone: true,
   imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, OFileManagerTranslatePipe, OSharedModule, ReactiveFormsModule],
+  providers: [OFileManagerTranslatePipe],
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class.folder-name-dialog]': 'true'
@@ -29,9 +30,10 @@ export class FolderNameDialogComponent {
 
   @ViewChild('folderNameRef') inputRef: ElementRef;
 
-  protected translatePipe: OFileManagerTranslatePipe = inject(OFileManagerTranslatePipe);
   public title: string;
   public folderName: string;
+
+  protected translatePipe: OFileManagerTranslatePipe = inject(OFileManagerTranslatePipe);
 
   constructor(public dialogRef: MatDialogRef<FolderNameDialogComponent>) {
     this.initialize();
@@ -39,7 +41,7 @@ export class FolderNameDialogComponent {
 
   initialize() {
     this.title = this.translatePipe.transform('EXTENDED_TABLE.NEW_FOLDER_TITLE');
-    this.folderName = this.translatePipe.transform('name')
+    this.folderName = this.translatePipe.transform('name');
   }
 
   onKeyDown(e: Event): void {
