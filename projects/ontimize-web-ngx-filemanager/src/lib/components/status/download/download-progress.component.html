@@ -3,14 +3,20 @@
   <mat-toolbar color="primary" class="download-progress-toolbar">
     <div class="mat-toolbar-tools o-flex-row o-flex-fill o-flex-align-start-center">
 
-      <div *ngIf="title" class="o-flex-row o-flex-align-center-center">
-        <span>{{ title }}</span>
-      </div>
+      @if (title) {
+        <div class="o-flex-row o-flex-align-center-center">
+          <span>{{ title }}</span>
+        </div>
+      }
       <span class="fill-remaining"></span>
 
       <button type="button" mat-icon-button (click)="onToggleCollapse()">
-        <mat-icon *ngIf="!collapsed">keyboard_arrow_down</mat-icon>
-        <mat-icon *ngIf="collapsed">keyboard_arrow_up</mat-icon>
+        @if (!collapsed) {
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        }
+        @if (collapsed) {
+          <mat-icon>keyboard_arrow_up</mat-icon>
+        }
       </button>
 
       <button type="button" mat-icon-button (click)="onClose()">
@@ -21,24 +27,38 @@
 
   <div [class.collapsed]="collapsed" class="download-progress-content" [@contentExpansion]="_getExpandedState()">
     <mat-list class="o-flex-1">
-      <mat-list-item *ngFor="let file of files">
-        <div class="o-flex-row o-flex-align-space-between-center file-data">
-          <span class="file-name" [class.downloading]="!file.downloaded" *ngIf="!file.cancelled"> {{ getText(file) }} </span>
-          <span class="file-cancelled-text" *ngIf="file.cancelled"> {{ cancelledDownloadText }} </span>
+      @for (file of files; track file) {
+        <mat-list-item>
+          <div class="o-flex-row o-flex-align-space-between-center file-data">
+            @if (!file.cancelled) {
+              <span class="file-name" [class.downloading]="!file.downloaded"> {{ getText(file) }} </span>
+            }
+            @if (file.cancelled) {
+              <span class="file-cancelled-text"> {{ cancelledDownloadText }} </span>
+            }
 
-          <span class="fill-remaining"></span>
-          <mat-progress-spinner *ngIf="!file.downloaded && !file.cancelled" color="accent" [style.opacity]="file.name !== undefined ? 1 : 0.5"
-            mode="indeterminate" class="uploading" strokeWidth="3" diameter="24">
-          </mat-progress-spinner>
+            <span class="fill-remaining"></span>
+            @if (!file.downloaded && !file.cancelled) {
+              <mat-progress-spinner color="accent" [style.opacity]="file.name !== undefined ? 1 : 0.5"
+                mode="indeterminate" class="uploading" strokeWidth="3" diameter="24">
+              </mat-progress-spinner>
+            }
 
-          <button type="button" mat-icon-button *ngIf="!file.downloaded && !file.cancelled" (click)="onCancelFileDownload(file)">
-            <mat-icon>close</mat-icon>
-          </button>
+            @if (!file.downloaded && !file.cancelled) {
+              <button type="button" mat-icon-button (click)="onCancelFileDownload(file)">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
 
-          <mat-icon *ngIf="file.downloaded" class="downloaded">check_circle</mat-icon>
-          <mat-icon *ngIf="file.cancelled" class="cancelled">warning</mat-icon>
-        </div>
-      </mat-list-item>
+            @if (file.downloaded) {
+              <mat-icon class="downloaded">check_circle</mat-icon>
+            }
+            @if (file.cancelled) {
+              <mat-icon class="cancelled">warning</mat-icon>
+            }
+          </div>
+        </mat-list-item>
+      }
     </mat-list>
   </div>
 

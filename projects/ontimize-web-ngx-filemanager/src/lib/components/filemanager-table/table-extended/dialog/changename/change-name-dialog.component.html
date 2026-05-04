@@ -3,8 +3,12 @@
   <mat-form-field class="filename-form-field" style="flex: 0 0 100%; max-width: 100%">
     <input matInput #inputRef [formControl]="filenameFormControl" [(ngModel)]="filename" placeholder="{{ placeholder }}" (keydown)="onKeyDown($event)"
       required>
-    <mat-error *ngIf="filenameFormControl.hasError('invalidFileName')">{{ 'VALIDATE.FILENAME.INVALID' | oFileManagerTranslate }}</mat-error>
-    <mat-error *ngIf="filenameFormControl.hasError('required')">{{ 'FORM_VALIDATION.REQUIRED' | oTranslate }}</mat-error>
+    @if (filenameFormControl.hasError('invalidFileName')) {
+      <mat-error>{{ 'VALIDATE.FILENAME.INVALID' | oFileManagerTranslate }}</mat-error>
+    }
+    @if (filenameFormControl.hasError('required')) {
+      <mat-error>{{ 'FORM_VALIDATION.REQUIRED' | oTranslate }}</mat-error>
+    }
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions class="o-flex-align-end-center">

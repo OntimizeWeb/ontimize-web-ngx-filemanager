@@ -3,34 +3,56 @@
     <div class="o-flex-row">
       <input #inputShowValue matInput type="text" [attr.id]="getAttribute()" [id]="getAttribute()" [formControlName]="getAttribute()"
         [placeholder]="placeHolder" [ngModel]="getValue()" (ngModelChange)="innerOnChange($event)" readonly>
-      <div matSuffix *ngIf="getValue()" (click)="$event.stopPropagation()" class="o-flex-row o-flex-align-space-between-center o-file-input-buttons">
-        <button type="button" mat-icon-button (click)="onClickClearValue($event)">
-          <mat-icon aria-label="Clear">clear</mat-icon>
-        </button>
-        <button type="button" mat-icon-button [disabled]="!isValid || uploader.isUploading" (click)="onClickUpload($event)">
-          <mat-icon aria-label="Upload">file_upload</mat-icon>
-        </button>
-      </div>
+      @if (getValue()) {
+        <div matSuffix (click)="$event.stopPropagation()" class="o-flex-row o-flex-align-space-between-center o-file-input-buttons">
+          <button type="button" mat-icon-button (click)="onClickClearValue($event)">
+            <mat-icon aria-label="Clear">clear</mat-icon>
+          </button>
+          <button type="button" mat-icon-button [disabled]="!isValid || uploader.isUploading" (click)="onClickUpload($event)">
+            <mat-icon aria-label="Upload">file_upload</mat-icon>
+          </button>
+        </div>
+      }
     </div>
-    <mat-error *ngIf="hasError('required')">{{ 'FORM_VALIDATION.REQUIRED' | oTranslate }}</mat-error>
-    <mat-error *ngIf="hasError('fileType')">{{ 'FORM_VALIDATION.FILE_TYPE' | oTranslate}} ({{ getErrorValue('fileType', 'allowedFileTypes') }})</mat-error>
-    <mat-error *ngIf="hasError('fileSize')">{{ 'FORM_VALIDATION.FILE_MAXSIZE' | oTranslate }}: {{ getErrorValue('fileSize', 'maxFileSize') }} bytes</mat-error>
-    <mat-error *ngIf="hasError('numFile')">{{ 'FORM_VALIDATION.FILE_MAXNUM' | oTranslate }}: {{ getErrorValue('numFile', 'maxFiles') }}</mat-error>
+    @if (hasError('required')) {
+      <mat-error>{{ 'FORM_VALIDATION.REQUIRED' | oTranslate }}</mat-error>
+    }
+    @if (hasError('fileType')) {
+      <mat-error>{{ 'FORM_VALIDATION.FILE_TYPE' | oTranslate}} ({{ getErrorValue('fileType', 'allowedFileTypes') }})</mat-error>
+    }
+    @if (hasError('fileSize')) {
+      <mat-error>{{ 'FORM_VALIDATION.FILE_MAXSIZE' | oTranslate }}: {{ getErrorValue('fileSize', 'maxFileSize') }} bytes</mat-error>
+    }
+    @if (hasError('numFile')) {
+      <mat-error>{{ 'FORM_VALIDATION.FILE_MAXNUM' | oTranslate }}: {{ getErrorValue('numFile', 'maxFiles') }}</mat-error>
+    }
   </mat-form-field>
   <input #inputFile type="file" id="{{getAttribute()+'-file-input'}}" [attr.accept]="acceptFileType ? acceptFileType.replace(';',',') : null"
     (change)="fileSelected($event)" hidden="true" [attr.multiple]="multiple ? '' : null">
-  <div *ngIf="showInfo && files">
-    <mat-progress-bar *ngIf="!splitUpload && uploader.isUploading" color="accent" mode="determinate" [value]="uploader.progress"></mat-progress-bar>
-    <mat-list>
-      <mat-list-item *ngFor="let file of files">
-        <mat-icon mat-list-icon>insert_drive_file</mat-icon>
-        <span mat-line>{{ file.name }}</span>
-        <div class="o-flex-row o-flex-align-space-between-center">
-          <mat-progress-spinner *ngIf="splitUpload && file.isUploading" color="accent" mode="determinate" [value]="file.progress" class="uploading"></mat-progress-spinner>
-          <mat-icon *ngIf="splitUpload && file.isUploaded && file.isSuccess" class="uploaded">check_circle</mat-icon>
-          <mat-icon *ngIf="splitUpload && file.isUploaded && file.isError" class="error">error</mat-icon>
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </div>
+  @if (showInfo && files) {
+    <div>
+      @if (!splitUpload && uploader.isUploading) {
+        <mat-progress-bar color="accent" mode="determinate" [value]="uploader.progress"></mat-progress-bar>
+      }
+      <mat-list>
+        @for (file of files; track file) {
+          <mat-list-item>
+            <mat-icon mat-list-icon>insert_drive_file</mat-icon>
+            <span mat-line>{{ file.name }}</span>
+            <div class="o-flex-row o-flex-align-space-between-center">
+              @if (splitUpload && file.isUploading) {
+                <mat-progress-spinner color="accent" mode="determinate" [value]="file.progress" class="uploading"></mat-progress-spinner>
+              }
+              @if (splitUpload && file.isUploaded && file.isSuccess) {
+                <mat-icon class="uploaded">check_circle</mat-icon>
+              }
+              @if (splitUpload && file.isUploaded && file.isError) {
+                <mat-icon class="error">error</mat-icon>
+              }
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
+  }
 </div>

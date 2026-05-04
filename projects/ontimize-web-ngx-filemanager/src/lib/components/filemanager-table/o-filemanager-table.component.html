@@ -11,7 +11,9 @@
     pageable="no" store-state="no" groupable="no" show-report-on-demand-option="no" show-charts-on-demand-option="no">
 
     <o-table-button [label]="uploadLabel" icon="file_upload" (onClick)="onFileUploadClick()"></o-table-button>
-    <o-table-button *ngIf="newFolderButton" [label]="newFolderLabel" icon="add" (onClick)="oTable.onAddFolder()"></o-table-button>
+    @if (newFolderButton) {
+      <o-table-button [label]="newFolderLabel" icon="add" (onClick)="oTable.onAddFolder()"></o-table-button>
+    }
 
     <o-table-option [label]="newFolderLabel" (onClick)="oTable.onAddFolder()"></o-table-option>
 
@@ -45,5 +47,7 @@
   </o-context-menu>
 
   <!-- Disable blocker -->
-  <div *ngIf="!enabled" class="o-filemanager-table-disabled-blocker"></div>
+  @if (!enabled) {
+    <div class="o-filemanager-table-disabled-blocker"></div>
+  }
 </div>

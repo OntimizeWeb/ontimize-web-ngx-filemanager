@@ -3,14 +3,20 @@
   <mat-toolbar color="primary" class="upload-progress-toolbar">
     <div class="mat-toolbar-tools o-flex-row o-flex-fill o-flex-align-start-center">
 
-      <div *ngIf="title" class="o-flex-row o-flex-align-center-center">
-        <span>{{ title }}</span>
-      </div>
+      @if (title) {
+        <div class="o-flex-row o-flex-align-center-center">
+          <span>{{ title }}</span>
+        </div>
+      }
       <span class="fill-remaining"></span>
 
       <button type="button" mat-icon-button (click)="onToggleCollapse()">
-        <mat-icon *ngIf="!collapsed">keyboard_arrow_down</mat-icon>
-        <mat-icon *ngIf="collapsed">keyboard_arrow_up</mat-icon>
+        @if (!collapsed) {
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        }
+        @if (collapsed) {
+          <mat-icon>keyboard_arrow_up</mat-icon>
+        }
       </button>
 
       <button type="button" mat-icon-button (click)="onClose()">
@@ -22,25 +28,39 @@
   <!-- mat-expansion-panel-content -->
   <div [class.collapsed]="collapsed" class="upload-progress-content" [@contentExpansion]="_getExpandedState()">
     <mat-list class="o-flex-1">
-      <mat-list-item *ngFor="let file of uploaderFiles">
-        <div class="o-flex-row o-flex-align-space-between-center file-data">
-          <span class="file-name" [class.uploading]="file.isUploading"> {{ file.name }} </span>
-          <span class="file-cancelled-text" *ngIf="!file.isUploaded && file.isCancel"> {{ cancelledUploadText }} </span>
+      @for (file of uploaderFiles; track file) {
+        <mat-list-item>
+          <div class="o-flex-row o-flex-align-space-between-center file-data">
+            <span class="file-name" [class.uploading]="file.isUploading"> {{ file.name }} </span>
+            @if (!file.isUploaded && file.isCancel) {
+              <span class="file-cancelled-text"> {{ cancelledUploadText }} </span>
+            }
 
-          <span class="fill-remaining"></span>
-          <mat-progress-spinner *ngIf="file.isUploading" color="accent" mode="determinate" [value]="file.progress" class="uploading"
-            strokeWidth="3" diameter="24">
-          </mat-progress-spinner>
+            <span class="fill-remaining"></span>
+            @if (file.isUploading) {
+              <mat-progress-spinner color="accent" mode="determinate" [value]="file.progress" class="uploading"
+                strokeWidth="3" diameter="24">
+              </mat-progress-spinner>
+            }
 
-          <button type="button" mat-icon-button *ngIf="file.isUploading" (click)="onCancelFileUpload(file)">
-            <mat-icon>close</mat-icon>
-          </button>
+            @if (file.isUploading) {
+              <button type="button" mat-icon-button (click)="onCancelFileUpload(file)">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
 
-          <mat-icon *ngIf="file.isUploaded && file.isSuccess" class="uploaded">check_circle</mat-icon>
-          <mat-icon *ngIf="file.isUploaded && file.isError" class="error">error</mat-icon>
-          <mat-icon *ngIf="!file.isUploaded && file.isCancel" class="cancelled">warning</mat-icon>
-        </div>
-      </mat-list-item>
+            @if (file.isUploaded && file.isSuccess) {
+              <mat-icon class="uploaded">check_circle</mat-icon>
+            }
+            @if (file.isUploaded && file.isError) {
+              <mat-icon class="error">error</mat-icon>
+            }
+            @if (!file.isUploaded && file.isCancel) {
+              <mat-icon class="cancelled">warning</mat-icon>
+            }
+          </div>
+        </mat-list-item>
+      }
     </mat-list>
   </div>
 
