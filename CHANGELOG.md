@@ -1,3 +1,30 @@
+## 18.0.0-next.0 (2026-05-05)
+> [!NOTE]
+> This version requires `ontimize-web-ngx` version `18.0.0-next.0` or higher.
+
+### Features
+* Migration to Angular 18.
+* Migration to Angular Material 18 (MDC / Material 3 theming).
+* All components converted to standalone (`standalone: true`) with explicit `imports[]`. ([401ca93](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/401ca93))
+* Replaced `OTableSkeletonExtendedComponent` with the built-in `OTableSkeletonComponent` from `ontimize-web-ngx`. ([dcb9458](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/dcb9458))
+* Added `compilationMode: partial` to `tsconfig.lib.json` for ng-packagr partial compilation compatibility. ([7d8cee2](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/7d8cee2))
+* Migrated all component templates from `*ngIf`/`*ngFor`/`*ngSwitch` to Angular 17+ control flow syntax (`@if`/`@for`/`@switch`). ([75ed528](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/75ed528))
+
+### Bug fixes
+* Fixed `NullInjectorError` for `OFileManagerTranslatePipe` in `OFileManagerTableComponent` by adding it to `providers[]`. ([ef1ab76](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/ef1ab76))
+* Fixed `NullInjectorError` for `OFileManagerTranslatePipe` in `FolderNameDialogComponent` by adding it to `providers[]`; migrated template to `@if` control flow. ([ed8189b](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/ed8189b))
+* Fixed icon width in upload/download progress windows. ([0438c61](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/0438c61))
+* Added vertical padding to progress list items in upload/download progress components. ([5ce9f4d](https://github.com/OntimizeWeb/ontimize-web-ngx-filemanager/commit/5ce9f4d))
+
+### BREAKING CHANGES
+* `@angular/flex-layout` removed. Layout attributes (`fxLayout`, `fxFlex`, etc.) replaced with Ontimize CSS utility classes (`o-flex-row`, `o-flex-column`, `o-flex-fill`, etc.).
+* Requires `ontimize-web-ngx@18.0.0-next.0` or higher.
+
+### DEPENDENCY UPDATES
+* **Updated**: `@angular/core`, `@angular/material`, `@angular/cdk` to `^18.2.0`
+* **Updated**: `ontimize-web-ngx@18.0.0-next.0`
+* **Removed**: `@angular/flex-layout`
+
 ## 15.1.1 (2025-11-27)
 > [!NOTE]
 > This version requires `ontimize-web-ngx` version `15.7.1` or higher.
